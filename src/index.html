@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="./bs5dialog.css">
+    <script src="./bs5dialog.js"></script>
+</head>
+<body>
+    <div class="btn btn-show-msg">show message</div>
+    <script>
+        console.log(bs5dialog.i18n.setCurrentLang('zh'))
+
+       bs5dialog.msg("aaa",{duration:30000})
+       bs5dialog.showLoading();
+       bs5dialog.alert("哈哈哈哈","")
+       bs5dialog.confirm("确定要这样吗？","")
+    </script>
+</body>
+</html>
