@@ -9,7 +9,8 @@ const configs = {
     confirm: 'Confirm',
     cancel: 'Cancel',
     save:'Save',
-    close:'Close'
+    close:'Close',
+    prompt:'Prompt'
     
   },
   zh: {
@@ -17,7 +18,8 @@ const configs = {
     confirm: '确认',
     cancel: '取消',
     save:'保存',
-    close:'关闭'
+    close:'关闭',
+    prompt:'提示'
   }
 };
 

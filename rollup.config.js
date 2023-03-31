@@ -53,7 +53,7 @@ export default {
     postcss({
       plugins: [postcssImport()],
       extract: true,
-      modules: true,
+      // modules: true,
       // minimize: true,
     }),
    terser(),

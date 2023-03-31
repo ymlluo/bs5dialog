@@ -6,6 +6,24 @@ import Draggabilly from "draggabilly";
 import axios from "axios";
 import * as i18n from "./i18n.js";
 
+var modal;
+var modalId;
+
+function setModalId() {
+  modalId = "modal-" + Math.floor(Math.random() * 1000000);
+  return modalId;
+}
+
+function setModalWrapper() {
+  modal = document.createElement("div");
+  modal.classList.add("modal", "fade");
+  modal.setAttribute("data-bs-backdrop", "static");
+  modal.setAttribute("tabindex", "-1");
+  modal.setAttribute("data-bs-keyboard", "false");
+  modal.setAttribute("id", setModalId());
+  return modal;
+}
+
 /**
  *  show a dialog by a remote page
  * @param {*} apiUrl
@@ -30,19 +48,20 @@ function page(
   if (!modalTitle) {
     modalTitle = "";
   }
+  if(typeof axios ==='undefined'){
+    console.error("axios is not defined");
+    return;
+  };
   axios
     .get(apiUrl)
     .then(function (response) {
-      const modal = document.createElement("div");
-      modal.classList.add("modal", "fade");
-      modal.setAttribute("data-bs-backdrop", option.backdrop);
-      modal.setAttribute("data-bs-keyboard", "false");
+      const modal = setModalWrapper();
       modal.innerHTML = `
         <div class="modal-dialog modal-lg  modal-dialog-centered">
           <div class="modal-content shadow">
             <div class="modal-header ${
               option.drag ? "cursor-move" : ""
-            } "   id="modal-header">
+            } ">
               <h5 class="modal-title">${modalTitle}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -73,9 +92,13 @@ function page(
       if (firstFormEl) {
         firstFormEl.focus();
       }
-      const modalHeader = modal.querySelector("#modal-header");
+      const modalHeader = modal.querySelector(".modal-header");
       if (option.drag) {
-        new Draggabilly(modal, { handle: modalHeader });
+        if(typeof Draggabilly === "function"){
+          new Draggabilly(modal, { handle: modalHeader });
+        }else{
+          console.error("Draggabilly is not defined");
+        }
       }
       modal.addEventListener("shown.bs.modal", () => {
         option.onShown(modal);
@@ -127,10 +150,7 @@ function page(
  * @param {Function} onOk
  */
 function confirmRequest(message, apiUrl, method = "DELETE", onOk = () => {}) {
-  const modal = document.createElement("div");
-  modal.classList.add("modal", "fade");
-  modal.setAttribute("data-bs-backdrop", "static");
-  modal.setAttribute("data-bs-keyboard", "false");
+  const modal = setModalWrapper();
   modal.innerHTML = `
     <div class="modal-dialog modal-sm modal-dialog-centered">
       <div class="modal-content">
@@ -143,7 +163,7 @@ function confirmRequest(message, apiUrl, method = "DELETE", onOk = () => {}) {
         </div>
         <div class="modal-footer">
 <!--          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>-->
-          <button type="button" class="btn btn-primary" id="ok-btn">${i18n.getConfig(
+          <button type="button" class="btn btn-default btn-primary" id="ok-btn">${i18n.getConfig(
             "ok"
           )}</button>
         </div>
@@ -203,60 +223,59 @@ function confirmRequest(message, apiUrl, method = "DELETE", onOk = () => {}) {
  * @param {*} type
  * @param {*} btnText
  */
-function alert(content, onOk, title, type = "primary") {
-  // Get the modal template and clone it
-  const modalTemplate = document.createElement("template");
-  modalTemplate.innerHTML = `
-      <div class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+function alert(content, type = "light", onOk = () => {}, title = "") {
+  const modal = setModalWrapper();
+  modal.innerHTML = `
+    <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-          <div class="modal-header bg-${type}">
-            <h5 class="modal-title text-${
-              [
-                "success",
-                "primary",
-                "secondary",
-                "danger",
-                "dark",
-                "black",
-              ].includes(type)
-                ? "white"
-                : "dark"
-            }">${title || "⚠️"}</h5>
+          <div class="modal-header bg-${type}  text-${
+    ["success", "primary", "secondary", "danger", "dark", "black"].includes(
+      type
+    )
+      ? "white"
+      : "dark"
+  }">
+            <h5 class="modal-title">${title || "⚠️"}</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
             <div class="modal-body">
               <span>${content}</span>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-ok btn-${type}">${i18n.getConfig(
+              <button type="button" class="btn btn-default btn-ok btn-${type}">${i18n.getConfig(
     "ok"
   )}</button>
             </div>
           </div>
         </div>
-      </div>
     `;
-  const modalEl = modalTemplate.content.querySelector(".modal");
-
-  const okBtnEl = modalEl.querySelector(".modal-footer .btn-ok");
+  document.body.appendChild(modal);
+  const modalEl = new bootstrap.Modal(modal);
+  modalEl.show();
+  const okBtnEl = modal.querySelector(".modal-footer .btn-ok");
   okBtnEl.addEventListener("click", () => {
     replayLock(okBtnEl);
     onOk();
-    modal.hide();
+    modalEl.hide();
   });
-  const modal = new bootstrap.Modal(modalEl);
-  modal.show();
 }
 
 /**
  * confirm dialog
- * @param {*} options
+ * @param {*} message
+ * @param {*} onConfirm
+ * @param {*} title
+ * @param {*} type
  */
-function confirm(message, onConfirm = function () {}, title, type = "") {
-  const modal = `
-    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
+function confirm(
+  message,
+  type = "light",
+  onConfirm = function () {},
+  title = ""
+) {
+  const modal = setModalWrapper();
+  modal.innerHTML = `
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header bg-${type}">
             <h5 class="modal-title text-${
@@ -280,23 +299,76 @@ function confirm(message, onConfirm = function () {}, title, type = "") {
             <button type="button" class="btn btn-default" data-bs-dismiss="modal">${i18n.getConfig(
               "cancel"
             )}</button>
-            <button type="button" class="btn btn-primary btn-ok">${i18n.getConfig(
-              "confirm"
-            )}</button>
+            <button type="button" class="btn btn-default btn-${type} btn-ok">${i18n.getConfig(
+    "confirm"
+  )}</button>
           </div>
         </div>
       </div>
-    </div>
   `;
-  document.body.insertAdjacentHTML("beforeend", modal);
-  const modalEl = document.querySelector(".modal");
-  const modalInstance = new bootstrap.Modal(modalEl);
-  modalInstance.show();
-  const okBtnEl = modalEl.querySelector(".modal-footer .btn-ok");
+  document.body.appendChild(modal);
+  const modalEl = new bootstrap.Modal(modal);
+  modalEl.show();
+  const okBtnEl = modal.querySelector(".modal-footer .btn-ok");
   okBtnEl.addEventListener("click", () => {
     replayLock(okBtnEl);
     onConfirm();
-    modalInstance.hide();
+    modalEl.hide();
+  });
+}
+
+/**
+ * show promt dialog
+ * @param {*} options
+ */
+function prompt(message, type = "light", onOk = () => {}, title = "") {
+  const modal = setModalWrapper();
+  modal.innerHTML = `
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-${type}">
+            <h5 class="modal-title text-${
+              [
+                "success",
+                "primary",
+                "secondary",
+                "danger",
+                "dark",
+                "black",
+              ].includes(type)
+                ? "white"
+                : "dark"
+            }">${
+              title || i18n.getConfig("prompt")
+            }</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>${message}</p>
+            <input class="form-control" type="text" placeholder="">
+          </div>
+          <div class="modal-footer">
+            <button class="btn"  data-bs-dismiss="modal">${i18n.getConfig(
+              "cancel"
+            )}</button>
+            <button class="btn btn-default btn-${type} btn-ok">${i18n.getConfig(
+    "ok"
+  )}</button>
+          </div>
+        </div>
+      </div>
+  `;
+
+  document.body.appendChild(modal);
+  const modalEl = new bootstrap.Modal(modal);
+  modalEl.show();
+  const okBtnEl = modal.querySelector(".modal-footer .btn-ok");
+  const inputEl = modal.querySelector(".modal-body input");
+  okBtnEl.addEventListener("click", () => {
+    console.log(inputEl.value);
+    replayLock(okBtnEl);
+    onOk(inputEl.value);
+    modalEl.hide();
   });
 }
 
@@ -339,55 +411,13 @@ function msg(message, options = {}) {
 }
 
 /**
- * show promt dialog
- * @param {*} options
- */
-function prompt(message, onOk, type = "", title = "") {
-  const modal = `
-    <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header bg-${type}">
-            <h5 class="modal-title" id="modal-title">${title}</h5>
-          </div>
-          <div class="modal-body">
-            <p>${message}</p>
-            <input class="form-control" type="text" placeholder="Enter text here...">
-          </div>
-          <div class="modal-footer">
-            <button class="btn"  data-bs-dismiss="modal">${i18n.getConfig(
-              "cancel"
-            )}</button>
-            <button class="btn btn-ok">${i18n.getConfig("ok")}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const modalEl = document.createElement("div");
-  modalEl.innerHTML = modal;
-  document.body.appendChild(modalEl);
-  new bootstrap.Modal(modalEl.querySelector(".modal")).show();
-
-  const okBtnEl = modalEl.querySelector(".modal-footer .btn-ok");
-  const inputEl = modalEl.querySelector(".modal-body input");
-
-  okBtnEl.addEventListener("click", () => {
-    replayLock(okBtnEl);
-    onOk(inputEl.value);
-    modalEl.remove();
-  });
-}
-
-/**
  * show tabs dialog
  * @param {*} tabs
  * @param {*} width
  */
 function tabs(tabs, width = "500px") {
   const modal = `
-    <div class="modal fade" id="tabsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="tabsModal" tabindex="-1" aria-labelledby="tabs-modal" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" style="max-width: ${width}">
         <div class="modal-content">
           <div class="modal-header bg-header" style="padding: 0;">
@@ -544,32 +574,6 @@ function getTargetElement(element) {
   }
 }
 
-/**
- * createLoadingDiv
- * @param {*} spinnerDiv
- * @param {*} options
- * @returns
- */
-function createLoadingDiv(spinnerDiv, options) {
-  const rootStyles = `
-    :root {
-      --sk-color: ${options.color || "#333"};
-      --sk-size: ${options.size || "40px"};
-    }
-  `;
-
-  document.head.insertAdjacentHTML("beforeend", `<style>${rootStyles}</style>`);
-
-  const bgColor = options.bg
-    ? `background-color: ${options.bg}`
-    : "background-color: transparent;";
-
-  return `
-    <div class="bs5-modal-loading" style="z-index: 9999; position: absolute; top: 0; left: 0; right: 0; bottom: 0; ${bgColor}">
-      ${spinnerDiv}
-    </div>
-  `;
-}
 
 /**
  *show loading
@@ -577,14 +581,8 @@ function createLoadingDiv(spinnerDiv, options) {
  * @param {*} options
  * @returns
  */
-function showLoading(element = document.body, options = {}) {
-  const {
-    animationName = "default",
-    color = "#333",
-    size = "40px",
-    bg,
-    timeout = 0,
-  } = options;
+function showLoading(element = document.body, animationName, options = {}) {
+  const { color = "#333", size = "40px", bg, timeout = 0 } = options;
   const targetElement = getTargetElement(element);
   if (!targetElement) {
     return;
@@ -594,8 +592,26 @@ function showLoading(element = document.body, options = {}) {
     return;
   }
   targetElement.style.position = "relative";
+  var targetZIndex = targetElement.style.zIndex;
   const spinnerDiv = createSpinner(animationName);
-  const loadingDiv = createLoadingDiv(spinnerDiv, { color, size, bg });
+  const rootStyles = `
+  :root {
+    --sk-color: ${options.color || "#333"};
+    --sk-size: ${options.size || "40px"};
+  }
+`;
+  document.head.insertAdjacentHTML("beforeend", `<style>${rootStyles}</style>`);
+  const bgColor = options.bg
+    ? `background-color: ${options.bg}`
+    : "background-color: rgba(0,0,0,0.3);";
+  const loadingDiv = `
+  <div class="bs5-modal-loading" style="z-index: ${
+    targetZIndex + 1
+  }; position: absolute; top: 0; left: 0; right: 0; bottom: 0; ${bgColor}">
+  ${spinnerDiv}
+</div>
+  `;
+
   targetElement.insertAdjacentHTML("afterbegin", loadingDiv);
   targetElement.style.cursor = "wait";
   if (timeout > 0) {
