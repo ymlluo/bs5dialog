@@ -5,6 +5,7 @@ import json from '@rollup/plugin-json';
 import terser from '@rollup/plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import postcssImport from 'postcss-import';
+import copy from 'rollup-plugin-copy'
 
 export default {
   input: 'src/bs5dialog.js',
@@ -57,6 +58,11 @@ export default {
       // minimize: true,
     }),
    terser(),
+   copy({
+    targets: [
+      { src: 'src/index.html', dest: 'dist' },
+    ]
+  })
   ],
   external: ['axios', 'draggabilly','bootstrap'],
 };
