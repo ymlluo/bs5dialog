@@ -10,7 +10,8 @@ const configs = {
     cancel: 'Cancel',
     save:'Save',
     close:'Close',
-    prompt:'Prompt'
+    prompt:'Prompt',
+    sure:"Are you sure?"
     
   },
   zh: {
@@ -19,7 +20,8 @@ const configs = {
     cancel: '取消',
     save:'保存',
     close:'关闭',
-    prompt:'提示'
+    prompt:'提示',
+    sure:"确定吗？"
   }
 };
 

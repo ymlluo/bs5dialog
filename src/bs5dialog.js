@@ -4,6 +4,7 @@ import "./bs5dialog.css";
 import bootstrap from "bootstrap";
 import Draggabilly from "draggabilly";
 import axios from "axios";
+import { getTargetElement, getUrl, isUrlOrPath, postUrl } from "./libs.js";
 import * as i18n from "./i18n.js";
 
 var modal;
@@ -26,14 +27,17 @@ function setModalWrapper() {
 
 /**
  *  show a dialog by a remote page
- * @param {*} apiUrl
- * @param {*} modalTitle
- * @param {*} option
+ * @param {string} content 
+ * @param {Object} options
+ * @property {string}[options.title] title
  */
-function page(
-  apiUrl,
-  modalTitle,
-  option = {
+async function open(content,options = {}) {
+  const defaultOptions = {
+    title: "",
+    type: "secondary",
+    size: "md",
+    title:"",
+    size:'lg',
     backdrop: "false",
     drag: true,
     onStart: function () {},
@@ -42,98 +46,105 @@ function page(
     onSubmitSuccess: function () {},
     onSubmitError: function () {},
     onSubmitDone: function () {}
+  };
+  options = { ...defaultOptions, ...options };
+  options.onStart();
+  const modal = setModalWrapper();
+  if (isUrlOrPath(content)) {
+    let apiUrl = content;
+    content =await getUrl(apiUrl)
+     console.log('cur content',content);
   }
-) {
-  option.onStart();
-  if (!modalTitle) {
-    modalTitle = "";
-  }
-  if (typeof axios === "undefined") {
-    console.error("axios is not defined");
-    return;
-  }
-  axios
-    .get(apiUrl)
-    .then(function (response) {
-      const modal = setModalWrapper();
-      modal.innerHTML = `
-        <div class="modal-dialog modal-lg  modal-dialog-centered">
-          <div class="modal-content shadow">
-            <div class="modal-header ${option.drag ? "cursor-move" : ""} ">
-              <h5 class="modal-title">${modalTitle}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="max-height: 80vh; overflow-y: auto;">
-              ${response.data}
-            </div>
-            ${
-              response.data.includes("form")
-                ? `
-            <div class="modal-footer">
-                      <button type="button" class="btn btn-default me-auto" data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button>
-              <button type="button" class="btn btn-primary" id="submit-btn">${i18n.getConfig("ok")}</button>
-            </div>
-            `
-                : ""
-            }
-          </div>
+
+  modal.innerHTML = `
+  <div class="modal-dialog modal-${options.size} modal-dialog-centered">
+  <div class="modal-content">
+  <div class="modal-header">
+  <h5 class="modal-title">${options.title || icon('pinned')}</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+    <div class="modal-status bg-${options.type}"></div>
+    <div class="modal-body">
+      <h5 class="modal-title mb-1">${options.title}</h5>
+      <div class="text-muted">${content}</div>
+    </div>
+    <div class="modal-footer">
+    <div class="w-100">
+      <div class="row">
+        <div class="col">
+          <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button>
         </div>
-      `;
-      document.body.appendChild(modal);
-      const modalEl = new bootstrap.Modal(modal);
-      modalEl.show();
-      const firstFormEl = modal.querySelector("input, textarea, select");
-      if (firstFormEl) {
-        firstFormEl.focus();
-      }
-      const modalHeader = modal.querySelector(".modal-header");
-      if (option.drag) {
-        if (typeof Draggabilly === "function") {
-          new Draggabilly(modal, { handle: modalHeader });
-        } else {
-          console.error("Draggabilly is not defined");
-        }
-      }
-      modal.addEventListener("shown.bs.modal", () => {
-        option.onShown(modal);
-      });
-      const submitBtn = modal.querySelector("#submit-btn");
-      if (submitBtn) {
-        submitBtn.addEventListener("click", function () {
-          replayLock(submitBtn);
-          const form = modal.querySelector("form");
-          const formData = new FormData(form);
-          option.onSubmit(modal);
-          submitBtn.innerHTML = i18n.getConfig("save") + "...";
-          axios
-            .post(form.action, formData, {
-              validateStatus: function (status) {
-                return (status >= 200 && status < 300) || status === 422;
-              }
-            })
-            .then(function (response) {
-              submitBtn.innerHTML = i18n.getConfig("save");
-              if (response && response.status === 200) {
-                console.log(response);
-                modalEl.hide();
-                modal.remove();
-                console.log(modalEl);
-                option.onSubmitSuccess(response.data, modal);
-              }
-            })
-            .catch(function (error) {
-              option.onSubmitError(error, modal);
-            })
-            .finally(function () {
-              option.onSubmitDone(modal);
-            });
-        });
-      }
-      return { modal };
-    })
-    .catch(function (error) {
-      console.error(error);
+        <div class="col">
+          <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok">${i18n.getConfig("confirm")}</button>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+`;
+
+  document.body.appendChild(modal);
+  const modalEl = new bootstrap.Modal(modal);
+  modalEl.show();
+  //hide form submit button and replace to btn-ok
+  modal.addEventListener("shown.bs.modal", () => {
+    options.onShown(modal);
+  });
+
+  const form = modal.querySelector('form');
+  if(form.length){
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const okBtn = modal.querySelector('.modal-footer .btn-ok');
+    submitBtn.style.display = 'none';
+    okBtn.textContent = submitBtn.textContent;
+    okBtn.setAttribute('type', 'submit');
+    okBtn.addEventListener('click', function() {
+      replayLock(okBtn);
+      options.onSubmit(modal);
+      form.submit();
     });
+    form.addEventListener('submit', function(event) {
+     
+      event.preventDefault();
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form)
+      })
+      .then(response => {
+        if (response.ok) {
+          options.onSubmitSuccess(response.data, modal);
+          modalEl.hide();
+          form.reset();
+        } else {
+          options.onSubmitError(error, modal);
+          // Display error message
+          const errorDiv = document.createElement('div');
+          errorDiv.classList.add('alert', 'alert-danger');
+          errorDiv.textContent = 'There was an error submitting the form. Please try again.';
+          form.prepend(errorDiv);
+        }
+      }).then(()=>{
+        options.onSubmitDone(modal);
+      });
+    });
+     // Hide any error messages when the modal is hidden
+
+     modal.addEventListener('hide.bs.modal', function() {
+    const errorDiv = form.querySelector('.alert-danger');
+    if (errorDiv) {
+      errorDiv.remove();
+    }
+  });
+
+  }
+
+  return { modal };
+
+
+
+ 
 }
 
 /**
@@ -207,39 +218,54 @@ function confirmRequest(message, apiUrl, method = "DELETE", onOk = () => {}) {
   });
 }
 
+/**
+ *
+ * @param {string} title
+ * @param {string} content
+ * @param {Object} options
+ * @param {string} [options.title=''] - title
+ * @property {('primary'|'secondary'|'success'|'danger'|'warning'|'info'|'light'|'dark'|'link')} [options.type=''] - type
+ * @property {('sm'|'md')} [options.size] modal size,default "sm"
+ * @property {('success'|'ok'|'fail'|'error'|'info'|'help'|'alert'|'warn')} [options.icon='ok'] - Icon
+ * @param {string} [options.btnText = 'ok'] - btn text
+ * @param {function} [options.onOk] - callback function
+ */
 function alert(content, options = {}) {
   const defaultOptions = {
     title: "",
-    type: "",
-    btnText: "OK",
-    icon: "",
-    onOk: null
+    type: "secondary",
+    size: "sm",
+    btnText: "",
+    icon: "ok",
+    icon_color: "",
+    icon_custom: "",
+    onOk: null,
+    timeout: 0
   };
   options = { ...defaultOptions, ...options };
   const modal = setModalWrapper();
   modal.innerHTML = `
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-          <div class="modal-content">
-          <div class="modal-status bg-${options.type}"></div>
-          <div class="modal-body text-center py-4">
-            ${icon(options.icon) || ""}
-            <h5 class="modal-title">${options.title}</h5>
-            <div class="text-muted">${content}</div>
-          </div>
-            <div class="modal-footer">
-            <div class="w-100">
-            <div class="row">
-            <div class="col">
-              <button type="button" class=" w-100 btn btn-default btn-ok btn-${options.type}">${
+  <div class="modal-dialog modal-${options.size || "sm"} modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-status bg-${options.type}"></div>
+    <div class="modal-body text-center py-4">
+    ${options.icon_custom || icon(options.icon, options.icon_color || options.type) || ""}
+      <h5 class="modal-title mb-1">${options.title}</h5>
+      <div class="text-muted">${content}</div>
+    </div>
+    <div class="modal-footer">
+      <div class="w-100">
+        <div class="row">
+          <div class="col">
+            <button type="button" class=" w-100 btn btn-default btn-ok btn-${options.type}">${
     options.btnText || i18n.getConfig("ok")
-  }</button></div>
-  
-  </div>
-  </div>
-            </div>
-           
+  }</button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
     `;
   document.body.appendChild(modal);
   const modalEl = new bootstrap.Modal(modal);
@@ -252,6 +278,12 @@ function alert(content, options = {}) {
     }
     modalEl.hide();
   });
+  if (options.timeout) {
+    modal.querySelector(".modal-footer").style.display = "none";
+    setTimeout(() => {
+      modalEl.hide();
+    }, options.timeout);
+  }
 }
 
 /**
@@ -261,28 +293,43 @@ function alert(content, options = {}) {
  * @param {*} title
  * @param {*} type
  */
-function confirm(message, type = "light", onConfirm = function () {}, title = "") {
+function confirm(content = "", options = {}) {
+  const defaultOptions = {
+    title: i18n.getConfig("sure"),
+    type: "secondary",
+    size: "sm",
+    btnText: "",
+    icon: "alert",
+    icon_color: "",
+    icon_custom: "",
+    onConfirm: null
+  };
+  options = { ...defaultOptions, ...options };
+
   const modal = setModalWrapper();
   modal.innerHTML = `
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content">
-        <div class="modal-status bg-${type}"></div>
-          <div class="modal-body text-center py-4">
-            <h5 class="modal-title">${title || ""}</h5>
-            <div class="text-muted">${message}</div>
-          </div>
-          <div class="modal-footer">
-          <div class="w-100">
-          <div class="row">
+  <div class="modal-dialog modal-${options.size} modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-status bg-${options.type}"></div>
+    <div class="modal-body text-center py-4">
+    ${options.icon_custom || icon(options.icon, options.icon_color || options.type) || ""}
+    <h5 class="modal-title mb-1">${options.title}</h5>
+      <div class="text-muted">${content}</div>
+    </div>
+    <div class="modal-footer">
+      <div class="w-100">
+        <div class="row">
           <div class="col">
-            <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button></div>
-            <div class="col">
-            <button type="button" class="w-100 btn btn-default btn-${type} btn-ok">${i18n.getConfig("confirm")}</button></div>
+            <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button>
           </div>
-          </div>
+          <div class="col">
+            <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok">${i18n.getConfig("confirm")}</button>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
   `;
   document.body.appendChild(modal);
   const modalEl = new bootstrap.Modal(modal);
@@ -290,7 +337,9 @@ function confirm(message, type = "light", onConfirm = function () {}, title = ""
   const okBtnEl = modal.querySelector(".modal-footer .btn-ok");
   okBtnEl.addEventListener("click", () => {
     replayLock(okBtnEl);
-    onConfirm();
+    if (typeof options.onConfirm === "function") {
+      options.onConfirm();
+    }
     modalEl.hide();
   });
 }
@@ -299,27 +348,44 @@ function confirm(message, type = "light", onConfirm = function () {}, title = ""
  * show promt dialog
  * @param {*} options
  */
-function prompt(message, type = "light", onOk = () => {}, title = "") {
+function prompt(content, options = {}) {
+  const defaultOptions = {
+    title: "",
+    type: "secondary",
+    size: "md",
+    btnText: "",
+    icon: "code",
+    icon_color: "",
+    icon_custom: "",
+    secret: false,
+    onConfirm: null
+  };
+  options = { ...defaultOptions, ...options };
   const modal = setModalWrapper();
   modal.innerHTML = `
-    <div class="modal-dialog  modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-${type}">
-            <h5 class="modal-title text-${
-              ["success", "primary", "secondary", "danger", "dark", "black"].includes(type) ? "white" : "dark"
-            }">${title || i18n.getConfig("prompt")}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-${options.size} modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-status bg-${options.type}"></div>
+    <div class="modal-body text-center py-4">
+      ${options.icon_custom || icon(options.icon, options.icon_color || options.type) || ""}
+      <h5 class="modal-title mb-2">${options.title}</h5>
+      <div class="text-muted mb-2">${content}</div>
+      <input class="form-control" type="${options.secret === true ? "password" : "text"}" placeholder="">
+    </div>
+    <div class="modal-footer">
+      <div class="w-100">
+        <div class="row">
+          <div class="col">
+            <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button>
           </div>
-          <div class="modal-body">
-            <p>${message}</p>
-            <input class="form-control" type="text" placeholder="">
-          </div>
-          <div class="modal-footer">
-            <button class="btn"  data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button>
-            <button class="btn btn-default btn-${type} btn-ok">${i18n.getConfig("ok")}</button>
+          <div class="col">
+            <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok">${i18n.getConfig("ok")}</button>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
   `;
 
   document.body.appendChild(modal);
@@ -330,7 +396,9 @@ function prompt(message, type = "light", onOk = () => {}, title = "") {
   okBtnEl.addEventListener("click", () => {
     console.log(inputEl.value);
     replayLock(okBtnEl);
-    onOk(inputEl.value);
+    if (typeof options.onConfirm === "function") {
+      options.onConfirm(inputEl.value);
+    }
     modalEl.hide();
   });
 }
@@ -517,57 +585,86 @@ function createSpinner(animationName) {
   return spinnerTypes[animationName] || '<div class="bs5-modal-spinner"></div>';
 }
 
-function icon(iconName) {
+function icon(iconName, type) {
   switch (iconName) {
     case "success":
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-check" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="green" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    case "ok":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-circle-check" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
       <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
       <path d="M9 12l2 2l4 -4"></path>
    </svg>
    </svg>`;
       break;
+    case "fail":
+    case "error":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-circle-x" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+        <path d="M10 10l4 4m0 -4l-4 4"></path>
+     </svg>`;
     case "info":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-info-circle" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
+      <path d="M12 9h.01"></path>
+      <path d="M11 12h1v4h1"></path>
+   </svg>`;
       break;
-    case "warning":
+    case "alert":
+    case "warn":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-alert-triangle" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z"></path>
+      <path d="M12 9v4"></path>
+      <path d="M12 17h.01"></path>
+   </svg>`;
       break;
-    case "danger":
+    case "help":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-help" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+        <path d="M12 17l0 .01"></path>
+        <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4"></path>
+     </svg>`;
+    case "edit":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-edit" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
+      <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
+      <path d="M16 5l3 3"></path>
+   </svg>`;
+    case "code":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-code" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M7 8l-4 4l4 4"></path>
+    <path d="M17 8l4 4l-4 4"></path>
+    <path d="M14 4l-4 16"></path>
+ </svg>`;
       break;
-    case "primary":
-      break;
-    case "secondary":
-      break;
-    case "light":
-      break;
-    case "dark":
-      break;
-    case "link":
-      break;
-    case "white":
-      break;
-    case "black":
-      break;
-    case "gray":
-      break;
-    case "gray-dark":
-  }
-}
-
-/**
- *
- * @param {*} element
- * @returns
- */
-function getTargetElement(element) {
-  if (element instanceof Element) {
-    return element;
-  } else if (element.startsWith("#")) {
-    return document.getElementById(element.slice(1));
-  } else if (element.startsWith(".")) {
-    return document.querySelector(element);
-  } else {
-    console.error("Invalid element provided.");
-    return null;
+      case 'drag':
+        return `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-drag-drop" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M19 11v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
+        <path d="M13 13l9 3l-4 2l-2 4l-3 -9"></path>
+        <path d="M3 3l0 .01"></path>
+        <path d="M7 3l0 .01"></path>
+        <path d="M11 3l0 .01"></path>
+        <path d="M15 3l0 .01"></path>
+        <path d="M3 7l0 .01"></path>
+        <path d="M3 11l0 .01"></path>
+        <path d="M3 15l0 .01"></path>
+     </svg>`
+        break;
+        case 'pinned':
+          return `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pinned" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+          <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
+          <path d="M12 16l0 5"></path>
+          <path d="M8 4l8 0"></path>
+       </svg>`
+       default:
+        return `.`
   }
 }
 
@@ -646,4 +743,4 @@ function replayLock(element, timeout = 1000) {
   }, timeout);
 }
 
-export { i18n, alert, confirm, msg, prompt, tabs, showLoading, hideLoading, page, confirmRequest, replayLock };
+export { i18n, alert, confirm, msg, prompt, tabs, showLoading, hideLoading, open, confirmRequest, replayLock };

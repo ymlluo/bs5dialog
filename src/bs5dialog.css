@@ -147,3 +147,5 @@
   background: #616876;
   border-radius: 8px 8px 0 0
 }
+
+.modal-footer .btn-default{border: 1px solid #eaeaea;}
