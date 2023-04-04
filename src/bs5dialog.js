@@ -4,7 +4,7 @@ import "./bs5dialog.css";
 import bootstrap from "bootstrap";
 import Draggabilly from "draggabilly";
 import axios from "axios";
-import { getTargetElement, getUrl, isUrlOrPath, postUrl } from "./libs.js";
+import { getTargetElement, getUrl, isUrlOrPath, postUrl,makeDraggable } from "./libs.js";
 import * as i18n from "./i18n.js";
 
 var modal;
@@ -18,6 +18,7 @@ function setModalId() {
 function setModalWrapper() {
   modal = document.createElement("div");
   modal.classList.add("modal", "fade");
+  modal.classList.add("modal", "bs5dialog-modal");
   modal.setAttribute("data-bs-backdrop", "static");
   modal.setAttribute("tabindex", "-1");
   modal.setAttribute("data-bs-keyboard", "false");
@@ -40,6 +41,8 @@ async function open(content,options = {}) {
     size:'lg',
     backdrop: "false",
     drag: true,
+    btnOkText:"",
+    btnCancelText:"",
     onStart: function () {},
     onShown: function () {},
     onSubmit: function () {},
@@ -53,37 +56,23 @@ async function open(content,options = {}) {
   if (isUrlOrPath(content)) {
     let apiUrl = content;
     content =await getUrl(apiUrl)
-     console.log('cur content',content);
   }
 
-  modal.innerHTML = `
-  <div class="modal-dialog modal-${options.size} modal-dialog-centered">
+  modal.innerHTML = `<div class="modal-dialog modal-${options.size} modal-dialog-centered modal-dialog-scrollable" role="document">
   <div class="modal-content">
-  <div class="modal-header">
-  <h5 class="modal-title">${options.title || icon('pinned')}</h5>
-  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-    <div class="modal-status bg-${options.type}"></div>
-    <div class="modal-body">
-      <h5 class="modal-title mb-1">${options.title}</h5>
-      <div class="text-muted">${content}</div>
-    </div>
-    <div class="modal-footer">
-    <div class="w-100">
-      <div class="row">
-        <div class="col">
-          <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button>
-        </div>
-        <div class="col">
-          <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok">${i18n.getConfig("confirm")}</button>
-        </div>
-      </div>
-    </div>
-    </div>
+     <div class="modal-header">
+        <h5 class="modal-title">${options.title}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+     </div>
+     <div class="modal-body" style="vh">
+        ${content}
+     </div>
+     <div class="modal-footer">
+        <button type="button" class="btn me-auto" data-bs-dismiss="modal">${options.btnOkText || i18n.getConfig("cancel")}</button>
+        <button type="button" class="btn btn-ok btn-${options.type}" data-bs-dismiss="modal">${options.btnOkText || i18n.getConfig("save")}</button>
+     </div>
   </div>
-</div>
-
-`;
+</div>`;
 
   document.body.appendChild(modal);
   const modalEl = new bootstrap.Modal(modal);
@@ -92,21 +81,25 @@ async function open(content,options = {}) {
   modal.addEventListener("shown.bs.modal", () => {
     options.onShown(modal);
   });
+  if(options.drag){
+    makeDraggable(modal,modal.querySelector('.modal-header'));
+    modal.querySelector('.modal-header').style.cursor = "move";
+  }
 
   const form = modal.querySelector('form');
-  if(form.length){
+  if(form){
     const submitBtn = form.querySelector('button[type="submit"]');
     const okBtn = modal.querySelector('.modal-footer .btn-ok');
     submitBtn.style.display = 'none';
     okBtn.textContent = submitBtn.textContent;
     okBtn.setAttribute('type', 'submit');
-    okBtn.addEventListener('click', function() {
+    okBtn.addEventListener('click', function(event) {
+      event.preventDefault();
       replayLock(okBtn);
       options.onSubmit(modal);
       form.submit();
     });
     form.addEventListener('submit', function(event) {
-     
       event.preventDefault();
       fetch(form.action, {
         method: 'POST',
@@ -235,9 +228,9 @@ function alert(content, options = {}) {
     title: "",
     type: "secondary",
     size: "sm",
-    btnText: "",
+    btnOkText:"",
     icon: "ok",
-    icon_color: "",
+    icon_class: "",
     icon_custom: "",
     onOk: null,
     timeout: 0
@@ -249,7 +242,7 @@ function alert(content, options = {}) {
   <div class="modal-content">
     <div class="modal-status bg-${options.type}"></div>
     <div class="modal-body text-center py-4">
-    ${options.icon_custom || icon(options.icon, options.icon_color || options.type) || ""}
+    ${options.icon_custom || icon(options.icon, options.icon_class || 'text-'+options.type) || ""}
       <h5 class="modal-title mb-1">${options.title}</h5>
       <div class="text-muted">${content}</div>
     </div>
@@ -257,9 +250,7 @@ function alert(content, options = {}) {
       <div class="w-100">
         <div class="row">
           <div class="col">
-            <button type="button" class=" w-100 btn btn-default btn-ok btn-${options.type}">${
-    options.btnText || i18n.getConfig("ok")
-  }</button>
+            <button type="button" class=" w-100 btn btn-default btn-ok btn-${options.type}">${options.btnOkText || i18n.getConfig("ok")}</button>
           </div>
         </div>
       </div>
@@ -298,9 +289,10 @@ function confirm(content = "", options = {}) {
     title: i18n.getConfig("sure"),
     type: "secondary",
     size: "sm",
-    btnText: "",
+    btnOkText:"",
+    btnCancelText:"",
     icon: "alert",
-    icon_color: "",
+    icon_class: "",
     icon_custom: "",
     onConfirm: null
   };
@@ -312,7 +304,7 @@ function confirm(content = "", options = {}) {
   <div class="modal-content">
     <div class="modal-status bg-${options.type}"></div>
     <div class="modal-body text-center py-4">
-    ${options.icon_custom || icon(options.icon, options.icon_color || options.type) || ""}
+    ${options.icon_custom || icon(options.icon, options.icon_class || 'text-'+options.type) || ""}
     <h5 class="modal-title mb-1">${options.title}</h5>
       <div class="text-muted">${content}</div>
     </div>
@@ -320,10 +312,10 @@ function confirm(content = "", options = {}) {
       <div class="w-100">
         <div class="row">
           <div class="col">
-            <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button>
+            <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${options.btnCancelText || i18n.getConfig("cancel")}</button>
           </div>
           <div class="col">
-            <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok">${i18n.getConfig("confirm")}</button>
+            <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok">${options.btnOkText || i18n.getConfig("confirm")}</button>
           </div>
         </div>
       </div>
@@ -355,7 +347,7 @@ function prompt(content, options = {}) {
     size: "md",
     btnText: "",
     icon: "code",
-    icon_color: "",
+    icon_class: "",
     icon_custom: "",
     secret: false,
     onConfirm: null
@@ -367,7 +359,7 @@ function prompt(content, options = {}) {
   <div class="modal-content">
     <div class="modal-status bg-${options.type}"></div>
     <div class="modal-body text-center py-4">
-      ${options.icon_custom || icon(options.icon, options.icon_color || options.type) || ""}
+      ${options.icon_custom || icon(options.icon, options.icon_class || 'text-'+options.type) || ""}
       <h5 class="modal-title mb-2">${options.title}</h5>
       <div class="text-muted mb-2">${content}</div>
       <input class="form-control" type="${options.secret === true ? "password" : "text"}" placeholder="">
@@ -414,7 +406,7 @@ function msg(message, options = {}) {
     duration: 1500,
     backgroundColor: "rgba(0, 0, 0, 0.6)",
     textColor: "white",
-    fontsize: "0.75rem"
+    fontsize: "1rem"
   };
 
   const { position, duration, backgroundColor, textColor, fontsize } = {
@@ -585,11 +577,11 @@ function createSpinner(animationName) {
   return spinnerTypes[animationName] || '<div class="bs5-modal-spinner"></div>';
 }
 
-function icon(iconName, type) {
+function icon(iconName, className) {
   switch (iconName) {
     case "success":
     case "ok":
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-circle-check" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2  icon-tabler-circle-check" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
       <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
       <path d="M9 12l2 2l4 -4"></path>
@@ -598,13 +590,13 @@ function icon(iconName, type) {
       break;
     case "fail":
     case "error":
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-circle-x" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2  icon-tabler-circle-x" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
         <path d="M10 10l4 4m0 -4l-4 4"></path>
      </svg>`;
     case "info":
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-info-circle" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2  icon-tabler-info-circle" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
       <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
       <path d="M12 9h.01"></path>
@@ -613,7 +605,7 @@ function icon(iconName, type) {
       break;
     case "alert":
     case "warn":
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-alert-triangle" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2  icon-tabler-alert-triangle" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
       <path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z"></path>
       <path d="M12 9v4"></path>
@@ -621,21 +613,21 @@ function icon(iconName, type) {
    </svg>`;
       break;
     case "help":
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-help" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2  icon-tabler-help" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
         <path d="M12 17l0 .01"></path>
         <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4"></path>
      </svg>`;
     case "edit":
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-edit" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2  icon-tabler-edit" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
       <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1"></path>
       <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z"></path>
       <path d="M16 5l3 3"></path>
    </svg>`;
     case "code":
-      return `<svg xmlns="http://www.w3.org/2000/svg" class="text-${type} mb-2 icon icon-tabler icon-tabler-code" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2  icon-tabler-code" width="3.5rem" height="3.5rem" viewBox="0 0 24 24" stroke-width="0.75" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <path d="M7 8l-4 4l4 4"></path>
     <path d="M17 8l4 4l-4 4"></path>
@@ -643,7 +635,7 @@ function icon(iconName, type) {
  </svg>`;
       break;
       case 'drag':
-        return `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-drag-drop" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2 icon-tabler-drag-drop" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <path d="M19 11v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
         <path d="M13 13l9 3l-4 2l-2 4l-3 -9"></path>
@@ -657,7 +649,7 @@ function icon(iconName, type) {
      </svg>`
         break;
         case 'pinned':
-          return `<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pinned" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2 icon-tabler-pinned" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
           <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
           <path d="M12 16l0 5"></path>

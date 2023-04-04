@@ -138,7 +138,7 @@
   z-index: 10
 }
 
-.modal-status {
+.bs5dialog-modal .modal-status {
   position: absolute;
   top: 0;
   left: 0;
@@ -148,4 +148,6 @@
   border-radius: 8px 8px 0 0
 }
 
-.modal-footer .btn-default{border: 1px solid #eaeaea;}
+.bs5dialog-modal .modal-header {min-height: 3.5rem;}
+.bs5dialog-modal .btn {border: 1px solid #e6e7e9;}
+.bs5dialog-modal .btn:hover {border-color:#b3b7bd;}
