@@ -15,12 +15,10 @@ function genDialogId() {
 
 function setModalWrapper() {
   let modal = document.createElement("div");
-  modal.classList.add("modal", "fade");
-  modal.classList.add("modal", "bs5dialog-modal");
+  modal.classList.add("modal", "bs5dialog-modal","fade");
   modal.setAttribute("data-bs-backdrop", "static");
   modal.setAttribute("tabindex", "-1");
-  modal.setAttribute("data-bs-keyboard", "false");
-  modal.setAttribute("id", genDialogId());
+
   return modal;
 }
 
@@ -33,11 +31,11 @@ function setModalWrapper() {
 async function open(content, options = {}) {
   const defaultOptions = {
     title: "",
-    type: "secondary",
-    size: "md",
-    title: "",
+    type: "danger",
     size: "lg",
-    backdrop: "false",
+    id: "bs5dialog-modal",
+    backdrop: false,
+    keyboard: true,
     drag: true,
     btnOkText: "",
     btnCancelText: "",
@@ -50,22 +48,31 @@ async function open(content, options = {}) {
   };
   options = { ...defaultOptions, ...options };
   options.onStart();
-  const modal = setModalWrapper();
+
+  let modalElement;
+  if (document.getElementById(options.id)) {
+    modalElement = document.getElementById(options.id);
+  } else {
+    modalElement = setModalWrapper();
+    modalElement.setAttribute("id", options.id || genDialogId());
+  }
+
   if (isUrlOrPath(content)) {
     let apiUrl = content;
     content = await getUrl(apiUrl);
   }
 
-  modal.innerHTML = `<div class="modal-dialog modal-${options.size} modal-dialog-centered modal-dialog-scrollable" role="document">
+  modalElement.innerHTML = `<div class="modal-dialog modal-${options.size} modal-dialog-centered modal-dialog-scrollable" role="document">
   <div class="modal-content">
+  <div class="modal-status bg-${options.type}"></div>
      <div class="modal-header">
         <h5 class="modal-title">${options.title}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
      </div>
-     <div class="modal-body" style="vh">
+     <div class="modal-body" style="height:60vh;">
         ${content}
      </div>
-     <div class="modal-footer">
+     <div class="modal-footer d-none">
         <button type="button" class="btn me-auto" data-bs-dismiss="modal">${options.btnOkText || i18n.getConfig("cancel")}</button>
         <button type="button" class="btn btn-ok btn-${options.type}" data-bs-dismiss="modal">${
     options.btnOkText || i18n.getConfig("save")
@@ -74,29 +81,41 @@ async function open(content, options = {}) {
   </div>
 </div>`;
 
-  document.body.appendChild(modal);
-  const modalEl = new bs5Modal(modal);
-  modalEl.show();
+  document.body.appendChild(modalElement);
+  const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+  modalInstance.show();
+
   //hide form submit button and replace to btn-ok
-  modal.addEventListener("shown.bs.modal", () => {
-    options.onShown(modal);
+  modalElement.addEventListener("shown.bs.modal", () => {
+    if (options.backdrop === false) {
+      if (document.querySelector(".modal-backdrop")) {
+        document.querySelector(".modal-backdrop").remove();
+      }
+      modalElement.style.pointerEvents = "none";
+    }
+    if (options.keyboard) {
+      modalElement.setAttribute("data-bs-keyboard", options.keyboard);
+    }
+
+    options.onShown(modalElement);
   });
   if (options.drag) {
-    makeDraggable(modal, modal.querySelector(".modal-header"));
-    modal.querySelector(".modal-header").style.cursor = "move";
+    makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
+    modalElement.querySelector(".modal-header").style.cursor = "move";
   }
 
-  const form = modal.querySelector("form");
+  const form = modalElement.querySelector("form");
   if (form) {
+    modalElement.querySelector(".modal-footer").classList.remove("d-none");
     const submitBtn = form.querySelector('button[type="submit"]');
-    const okBtn = modal.querySelector(".modal-footer .btn-ok");
+    const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
     submitBtn.style.display = "none";
     okBtn.textContent = submitBtn.textContent;
     okBtn.setAttribute("type", "submit");
     okBtn.addEventListener("click", function (event) {
       event.preventDefault();
       replayLock(okBtn);
-      options.onSubmit(modal);
+      options.onSubmit(modalElement);
       form.submit();
     });
     form.addEventListener("submit", function (event) {
@@ -107,11 +126,11 @@ async function open(content, options = {}) {
       })
         .then(response => {
           if (response.ok) {
-            options.onSubmitSuccess(response.data, modal);
-            modalEl.hide();
+            options.onSubmitSuccess(response.data, modalElement);
+            modalInstance.hide();
             form.reset();
           } else {
-            options.onSubmitError(error, modal);
+            options.onSubmitError(error, modalElement);
             // Display error message
             const errorDiv = document.createElement("div");
             errorDiv.classList.add("alert", "alert-danger");
@@ -120,16 +139,16 @@ async function open(content, options = {}) {
           }
         })
         .then(() => {
-          options.onSubmitDone(modal);
+          options.onSubmitDone(modalElement);
         });
     });
     // Hide any error messages when the modal is hidden
 
-    modal.addEventListener("hide.bs.modal", function () {
-      const errorDiv = form.querySelector(".alert-danger");
-      if (errorDiv) {
-        errorDiv.remove();
-      }
+    modalElement.addEventListener("hide.bs.modal", function () {
+      modalElement.classList.add('hide');
+      setTimeout(function() {
+        modalElement.classList.remove('show', 'hide');
+      }, 300);
     });
   }
 
@@ -139,18 +158,19 @@ async function open(content, options = {}) {
 function offcanvas(content, options = {}) {
   const defaultOptions = {
     title: "",
-    direction: "top",
-    size: "200px",
-    scroll: true,
+    direction: "start",
+    size: "400px",
     type: "secondary",
     id: "bs5dialog-offcanvas",
-    backdrop: "false",
-
+    backdrop: true,
+    scroll: true,
+    dark: false,
     onStart: function () {},
     onShown: function () {},
-    onHidden: function () {},
+    onHidden: function () {}
   };
   options = { ...defaultOptions, ...options };
+  console.warn(options);
   options.onStart();
   const dialogId = options.id || genDialogId();
   let offcanvasEl;
@@ -166,9 +186,9 @@ function offcanvas(content, options = {}) {
   if (options.scroll) {
     offcanvasEl.setAttribute("data-bs-scroll", "true");
   }
-  if (options.backdrop) {
-    offcanvasEl.setAttribute("data-bs-backdrop", "false");
-  }
+
+  offcanvasEl.setAttribute("data-bs-backdrop", options.backdrop);
+
   if (options.direction === "start" || options.direction === "end") {
     offcanvasEl.style.width = options.size;
   }
@@ -184,6 +204,12 @@ function offcanvas(content, options = {}) {
   <div class="offcanvas-body">
     ${content}
   </div>`;
+
+  if (options.dark) {
+    offcanvasEl.classList.add("text-bg-dark");
+    offcanvasEl.querySelector(".btn-close").classList.add("btn-close-white");
+  }
+
   document.body.appendChild(offcanvasEl);
   const oc = bs5Offcanvas.getOrCreateInstance(offcanvasEl);
   oc.toggle();
@@ -191,7 +217,7 @@ function offcanvas(content, options = {}) {
   offcanvasEl.addEventListener("shown.bs.offcanvas", () => {
     options.onShown(offcanvasEl);
   });
-  
+
   offcanvasEl.addEventListener("hidden.bs.offcanvas", () => {
     options.onHidden(offcanvasEl);
   });
@@ -205,6 +231,8 @@ function offcanvas(content, options = {}) {
  * @param {Function} onOk
  */
 function confirmRequest(message, apiUrl, method = "DELETE", onOk = () => {}) {}
+
+
 
 /**
  *
@@ -231,8 +259,9 @@ function alert(content, options = {}) {
     timeout: 0
   };
   options = { ...defaultOptions, ...options };
-  const modal = setModalWrapper();
-  modal.innerHTML = `
+  const modalElement = setModalWrapper();
+  modalElement.classList.add("bs5dialog-modal-alert");
+  modalElement.innerHTML = `
   <div class="modal-dialog modal-${options.size || "sm"} modal-dialog-centered">
   <div class="modal-content">
     <div class="modal-status bg-${options.type}"></div>
@@ -255,23 +284,34 @@ function alert(content, options = {}) {
   </div>
 </div>
     `;
-  document.body.appendChild(modal);
-  const modalEl = new bs5Modal(modal);
-  modalEl.show();
-  const okBtnEl = modal.querySelector(".modal-footer .btn-ok");
+  document.body.appendChild(modalElement);
+  const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+  modalInstance.show();
+  const okBtnEl = modalElement.querySelector(".modal-footer .btn-ok");
   okBtnEl.addEventListener("click", () => {
     replayLock(okBtnEl);
     if (typeof options.onOk === "function") {
       options.onOk();
     }
-    modalEl.hide();
+    modalInstance.hide();
   });
   if (options.timeout) {
-    modal.querySelector(".modal-footer").style.display = "none";
+    modalElement.querySelector(".modal-footer").style.display = "none";
     setTimeout(() => {
-      modalEl.hide();
+      modalInstance.hide();
     }, options.timeout);
   }
+
+
+  modalElement.addEventListener('hide.bs.modal', function() {
+    modalElement.classList.add('hide');
+  });
+  
+  modalElement.addEventListener('hidden.bs.modal', function() {
+    modalElement.style.display = 'none';
+    modalElement.classList.remove('show', 'hide');
+  });
+
 }
 
 /**
@@ -296,6 +336,7 @@ function confirm(content = "", options = {}) {
   options = { ...defaultOptions, ...options };
 
   const modal = setModalWrapper();
+  modal.classList.add("bs5dialog-modal-confirm");
   modal.innerHTML = `
   <div class="modal-dialog modal-${options.size} modal-dialog-centered">
   <div class="modal-content">
@@ -355,6 +396,7 @@ function prompt(content, options = {}) {
   };
   options = { ...defaultOptions, ...options };
   const modal = setModalWrapper();
+  modal.classList.add("bs5dialog-modal-prompt");
   modal.innerHTML = `
   <div class="modal-dialog modal-${options.size} modal-dialog-centered">
   <div class="modal-content">

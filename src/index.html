@@ -17,9 +17,13 @@
 
     <link rel="stylesheet" href="./bs5dialog.css" />
     <script src="./bs5dialog.js"></script>
+    <style>
+      .demo .btn{border:  1px solid #999;}
+      .demo .show_loading{height: 150px; width: 200px; float: left; margin: 0 3px 3px 0}
+    </style>
   </head>
   <body>
-    <div class="container">
+    <div class="container demo">
       <div class="row">
         <div class="mb-3">
           <div class="col-xs-12">
@@ -89,19 +93,41 @@
             <div class="card">
               <div class="card-header">show Loading</div>
               <div class="card-body col-xs-12">
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="default">default</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="plane">plane</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="chase">chase</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="bounce">bounce</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="wave">wave</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="pulse">pulse</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="flow">flow</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="swing">swing</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="circle">circle</div>
+                <div  class="show_loading" data-animal="default">default</div>
+                <div  class="show_loading" data-animal="plane">
+                  plane
+                </div>
+                <div  class="show_loading" data-animal="chase">
+                  chase
+                </div>
+                <div  class="show_loading" data-animal="bounce">
+                  bounce
+                </div>
+                <div  class="show_loading" data-animal="wave">
+                  wave
+                </div>
+                <div  class="show_loading" data-animal="pulse">
+                  pulse
+                </div>
+                <div  class="show_loading" data-animal="flow">
+                  flow
+                </div>
+                <div  class="show_loading" data-animal="swing">
+                  swing
+                </div>
+                <div  class="show_loading" data-animal="circle">
+                  circle
+                </div>
                 <!-- <div style="height:150px;width:200px;"  class="btn-loading  btn" data-animal="circle_fade">circle_fade</div> -->
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="grid">grid</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="fold">fold</div>
-                <div style="height: 150px; width: 200px;float: left;margin: 0 3px 3px 0;" class="show_loading" data-animal="wander">wander</div>
+                <div  class="show_loading" data-animal="grid">
+                  grid
+                </div>
+                <div  class="show_loading" data-animal="fold">
+                  fold
+                </div>
+                <div  class="show_loading" data-animal="wander">
+                  wander
+                </div>
               </div>
               <div class="card-footer">
                 <div class="mb-3">
@@ -121,15 +147,15 @@
             <div class="card">
               <div class="card-header">Show Message</div>
               <div class="card-body">
-                <button class="btn  btn-show-msg" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="center">center</button>
-                <button class="btn  btn-show-msg" data-bg="green" data-text-color="white" data-position="top">top</button>
-                <button class="btn  btn-show-msg" data-bg="yellow" data-text-color="#000" data-position="bottom">bottom</button>
-                <button class="btn  btn-show-msg" data-bg="grey" data-text-color="white" data-position="left">left</button>
-                <button class="btn  btn-show-msg" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="right">right</button>
-                <button class="btn  btn-show-msg" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="top-left">top-left</button>
-                <button class="btn  btn-show-msg" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="top-right">top-right</button>
-                <button class="btn  btn-show-msg" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="bottom-left">bottom-left</button>
-                <button class="btn  btn-show-msg" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="bottom-right">bottom-right</button>
+                <button class="btn btn-show-msg mb-1" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="center">center</button>
+                <button class="btn btn-show-msg mb-1" data-bg="green" data-text-color="white" data-position="top">top</button>
+                <button class="btn btn-show-msg mb-1" data-bg="yellow" data-text-color="#000" data-position="bottom">bottom</button>
+                <button class="btn btn-show-msg mb-1" data-bg="grey" data-text-color="white" data-position="left">left</button>
+                <button class="btn btn-show-msg mb-1" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="right">right</button>
+                <button class="btn btn-show-msg mb-1" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="top-left">top-left </button>
+                <button class="btn btn-show-msg mb-1" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="top-right">top-right</button>
+                <button class="btn btn-show-msg mb-1" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="bottom-left">bottom-left</button>
+                <button class="btn btn-show-msg mb-1" data-bg="rgba(0,0,0,0.5)" data-text-color="white" data-position="bottom-right">bottom-right</button>
               </div>
               <div class="card-footer">
                 <kbd> var position = 'center'; bs5dialog.msg("hello world! ", { position:position,during: 5000 }); </kbd>
@@ -142,9 +168,19 @@
           <div col-xs-12>
             <div class="card">
               <div class="card-header"></div>
+
               <div class="card-body">
-                <a href="" class="btn btn-primary btn-offcanvas">offcanvas</a>
+                <button class="btn btn-offcanvas mb-1" data-direction="start">start offcanvas</button>
+                <button class="btn btn-offcanvas mb-1" data-direction="end">end offcanvas</button>
+                <button class="btn btn-offcanvas mb-1" data-direction="top">top offcanvas</button>
+                <button class="btn btn-offcanvas mb-1" data-direction="bottom">bottom offcanvas</button>
+                <button class="btn btn-offcanvas mb-1" data-direction="start" data-backdrop="false">offcanvas without backdrop</button>
+                <button class="btn btn-offcanvas mb-1" data-direction="start" data-scroll="true">offcanvas with scroll</button>
+                <button class="btn btn-offcanvas mb-1" data-direction="start" data-dark="true">offcanvas dark</button>
+                <button class="btn btn-offcanvas mb-1" data-direction="start" data-id="example-offcanvas">offcanvas static id</button>
+                <button class="btn btn-offcanvas mb-1" data-direction="start" data-size="300px">offcanvas size 300px</button>
               </div>
+
               <div class="card-footer"></div>
             </div>
           </div>
@@ -155,8 +191,10 @@
             <div class="card">
               <div class="card-header"></div>
               <div class="card-body">
-                <button class="btn btn-dark btn-open-content" data-content="xxxxx">open content</button>
-                <button class="btn btn-dark btn-open-content" data-content=" <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas
+                <button class="btn btn-dark btn-open-content" data-content="/form.html">open form</button>
+                <button
+                  class="btn btn-dark btn-open-content"
+                  data-content=" <p>Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas
                   eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
                 <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue
                   laoreet rutrum faucibus dolor auctor.</p>
@@ -191,7 +229,9 @@
                 <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue
                   laoreet rutrum faucibus dolor auctor.</p>
                 <p>Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl
-                  consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>">open content</button>
+                  consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>">
+                  open content
+                </button>
               </div>
               <div class="card-footer"></div>
             </div>
@@ -244,23 +284,42 @@
           var position = item.getAttribute("data-position");
           var bg = item.getAttribute("data-bg");
           var color = item.getAttribute("data-text-color");
-          bs5dialog.msg("hello world!", { position: position, during: 5000,backgroundColor:bg,textColor:color });
+          bs5dialog.msg("hello world!", { position: position, during: 5000, backgroundColor: bg, textColor: color });
         };
       });
+      var backdrop = backdrop;
       document.querySelectorAll(".btn-open-content").forEach(function (item) {
         item.onclick = function (e) {
           e.preventDefault();
           var content = item.getAttribute("data-content");
-          bs5dialog.open(content, {drag:true});
+          bs5dialog.open(content, { backdrop: false });
         };
       });
-
 
       document.querySelectorAll(".btn-offcanvas").forEach(function (item) {
         item.onclick = function (e) {
           e.preventDefault();
           var content = item.getAttribute("data-content");
-          bs5dialog.offcanvas(content || "Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.", {drag:true});
+          var direction = item.getAttribute("data-direction") || '';
+          var dark = item.getAttribute("data-dark") || '';
+          var id = item.getAttribute("data-id") || '';
+          var backdrop = item.getAttribute("data-backdrop") || 'true';
+
+          var scroll = item.getAttribute("data-scroll") || '';
+          var size = item.getAttribute("data-size") || '';
+
+          bs5dialog.offcanvas(
+            content || "Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.",
+            {
+              title: "购物车",
+              size: size,
+              id: id,
+              direction:direction,
+              backdrop: backdrop,
+              scroll: scroll,
+              dark: dark
+            }
+          );
         };
       });
     </script>

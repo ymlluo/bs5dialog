@@ -125,7 +125,18 @@
   }
 }
 
-
+.bs5dialog-modal.show{
+  opacity: 1;
+  animation-name: bs5MsgBoxShow;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+.bs5dialog-modal.hide {
+  display: block;
+  animation-name: bs5MsgBoxHide;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
 
 .modal-content .btn-close {
   position: absolute;
@@ -135,7 +146,7 @@
   height: 3.5rem;
   margin: 0;
   padding: 0;
-  z-index: 10
+  z-index: 10;
 }
 
 .bs5dialog-modal .modal-status {
@@ -145,9 +156,77 @@
   right: 0;
   height: 2px;
   background: #616876;
-  border-radius: 8px 8px 0 0
+  border-radius: 8px 8px 0 0;
 }
 
-.bs5dialog-modal .modal-header {min-height: 3.5rem;}
-.bs5dialog-modal .btn {border: 1px solid #e6e7e9;}
-.bs5dialog-modal .btn:hover {border-color:#b3b7bd;}
+.bs5dialog-modal .modal-header {
+  min-height: 3.5rem;
+}
+.bs5dialog-modal .btn {
+  border: 1px solid #e6e7e9;
+}
+.bs5dialog-modal .btn:hover {
+  border-color: #b3b7bd;
+}
+.bs5dialog-modal .modal-dialog {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Add an animation to the Offcanvas element */
+.bs5dialog-offcanvas.offcanvas-start {
+  animation: slideInStart 0.3s ease-in-out;
+  /* transform: translateX(-100%); */
+}
+
+.bs5dialog-offcanvas.offcanvas-end {
+  animation: slideInEnd 0.3s ease-in-out;
+  /* transform: translateX(100%); */
+}
+.bs5dialog-offcanvas.offcanvas-top {
+  animation: slideInTop 0.3s ease-in-out;
+  /* transform: translateX(-100%); */
+}
+
+.bs5dialog-offcanvas.offcanvas-bottom {
+  animation: slideInBottom 0.3s ease-in-out;
+  /* transform: translateX(100%); */
+}
+
+@keyframes slideInStart {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes slideInEnd {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes slideInBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.bs5dialog-offcanvas .offcanvas-header {
+  border-bottom: 1px solid rgba(97, 104, 118, 0.16);
+}

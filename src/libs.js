@@ -53,7 +53,12 @@ export function makeDraggable (elmnt, handler) {
   elmnt = getTargetElement(elmnt);
   handler = getTargetElement(handler);
   // Make an element draggable (or if it has a .window-top class, drag based on the .window-top element)
-  let currentPosX = 0, currentPosY = 0, previousPosX = 0, previousPosY = 0;
+  let currentPosX = 0,
+    currentPosY = 0,
+    previousPosX = 0,
+    previousPosY = 0,
+    prevLeft = 0,
+    prevTop = 0;
 
   // If there is a window-top classed element, attach to that element instead of full window
   if (handler) {
@@ -89,12 +94,30 @@ export function makeDraggable (elmnt, handler) {
       // Set the element's new position
       elmnt.style.top = (elmnt.offsetTop - currentPosY) + 'px';
       elmnt.style.left = (elmnt.offsetLeft - currentPosX) + 'px';
+      // console.error(currentPosX, currentPosY, previousPosX, previousPosY);
+
   }
 
-  function closeDragElement () {
+  function closeDragElement(e) {
       // Stop moving when mouse button is released and release events
       document.onmouseup = null;
       document.onmousemove = null;
+    let handlerInfo = handler.getBoundingClientRect();
+    let elmntRect = elmnt.getBoundingClientRect();
+
+
+    if (handlerInfo.top+handler.offsetHeight < 0 || handlerInfo.top > window.innerHeight) {
+      elmnt.style.top = prevTop + "px";
+    }else{
+      prevTop = elmntRect.top;
+    }
+    if (handlerInfo.left+ handler.offsetWidth+60 < 0 || handlerInfo.right-handler.offsetWidth > window.innerWidth) {
+      elmnt.style.left = prevLeft + "px";
+    }else{
+      prevLeft = elmntRect.left;
+    }
+   
+  
   }
 }
 
