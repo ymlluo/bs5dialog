@@ -1,48 +1,46 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 import "./bs5dialog.css";
-import bootstrap from "bootstrap";
-import Draggabilly from "draggabilly";
-import axios from "axios";
-import { getTargetElement, getUrl, isUrlOrPath, postUrl,makeDraggable } from "./libs.js";
+import { getTargetElement, getUrl, isUrlOrPath, postUrl, makeDraggable } from "./libs.js";
 import * as i18n from "./i18n.js";
+import { Modal as bs5Modal, Offcanvas as bs5Offcanvas } from "bootstrap";
 
 var modal;
 var modalId;
 
-function setModalId() {
-  modalId = "modal-" + Math.floor(Math.random() * 1000000);
+function genDialogId() {
+  modalId = "dialg-" + Math.floor(Math.random() * 1000000);
   return modalId;
 }
 
 function setModalWrapper() {
-  modal = document.createElement("div");
+  let modal = document.createElement("div");
   modal.classList.add("modal", "fade");
   modal.classList.add("modal", "bs5dialog-modal");
   modal.setAttribute("data-bs-backdrop", "static");
   modal.setAttribute("tabindex", "-1");
   modal.setAttribute("data-bs-keyboard", "false");
-  modal.setAttribute("id", setModalId());
+  modal.setAttribute("id", genDialogId());
   return modal;
 }
 
 /**
  *  show a dialog by a remote page
- * @param {string} content 
+ * @param {string} content
  * @param {Object} options
  * @property {string}[options.title] title
  */
-async function open(content,options = {}) {
+async function open(content, options = {}) {
   const defaultOptions = {
     title: "",
     type: "secondary",
     size: "md",
-    title:"",
-    size:'lg',
+    title: "",
+    size: "lg",
     backdrop: "false",
     drag: true,
-    btnOkText:"",
-    btnCancelText:"",
+    btnOkText: "",
+    btnCancelText: "",
     onStart: function () {},
     onShown: function () {},
     onSubmit: function () {},
@@ -55,7 +53,7 @@ async function open(content,options = {}) {
   const modal = setModalWrapper();
   if (isUrlOrPath(content)) {
     let apiUrl = content;
-    content =await getUrl(apiUrl)
+    content = await getUrl(apiUrl);
   }
 
   modal.innerHTML = `<div class="modal-dialog modal-${options.size} modal-dialog-centered modal-dialog-scrollable" role="document">
@@ -69,75 +67,134 @@ async function open(content,options = {}) {
      </div>
      <div class="modal-footer">
         <button type="button" class="btn me-auto" data-bs-dismiss="modal">${options.btnOkText || i18n.getConfig("cancel")}</button>
-        <button type="button" class="btn btn-ok btn-${options.type}" data-bs-dismiss="modal">${options.btnOkText || i18n.getConfig("save")}</button>
+        <button type="button" class="btn btn-ok btn-${options.type}" data-bs-dismiss="modal">${
+    options.btnOkText || i18n.getConfig("save")
+  }</button>
      </div>
   </div>
 </div>`;
 
   document.body.appendChild(modal);
-  const modalEl = new bootstrap.Modal(modal);
+  const modalEl = new bs5Modal(modal);
   modalEl.show();
   //hide form submit button and replace to btn-ok
   modal.addEventListener("shown.bs.modal", () => {
     options.onShown(modal);
   });
-  if(options.drag){
-    makeDraggable(modal,modal.querySelector('.modal-header'));
-    modal.querySelector('.modal-header').style.cursor = "move";
+  if (options.drag) {
+    makeDraggable(modal, modal.querySelector(".modal-header"));
+    modal.querySelector(".modal-header").style.cursor = "move";
   }
 
-  const form = modal.querySelector('form');
-  if(form){
+  const form = modal.querySelector("form");
+  if (form) {
     const submitBtn = form.querySelector('button[type="submit"]');
-    const okBtn = modal.querySelector('.modal-footer .btn-ok');
-    submitBtn.style.display = 'none';
+    const okBtn = modal.querySelector(".modal-footer .btn-ok");
+    submitBtn.style.display = "none";
     okBtn.textContent = submitBtn.textContent;
-    okBtn.setAttribute('type', 'submit');
-    okBtn.addEventListener('click', function(event) {
+    okBtn.setAttribute("type", "submit");
+    okBtn.addEventListener("click", function (event) {
       event.preventDefault();
       replayLock(okBtn);
       options.onSubmit(modal);
       form.submit();
     });
-    form.addEventListener('submit', function(event) {
+    form.addEventListener("submit", function (event) {
       event.preventDefault();
       fetch(form.action, {
-        method: 'POST',
+        method: "POST",
         body: new FormData(form)
       })
-      .then(response => {
-        if (response.ok) {
-          options.onSubmitSuccess(response.data, modal);
-          modalEl.hide();
-          form.reset();
-        } else {
-          options.onSubmitError(error, modal);
-          // Display error message
-          const errorDiv = document.createElement('div');
-          errorDiv.classList.add('alert', 'alert-danger');
-          errorDiv.textContent = 'There was an error submitting the form. Please try again.';
-          form.prepend(errorDiv);
-        }
-      }).then(()=>{
-        options.onSubmitDone(modal);
-      });
+        .then(response => {
+          if (response.ok) {
+            options.onSubmitSuccess(response.data, modal);
+            modalEl.hide();
+            form.reset();
+          } else {
+            options.onSubmitError(error, modal);
+            // Display error message
+            const errorDiv = document.createElement("div");
+            errorDiv.classList.add("alert", "alert-danger");
+            errorDiv.textContent = "There was an error submitting the form. Please try again.";
+            form.prepend(errorDiv);
+          }
+        })
+        .then(() => {
+          options.onSubmitDone(modal);
+        });
     });
-     // Hide any error messages when the modal is hidden
+    // Hide any error messages when the modal is hidden
 
-     modal.addEventListener('hide.bs.modal', function() {
-    const errorDiv = form.querySelector('.alert-danger');
-    if (errorDiv) {
-      errorDiv.remove();
-    }
-  });
-
+    modal.addEventListener("hide.bs.modal", function () {
+      const errorDiv = form.querySelector(".alert-danger");
+      if (errorDiv) {
+        errorDiv.remove();
+      }
+    });
   }
 
   return { modal };
+}
 
+function offcanvas(content, options = {}) {
+  const defaultOptions = {
+    title: "",
+    direction: "top",
+    size: "200px",
+    scroll: true,
+    type: "secondary",
+    id: "bs5dialog-offcanvas",
+    backdrop: "false",
 
+    onStart: function () {},
+    onShown: function () {},
+    onHidden: function () {},
+  };
+  options = { ...defaultOptions, ...options };
+  options.onStart();
+  const dialogId = options.id || genDialogId();
+  let offcanvasEl;
+  if (document.getElementById(dialogId)) {
+    offcanvasEl = document.getElementById(dialogId);
+  } else {
+    offcanvasEl = document.createElement("div");
+  }
+  offcanvasEl.classList.add("offcanvas", "bs5dialog-offcanvas", "offcanvas-" + options.direction);
+  offcanvasEl.setAttribute("id", dialogId);
+  offcanvasEl.setAttribute("tabindex", "-1");
+  offcanvasEl.setAttribute("role", "dialog");
+  if (options.scroll) {
+    offcanvasEl.setAttribute("data-bs-scroll", "true");
+  }
+  if (options.backdrop) {
+    offcanvasEl.setAttribute("data-bs-backdrop", "false");
+  }
+  if (options.direction === "start" || options.direction === "end") {
+    offcanvasEl.style.width = options.size;
+  }
+  if (options.direction === "top" || options.direction === "bottom") {
+    offcanvasEl.style.height = options.size;
+  }
 
- 
+  offcanvasEl.innerHTML = `
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">${options.title || ""}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#${dialogId}" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    ${content}
+  </div>`;
+  document.body.appendChild(offcanvasEl);
+  const oc = bs5Offcanvas.getOrCreateInstance(offcanvasEl);
+  oc.toggle();
+
+  offcanvasEl.addEventListener("shown.bs.offcanvas", () => {
+    options.onShown(offcanvasEl);
+  });
+  
+  offcanvasEl.addEventListener("hidden.bs.offcanvas", () => {
+    options.onHidden(offcanvasEl);
+  });
 }
 
 /**
@@ -147,69 +204,7 @@ async function open(content,options = {}) {
  * @param {string} method
  * @param {Function} onOk
  */
-function confirmRequest(message, apiUrl, method = "DELETE", onOk = () => {}) {
-  const modal = setModalWrapper();
-  modal.innerHTML = `
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-      <div class="modal-content">
-        <div id="modal-header" class="modal-header">
-          <h5 class="modal-title">${i18n.getConfig("confirm")}</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          ${message}
-        </div>
-        <div class="modal-footer">
-<!--          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>-->
-          <button type="button" class="btn btn-default btn-primary" id="ok-btn">${i18n.getConfig("ok")}</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-  const modalEl = new bootstrap.Modal(modal);
-  modalEl.show();
-  const modalHeader = modal.querySelector("#modal-header");
-  new Draggabilly(modal, { handle: modalHeader });
-  const okBtn = modal.querySelector("#ok-btn");
-  okBtn.addEventListener("click", async () => {
-    replayLock(okBtn);
-    if (!apiUrl) {
-      if (typeof onOk === "function") {
-        onOk(modal);
-      }
-      modalEl.hide();
-    } else {
-      try {
-        let data = {};
-        switch (method.toUpperCase()) {
-          case "PUT":
-          case "PATCH":
-          case "DELETE":
-            data = { _method: method.toUpperCase() };
-            break;
-        }
-        if (method.toUpperCase() === "DELETE") {
-          data = { _method: "DELETE" };
-        }
-        const response = await axios({
-          method: method || "post",
-          url: apiUrl,
-          data
-        });
-        if (typeof onOk === "function") {
-          onOk(response, modal);
-        }
-        modalEl.hide();
-      } catch (error) {
-        console.error(error);
-        // Handle errors if the POST request failed
-      }
-    }
-    modal.remove();
-  });
-}
+function confirmRequest(message, apiUrl, method = "DELETE", onOk = () => {}) {}
 
 /**
  *
@@ -228,7 +223,7 @@ function alert(content, options = {}) {
     title: "",
     type: "secondary",
     size: "sm",
-    btnOkText:"",
+    btnOkText: "",
     icon: "ok",
     icon_class: "",
     icon_custom: "",
@@ -242,7 +237,7 @@ function alert(content, options = {}) {
   <div class="modal-content">
     <div class="modal-status bg-${options.type}"></div>
     <div class="modal-body text-center py-4">
-    ${options.icon_custom || icon(options.icon, options.icon_class || 'text-'+options.type) || ""}
+    ${options.icon_custom || icon(options.icon, options.icon_class || "text-" + options.type) || ""}
       <h5 class="modal-title mb-1">${options.title}</h5>
       <div class="text-muted">${content}</div>
     </div>
@@ -250,7 +245,9 @@ function alert(content, options = {}) {
       <div class="w-100">
         <div class="row">
           <div class="col">
-            <button type="button" class=" w-100 btn btn-default btn-ok btn-${options.type}">${options.btnOkText || i18n.getConfig("ok")}</button>
+            <button type="button" class=" w-100 btn btn-default btn-ok btn-${options.type}">${
+    options.btnOkText || i18n.getConfig("ok")
+  }</button>
           </div>
         </div>
       </div>
@@ -259,7 +256,7 @@ function alert(content, options = {}) {
 </div>
     `;
   document.body.appendChild(modal);
-  const modalEl = new bootstrap.Modal(modal);
+  const modalEl = new bs5Modal(modal);
   modalEl.show();
   const okBtnEl = modal.querySelector(".modal-footer .btn-ok");
   okBtnEl.addEventListener("click", () => {
@@ -289,8 +286,8 @@ function confirm(content = "", options = {}) {
     title: i18n.getConfig("sure"),
     type: "secondary",
     size: "sm",
-    btnOkText:"",
-    btnCancelText:"",
+    btnOkText: "",
+    btnCancelText: "",
     icon: "alert",
     icon_class: "",
     icon_custom: "",
@@ -304,7 +301,7 @@ function confirm(content = "", options = {}) {
   <div class="modal-content">
     <div class="modal-status bg-${options.type}"></div>
     <div class="modal-body text-center py-4">
-    ${options.icon_custom || icon(options.icon, options.icon_class || 'text-'+options.type) || ""}
+    ${options.icon_custom || icon(options.icon, options.icon_class || "text-" + options.type) || ""}
     <h5 class="modal-title mb-1">${options.title}</h5>
       <div class="text-muted">${content}</div>
     </div>
@@ -312,10 +309,14 @@ function confirm(content = "", options = {}) {
       <div class="w-100">
         <div class="row">
           <div class="col">
-            <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${options.btnCancelText || i18n.getConfig("cancel")}</button>
+            <button type="button" class="w-100 btn btn-default" data-bs-dismiss="modal">${
+              options.btnCancelText || i18n.getConfig("cancel")
+            }</button>
           </div>
           <div class="col">
-            <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok">${options.btnOkText || i18n.getConfig("confirm")}</button>
+            <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok">${
+    options.btnOkText || i18n.getConfig("confirm")
+  }</button>
           </div>
         </div>
       </div>
@@ -324,7 +325,7 @@ function confirm(content = "", options = {}) {
 </div>
   `;
   document.body.appendChild(modal);
-  const modalEl = new bootstrap.Modal(modal);
+  const modalEl = new bs5Modal(modal);
   modalEl.show();
   const okBtnEl = modal.querySelector(".modal-footer .btn-ok");
   okBtnEl.addEventListener("click", () => {
@@ -359,7 +360,7 @@ function prompt(content, options = {}) {
   <div class="modal-content">
     <div class="modal-status bg-${options.type}"></div>
     <div class="modal-body text-center py-4">
-      ${options.icon_custom || icon(options.icon, options.icon_class || 'text-'+options.type) || ""}
+      ${options.icon_custom || icon(options.icon, options.icon_class || "text-" + options.type) || ""}
       <h5 class="modal-title mb-2">${options.title}</h5>
       <div class="text-muted mb-2">${content}</div>
       <input class="form-control" type="${options.secret === true ? "password" : "text"}" placeholder="">
@@ -381,7 +382,7 @@ function prompt(content, options = {}) {
   `;
 
   document.body.appendChild(modal);
-  const modalEl = new bootstrap.Modal(modal);
+  const modalEl = new bs5Modal(modal);
   modalEl.show();
   const okBtnEl = modal.querySelector(".modal-footer .btn-ok");
   const inputEl = modal.querySelector(".modal-body input");
@@ -479,7 +480,7 @@ function tabs(tabs, width = "500px") {
 
   document.body.insertAdjacentHTML("beforeend", modal);
   const modalEl = document.getElementById("tabsModal");
-  const modalInstance = new bootstrap.Modal(modalEl);
+  const modalInstance = new bs5Modal(modalEl);
   modalInstance.show();
 }
 
@@ -634,8 +635,8 @@ function icon(iconName, className) {
     <path d="M14 4l-4 16"></path>
  </svg>`;
       break;
-      case 'drag':
-        return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2 icon-tabler-drag-drop" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    case "drag":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2 icon-tabler-drag-drop" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
         <path d="M19 11v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2"></path>
         <path d="M13 13l9 3l-4 2l-2 4l-3 -9"></path>
@@ -646,17 +647,17 @@ function icon(iconName, className) {
         <path d="M3 7l0 .01"></path>
         <path d="M3 11l0 .01"></path>
         <path d="M3 15l0 .01"></path>
-     </svg>`
-        break;
-        case 'pinned':
-          return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2 icon-tabler-pinned" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+     </svg>`;
+      break;
+    case "pinned":
+      return `<svg xmlns="http://www.w3.org/2000/svg" class="${className} mb-2 icon-tabler-pinned" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
           <path d="M9 4v6l-2 4v2h10v-2l-2 -4v-6"></path>
           <path d="M12 16l0 5"></path>
           <path d="M8 4l8 0"></path>
-       </svg>`
-       default:
-        return `.`
+       </svg>`;
+    default:
+      return `.`;
   }
 }
 
@@ -735,4 +736,4 @@ function replayLock(element, timeout = 1000) {
   }, timeout);
 }
 
-export { i18n, alert, confirm, msg, prompt, tabs, showLoading, hideLoading, open, confirmRequest, replayLock };
+export { i18n, alert, confirm, msg, prompt, tabs, showLoading, hideLoading, open, confirmRequest, replayLock, offcanvas };

@@ -18,8 +18,7 @@ export default {
       sourcemap: false,
       globals: {
         axios: "axios",
-        draggabilly: "Draggabilly",
-        bootstrap: "bootstrap"
+        // bootstrap: "bootstrap"
       }
     },
     {
@@ -28,8 +27,7 @@ export default {
       sourcemap: false,
       globals: {
         axios: "axios",
-        draggabilly: "Draggabilly",
-        bootstrap: "bootstrap"
+        // bootstrap: "bootstrap"
       }
     },
     {
@@ -38,8 +36,7 @@ export default {
       sourcemap: false,
       globals: {
         axios: "axios",
-        draggabilly: "Draggabilly",
-        bootstrap: "bootstrap"
+        // bootstrap: "bootstrap"
       }
     }
   ],
@@ -70,5 +67,8 @@ export default {
       hook: "buildStart"
     })
   ],
-  external: ["axios", "draggabilly", "bootstrap"]
+  external: [
+    "axios", 
+    // "bootstrap"
+  ]
 };

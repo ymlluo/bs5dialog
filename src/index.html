@@ -143,7 +143,7 @@
             <div class="card">
               <div class="card-header"></div>
               <div class="card-body">
-                <a href="" class="btn btn-primary btn-load-form">load remote form</a>
+                <a href="" class="btn btn-primary btn-offcanvas">offcanvas</a>
               </div>
               <div class="card-footer"></div>
             </div>
@@ -252,6 +252,15 @@
           e.preventDefault();
           var content = item.getAttribute("data-content");
           bs5dialog.open(content, {drag:true});
+        };
+      });
+
+
+      document.querySelectorAll(".btn-offcanvas").forEach(function (item) {
+        item.onclick = function (e) {
+          e.preventDefault();
+          var content = item.getAttribute("data-content");
+          bs5dialog.offcanvas(content || "Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.", {drag:true});
         };
       });
     </script>
