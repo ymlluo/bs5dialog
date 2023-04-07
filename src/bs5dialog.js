@@ -1,7 +1,7 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable max-len */
 import "./bs5dialog.css";
-import { getTargetElement, getUrl, isUrlOrPath, postUrl, makeDraggable } from "./libs.js";
+import { getTargetElement, getUrl, isUrlOrPath, postUrl, makeDraggable, makeResizable } from "./libs.js";
 import * as i18n from "./i18n.js";
 import { Modal as bs5Modal, Offcanvas as bs5Offcanvas } from "bootstrap";
 
@@ -15,7 +15,7 @@ function genDialogId() {
 
 function setModalWrapper() {
   let modal = document.createElement("div");
-  modal.classList.add("modal", "bs5dialog-modal","fade");
+  modal.classList.add("modal", "bs5dialog-modal", "fade");
   modal.setAttribute("data-bs-backdrop", "static");
   modal.setAttribute("tabindex", "-1");
 
@@ -36,7 +36,8 @@ async function open(content, options = {}) {
     id: "bs5dialog-modal",
     backdrop: false,
     keyboard: true,
-    drag: true,
+    draggable: true,
+    resizable: true,
     btnOkText: "",
     btnCancelText: "",
     onStart: function () {},
@@ -96,13 +97,15 @@ async function open(content, options = {}) {
     if (options.keyboard) {
       modalElement.setAttribute("data-bs-keyboard", options.keyboard);
     }
+    if (options.draggable) {
+      makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
+    }
+    if (options.resizable) {
+      makeResizable(modalElement.querySelector(".modal-content"));
+    }
 
     options.onShown(modalElement);
   });
-  if (options.drag) {
-    makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
-    modalElement.querySelector(".modal-header").style.cursor = "move";
-  }
 
   const form = modalElement.querySelector("form");
   if (form) {
@@ -145,9 +148,9 @@ async function open(content, options = {}) {
     // Hide any error messages when the modal is hidden
 
     modalElement.addEventListener("hide.bs.modal", function () {
-      modalElement.classList.add('hide');
-      setTimeout(function() {
-        modalElement.classList.remove('show', 'hide');
+      modalElement.classList.add("hide");
+      setTimeout(function () {
+        modalElement.classList.remove("show", "hide");
       }, 300);
     });
   }
@@ -159,18 +162,19 @@ function offcanvas(content, options = {}) {
   const defaultOptions = {
     title: "",
     direction: "start",
-    size: "400px",
+    size: "",
     type: "secondary",
     id: "bs5dialog-offcanvas",
     backdrop: true,
     scroll: true,
     dark: false,
+    accordion: true,
     onStart: function () {},
     onShown: function () {},
-    onHidden: function () {}
+    onHidden: function () {},
   };
   options = { ...defaultOptions, ...options };
-  console.warn(options);
+
   options.onStart();
   const dialogId = options.id || genDialogId();
   let offcanvasEl;
@@ -188,7 +192,6 @@ function offcanvas(content, options = {}) {
   }
 
   offcanvasEl.setAttribute("data-bs-backdrop", options.backdrop);
-
   if (options.direction === "start" || options.direction === "end") {
     offcanvasEl.style.width = options.size;
   }
@@ -214,12 +217,22 @@ function offcanvas(content, options = {}) {
   const oc = bs5Offcanvas.getOrCreateInstance(offcanvasEl);
   oc.toggle();
 
+  let prevBodyMargin;
+  let accordionDirection;
   offcanvasEl.addEventListener("shown.bs.offcanvas", () => {
+    if (options.accordion) {
+      accordionDirection = options.direction === "start" ? "left" : options.direction === "end" ? "right" : options.direction || "";
+      prevBodyMargin = document.body.style.getPropertyValue("margin-" + accordionDirection);
+     const marginSize =options.size || ["left", "right"].includes(accordionDirection) ? offcanvasEl.offsetWidth + "px" : offcanvasEl.offsetHeight + "px";
+      document.body.style.setProperty("margin-" + accordionDirection, marginSize);
+    }
     options.onShown(offcanvasEl);
   });
-
   offcanvasEl.addEventListener("hidden.bs.offcanvas", () => {
     options.onHidden(offcanvasEl);
+    if (options.accordion) {
+      document.body.style.setProperty("margin-" + accordionDirection, prevBodyMargin);
+    }
   });
 }
 
@@ -231,8 +244,6 @@ function offcanvas(content, options = {}) {
  * @param {Function} onOk
  */
 function confirmRequest(message, apiUrl, method = "DELETE", onOk = () => {}) {}
-
-
 
 /**
  *
@@ -302,16 +313,14 @@ function alert(content, options = {}) {
     }, options.timeout);
   }
 
-
-  modalElement.addEventListener('hide.bs.modal', function() {
-    modalElement.classList.add('hide');
-  });
-  
-  modalElement.addEventListener('hidden.bs.modal', function() {
-    modalElement.style.display = 'none';
-    modalElement.classList.remove('show', 'hide');
+  modalElement.addEventListener("hide.bs.modal", function () {
+    modalElement.classList.add("hide");
   });
 
+  modalElement.addEventListener("hidden.bs.modal", function () {
+    modalElement.style.display = "none";
+    modalElement.classList.remove("show", "hide");
+  });
 }
 
 /**
@@ -778,4 +787,4 @@ function replayLock(element, timeout = 1000) {
   }, timeout);
 }
 
-export { i18n, alert, confirm, msg, prompt, tabs, showLoading, hideLoading, open, confirmRequest, replayLock, offcanvas };
+export { i18n, alert, confirm, msg, prompt, tabs, showLoading, hideLoading, open, confirmRequest, replayLock, offcanvas,bs5Modal,bs5Offcanvas };
