@@ -244,8 +244,9 @@
             <div class="card">
               <div class="card-header">Load page or content</div>
               <div class="card-body">
-                <button class="btn btn-sm btn-open-content" data-content="/form.html">load form</button>
-                <button class="btn btn-sm btn-open-content" data-content="/form1.html">load when 404</button>
+                <button class="btn btn-sm btn-open-content" data-content="./form.html">load form</button>
+                <button class="btn btn-sm btn-open-content" data-content="./form1.html">load when 404</button>
+                <button class="btn btn-sm btn-open-content" data-fullscreen="true" data-content="https://ymlluo.github.io/bs5dialog/">open fullscreen page</button>
                 <button
                   class="btn btn-sm btn-open-content"
                   data-backdrop="false"
@@ -340,9 +341,11 @@
           var content = item.getAttribute("data-content");
           var title = item.getAttribute("data-title") || "";
           var backdrop = item.getAttribute("data-backdrop") || "";
+          var fullscreen = item.getAttribute("data-fullscreen") || false;
           bs5dialog.load(content, {
             title: title,
             backdrop: backdrop,
+            fullscreen:fullscreen,
             onSubmitDone(submitResult) {
               console.log(submitResult);
             }
