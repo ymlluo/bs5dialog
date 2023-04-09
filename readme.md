@@ -45,7 +45,7 @@ bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of co
 To install bs5dialog, run the following command:
 
 ```
-npm install bs5dialog
+npm install @ymlluo/bs5dialog
 ```
 
 ### CDN via jsDelivr 
