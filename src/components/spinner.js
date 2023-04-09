@@ -117,3 +117,8 @@ export function spinnerClean() {
     });
   }
 }
+
+export const showLoading =spinner
+export const hideLoading = spinnerClean
+
+

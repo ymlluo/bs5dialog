@@ -110,12 +110,4 @@ export function toast(message, options) {
     }
   });
 
-  //   if (options.timeout) {
-  //     setTimeout(() => {
-  //
-  //       setTimeout(() => {
-  //         toastInstance.hide();
-  //       }, 500);
-  //     }, options.timeout);
-  //   }
 }

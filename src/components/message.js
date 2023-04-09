@@ -117,3 +117,6 @@ export function message(message, options={}) {
     }, options.timeout);
   }
 }
+
+
+export const msg = message
