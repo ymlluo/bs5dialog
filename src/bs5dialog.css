@@ -241,7 +241,7 @@
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-.bs5dialog-modal-confirm .modal-title {
+.bs5dialog-modal .modal-title {
   font-size: 1rem;
   line-height: 1.5rem;
   font-weight: 600;

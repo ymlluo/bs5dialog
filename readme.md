@@ -1,5 +1,40 @@
 # README for bs5dialog
 
+Table of Contents
+=================
+
+* [README for bs5dialog](#readme-for-bs5dialog)
+* [Table of Contents](#table-of-contents)
+   * [Introduction](#introduction)
+   * [Installation](#installation)
+   * [Usage](#usage)
+   * [Components](#components)
+      * [Alert](#alert)
+         * [Usage](#usage-1)
+         * [Parameters](#parameters)
+      * [Confirm](#confirm)
+         * [Usage](#usage-2)
+         * [Parameters](#parameters-1)
+      * [Prompt](#prompt)
+         * [Usage](#usage-3)
+         * [Parameters](#parameters-2)
+      * [Message](#message)
+         * [Usage](#usage-4)
+         * [Parameters](#parameters-3)
+      * [Spinner](#spinner)
+         * [Usage](#usage-5)
+         * [Parameters](#parameters-4)
+      * [Toast](#toast)
+         * [Usage](#usage-6)
+         * [Parameters](#parameters-5)
+      * [Offcanvas](#offcanvas)
+         * [Usage](#usage-7)
+         * [Parameters](#parameters-6)
+      * [Load](#load)
+         * [Usage](#usage-8)
+         * [Parameters](#parameters-7)
+   * [Internationalization](#internationalization)
+
 ## Introduction
 
 bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of components for creating alerts, prompts, confirms, messages, toasts, tabs, spinners, and offcanvas dialogs. It also includes a replayLock function for preventing multiple dialog instances from being opened at the same time.
@@ -164,8 +199,8 @@ The following options are available:
 - secret (boolean): Whether or not the input should be a password field.
 - onConfirm (function): A function to call when the confirmation button is clicked.
 - onCancel (function): A function to call when the cancel button is clicked.
-
 For more information on the available options, please refer to the comments in the prompt.js file.
+
 ---
 
 
@@ -396,68 +431,66 @@ To use the load function, simply import it and call it with the desired paramete
 ```
 import { load } from "bs5dialog";
 
-const content = "<p>Hello, world!</p>";
-const options = {
-  title: "My Modal",
+load({
+  title: "Example Modal",
+  content: "<p>This is an example modal.</p>",
   size: "md",
-  btnOkText: "OK",
-  btnCancelText: "Cancel",
-  onSubmit: () => console.log("Submitted!"),
-  onSubmitSuccess: () => console.log("Submission successful!"),
-  onSubmitError: () => console.log("Submission error!"),
-  onSubmitDone: () => console.log("Submission done!"),
-};
-
-await load(content, options);
+  type: "primary",
+  onShow: function() {
+    console.log("Modal shown.");
+  },
+  onHide: function() {
+    console.log("Modal hidden.");
+  }
+});
 ```
 
 the load function can indeed load a form and replace form submit. You can achieve this by passing a string of HTML containing the form as the content parameter, and defining a function to be called when the form is submitted using the onSubmit option. Here's an example:
 
 ```
 import { load } from "bs5dialog";
-
-const content = `
-  <form>
-    <input type="text" name="username" placeholder="Username">
-    <input type="password" name="password" placeholder="Password">
-    <button type="submit">Submit</button>
-  </form>
-`;
-
-const options = {
-  title: "Login",
-  onSubmit: async (response) => {
-    
+load({
+  title: "Remote Form Modal",
+  content: "/path/to/remote/form.html",
+  size: "md",
+  type: "primary",
+  onSubmitSuccess: function(result) {
+    console.log("Form submitted successfully:", result);
   },
-};
-
-await open(content, options);
+  onSubmitError: function(result) {
+    console.error("Form submission failed:", result);
+  }
+});
 ```
 
 
 #### Parameters
-- content (string): The content to display in the modal dialog. It might be a URL or a string of HTML.
-- options (Object): The options for the modal dialog. It has the following properties:
-- title (string): The title of the modal dialog.
-- type (string): The type of the modal dialog. Default is "danger".
-- size (string): The size of the modal dialog. Default is "lg".
-- id (string): The id of the modal dialog. If not provided, a random id will be generated.
-- centered (boolean): Whether the modal dialog should be vertically centered. Default is true.
-- scrollable (boolean): Whether the modal dialog should be scrollable. Default is true.
-- fullscreen (boolean): Whether the modal dialog should be fullscreen. Default is false.
-- backdrop (boolean): Whether the modal dialog should have a backdrop. Default is false.
-- keyboard (boolean): Whether the modal dialog should be closable with the keyboard. Default is true.
-- draggable (boolean): Whether the modal dialog should be draggable. Default is true.
-- resizable (boolean): Whether the modal dialog should be resizable. Default is true.
-- btnOkText (string): The text to display on the OK button.
-- btnCancelText (string): The text to display on the Cancel button.
-- onStart (Function): The function to call when the modal dialog starts.
-- onShown (Function): The function to call when the modal dialog is shown.
-- onSubmit (Function): The function to call when the modal dialog is submitted.
-- onSubmitSuccess (Function): The function to call when the modal dialog submission is successful.
-- onSubmitError (Function): The function to call when the modal dialog submission encounters an error.
-- onSubmitDone (Function): The function to call when the modal dialog submission is done.
 
+- options (object): An object containing the following properties:
+- id (string, optional): The ID of the modal element. If not provided, a unique ID will be generated.
+- title (string): The title of the modal.
+- content (string): The content of the modal. This can be either a string of HTML or a URL to fetch content from.
+- size (string, optional): The size of the modal. Can be "sm", "md", "lg", "xl", or "xxl". Defaults to "md".
+- fullscreen (boolean, optional): Whether or not the modal should be displayed in fullscreen mode. Defaults to false.
+- centered (boolean, optional): Whether or not the modal should be vertically centered. Defaults to false.
+- scrollable (boolean, optional): Whether or not the modal should be scrollable. Defaults to false.
+- type (string, optional): The type of the modal. Can be "primary", "secondary", "success", "danger", "warning", "info", or "light". Defaults to "primary".
+- keyboard (boolean, optional): Whether or not the modal should be closed when the escape key is pressed. Defaults to true.
+- focus (boolean, optional): Whether or not the modal should be focused when opened. Defaults to true.
+- backdrop (boolean, optional): Whether or not a backdrop should be displayed behind the modal. Defaults to true.
+- draggable (boolean, optional): Whether or not the modal should be draggable. Defaults to false.
+- resizable (boolean, optional): Whether or not the modal should be resizable. Defaults to false.
+- btnOkText (string, optional): The text to display on the "OK" button. Defaults to "Save".
+- onShow (function, optional): A function to be called when the modal is shown.
+- onShown (function, optional): A function to be called after the modal is shown.
+- onHide (function, optional): A function to be called when the modal is hidden.
+- onHidden (function, optional): A function to be called after the modal is hidden.
+- onSubmit (function, optional): A function to be called when the modal's form is submitted.
+- onSubmitSuccess (function, optional): A function to be called when the modal's form is successfully submitted.
+- onSubmitError (function, optional): A function to be called when the modal's form submission fails.
+- onSubmitDone (function, optional): A function to be called after the modal's form is submitted, regardless of success or failure.
+
+For more information on the available options, please refer to the comments in the load.js file.
 
 ---
 
@@ -476,20 +509,4 @@ Then, set the language using the setLanguage function:
 
 ```
 bs5dialog.i18n.setCurrentLang("zh")
-```
-
-## Examples
-
-Here are some examples of using bs5dialog:
-
-```
-import { alert, prompt, message } from 'bs5dialog';
-
-alert('This is an alert!');
-
-prompt('What is your name?', (name) => {
-  console.log(`Hello, ${name}!`);
-});
-
-message('This is a message!');
 ```

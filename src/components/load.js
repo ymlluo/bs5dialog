@@ -5,31 +5,33 @@ import { getIconHtml } from "../templates";
 import { message } from "./message";
 
 /**
- * load a modal dialog with the given content and options.
- * @async
- * @param {string} content - The content to display in the modal dialog.might a url
- * @param {Object} options - The options for the modal dialog.
+ * Loads content into a Bootstrap 5 modal dialog with customizable options.
+ * @param {string} content - The content to be loaded into the modal dialog. Can be a URL or HTML content.
+ * @param {Object} options - An object containing customizable options for the modal dialog.
  * @param {string} options.title - The title of the modal dialog.
- * @param {string} options.type - The type of the modal dialog.
+ * @param {string} options.type - The type of the modal dialog, which determines the color of the status bar.
  * @param {string} options.size - The size of the modal dialog.
- * @param {string} options.id - The id of the modal dialog.
+ * @param {string} options.id - The ID of the modal dialog.
+ * @param {boolean} options.centered - Whether the modal dialog should be centered on the screen.
+ * @param {boolean} options.scrollable - Whether the modal dialog should be scrollable.
  * @param {boolean} options.fullscreen - Whether the modal dialog should be fullscreen.
  * @param {boolean} options.backdrop - Whether the modal dialog should have a backdrop.
- * @param {boolean} options.keyboard - Whether the modal dialog should be closable with the keyboard.
+ * @param {boolean} options.focus - Whether the modal dialog should be focused.
+ * @param {boolean} options.keyboard - Whether the keyboard should be enabled for the modal dialog.
  * @param {boolean} options.draggable - Whether the modal dialog should be draggable.
  * @param {boolean} options.resizable - Whether the modal dialog should be resizable.
  * @param {string} options.btnOkText - The text to display on the OK button.
  * @param {string} options.btnCancelText - The text to display on the Cancel button.
- * @param {Function} options.onShow - The function to call when the modal dialog starts.
- * @param {Function} options.onShown - The function to call when the modal dialog is shown.
- * @param {Function} options.onHide - The function to call when the modal dialog hide.
- * @param {Function} options.onHidden - The function to call when the modal dialog is hidden.
- * @param {Function} options.onSubmit - The function to call when the modal dialog is submitted.
- * @param {Function} options.onSubmitSuccess - The function to call when the modal dialog submission is successful.
- * @param {Function} options.onSubmitError - The function to call when the modal dialog submission encounters an error.
- * @param {Function} options.onSubmitDone - The function to call when the modal dialog submission is done.
- * @returns {Promise<void>}
+ * @param {function} options.onShow - A function to be called when the modal dialog is shown.
+ * @param {function} options.onShown - A function to be called after the modal dialog is shown.
+ * @param {function} options.onHide - A function to be called when the modal dialog is hidden.
+ * @param {function} options.onHidden - A function to be called after the modal dialog is hidden.
+ * @param {function} options.onSubmit - A function to be called when the modal dialog is submitted.
+ * @param {function} options.onSubmitSuccess - A function to be called after the modal dialog is successfully submitted.
+ * @param {function} options.onSubmitError - A function to be called if there is an error submitting the modal dialog.
+ * @param {function} options.onSubmitDone - A function to be called after the modal dialog is submitted, regardless of success or failure.
  */
+
 export async function load(content, options = {}) {
   const defaultOptions = {
     title: "",
@@ -39,7 +41,7 @@ export async function load(content, options = {}) {
     centered: true,
     scrollable: true,
     fullscreen: false,
-    backdrop: false,
+    backdrop: true,
     focus: true,
     keyboard: true,
     draggable: true,
@@ -71,7 +73,7 @@ export async function load(content, options = {}) {
     content = res.content;
     if (content.includes("<!DOCTYPE html>") || content.includes("<html")) {
       //frame
-      content = '<iframe src="' + apiUrl + "\" width='100%' height='100%'></iframe>";
+      content = `<iframe src="${apiUrl}" width='100%' height='100%'></iframe>`;
       options.scrollable = false;
     }
   }
@@ -87,7 +89,7 @@ export async function load(content, options = {}) {
           ${getIconHtml("fullscreen", "btn-fullscreen btn-fullscreen-toggle " + (options.fullscreen ? "d-none" : ""), "1rem")}
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
        </div>
-       <div class="modal-body" style="height:60vh;">
+       <div class="modal-body" ${options.scrollable?"style='min-height:30vh'":""}>
           ${content}
        </div>
        <div class="modal-footer d-none">
