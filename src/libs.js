@@ -14,13 +14,8 @@ export function isUrlOrPath(text) {
 export function getTargetElement(element) {
   if (element instanceof Element) {
     return element;
-  } else if (element.startsWith("#")) {
-    return document.getElementById(element.slice(1));
-  } else if (element.startsWith(".")) {
+  }else {
     return document.querySelector(element);
-  } else {
-    console.error("Invalid element provided.");
-    return null;
   }
 }
 
@@ -99,6 +94,21 @@ export function makeDraggable(elmnt, handler) {
   }
 }
 
+export function getOverlapDimensions(div1, div2) {
+  const rect1 = div1.getBoundingClientRect();
+  const rect2 = div2.getBoundingClientRect();
+
+  const overlapLeft = Math.max(rect1.left, rect2.left);
+  const overlapTop = Math.max(rect1.top, rect2.top);
+  const overlapRight = Math.min(rect1.right, rect2.right);
+  const overlapBottom = Math.min(rect1.bottom, rect2.bottom);
+
+  const overlapWidth = overlapRight - overlapLeft;
+  const overlapHeight = overlapBottom - overlapTop;
+
+  return { overlapWidth, overlapHeight };
+}
+
 export async function getUrl(url) {
   try {
     if (typeof axios === "function") {
@@ -152,11 +162,179 @@ export async function postUrl(url, data) {
   }
 }
 
+export function genDialogId() {
+  const modalId = "dialg-" + Math.floor(Math.random() * 1000000);
+  return modalId;
+}
+
+export function setModalWrapper() {
+  let modal = document.createElement("div");
+  modal.classList.add("modal", "bs5dialog-modal", "fade");
+  modal.setAttribute("data-bs-backdrop", "static");
+  modal.setAttribute("tabindex", "-1");
+
+  return modal;
+}
+
+/**
+ * add disabled class ，default lock 1s timeout
+ * @param {*} element
+ * @param {*} timeout
+ */
+export function replayLock(element, timeout = 1000) {
+  const targetElement = getTargetElement(element);
+  targetElement.classList.add("disabled");
+  targetElement.setAttribute("disabled", "disabled");
+  var timer = setTimeout(() => {
+    targetElement.classList.remove("disabled");
+    targetElement.removeAttribute("disabled");
+  }, timeout);
+  return timer;
+}
+
+export function getMaxZIndex() {
+  let maxZIndex = 0;
+  document.querySelectorAll("*").forEach(element => {
+    const zIndex = parseFloat(getComputedStyle(element).zIndex);
+    if (!isNaN(zIndex) && zIndex > maxZIndex) {
+      maxZIndex = zIndex;
+    }
+  });
+  return maxZIndex;
+}
+
+export function getTextClass(bgColorClassName) {
+  if (bgColorClassName === "bg-link") {
+    return "text-black";
+  }
+
+  let bgColor;
+  if (document.querySelector("." + bgColorClassName)) {
+    bgColor = getComputedStyle(document.querySelector("." + bgColorClassName)).backgroundColor;
+  } else {
+    // Create temporary element
+    let tempElement = document.createElement("div");
+    tempElement.classList.add(bgColorClassName);
+    // Add element to body
+    document.body.appendChild(tempElement);
+
+    // Get background color of element
+    bgColor = getComputedStyle(tempElement).backgroundColor;
+
+    // Remove element from body
+    tempElement.remove();
+  }
+
+  // Get RGB values of background color
+  const colorValues = bgColor.match(/\d+/g);
+  const red = colorValues[0];
+  const green = colorValues[1];
+  const blue = colorValues[2];
+
+  // Calculate perceived brightness of background color
+  const perceivedBrightness = Math.sqrt(red * red * 0.299 + green * green * 0.587 + blue * blue * 0.114);
+
+  // Return text color class based on perceived brightness
+  return perceivedBrightness > 150 ? "text-black" : "text-white";
+}
+
+export async function makeRequest(url, method = 'GET', headers = {}, body = null) {
+  const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+  if (csrfTokenMeta) {
+    headers['X-CSRF-TOKEN'] = csrfTokenMeta.content;
+  }
+
+  if (typeof axios !== 'undefined') {
+    axios.defaults.crossDomain=true
+    axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+    // Use axios if it's available
+    try {
+      const axiosConfig = {
+        url,
+        method,
+        headers,
+        withCredentials: false, // Allow cookies to be sent and received for cross-domain requests
+      };
+
+      if (body) {
+        if (body instanceof FormData) {
+          // If body is a FormData object, do not set Content-Type header and pass the FormData directly to axios
+          axiosConfig.data = body;
+        } else {
+          // If body is not a FormData object, assume it's JSON data
+          axiosConfig.data = JSON.stringify(body);
+          axiosConfig.headers['Content-Type'] = 'application/json';
+        }
+      }
+
+      const response = await axios(axiosConfig);
+      return {
+        isSuccess: true,
+        statusCode: response.status,
+        content: response.data,
+      };
+    } catch (error) {
+      
+      return {
+        isSuccess: false,
+        statusCode: error.response?.status,
+        content: error.response?.data || error.message,
+      };
+    }
+  } else {
+    // Use fetch if axios is not available
+    const options = {
+      method,
+      headers: {
+        ...headers,
+        'Accept': 'application/json',
+      },
+      credentials: 'include', // Allow cookies to be sent and received for cross-domain requests
+    };
+
+    if (body) {
+      if (body instanceof FormData) {
+        // If body is a FormData object, do not set Content-Type header and pass the FormData directly to fetch
+        options.body = body;
+      } else {
+        // If body is not a FormData object, assume it's JSON data
+        options.body = JSON.stringify(body);
+        options.headers['Content-Type'] = 'application/json';
+      }
+    }
+
+    try {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      return {
+        isSuccess: response.ok,
+        statusCode: response.status,
+        content: data,
+      };
+    } catch (error) {
+      return {
+        isSuccess: false,
+        statusCode: error.status,
+        content: error.message,
+      };
+    }
+  }
+}
+
+
+
 export default {
   getTargetElement,
   isUrlOrPath,
   makeDraggable,
   makeResizable,
+  makeRequest,
   getUrl,
-  postUrl
+  postUrl,
+  getOverlapDimensions,
+  genDialogId,
+  setModalWrapper,
+  replayLock,
+  getMaxZIndex,
+  getTextClass
 };
