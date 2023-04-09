@@ -48,18 +48,14 @@ To install bs5dialog, run the following command:
 npm install bs5dialog
 ```
 
-# Usage
+### CDN via jsDelivr 
+Skip the download with jsDelivr to deliver cached version of bs5dialog's compiled CSS and JS to your project.
 
-To use bs5dialog, import the desired components from the library:
+``` html
+<link href="https://cdn.jsdelivr.net/gh/ymlluo/bs5dialog@master/dist/bs5dialog.css" rel="stylesheet" crossorigin="anonymous">
 
-```
-import { alert, prompt, message } from 'bs5dialog';
-```
+<script src="https://cdn.jsdelivr.net/gh/ymlluo/bs5dialog@master/dist/bs5dialog.js" crossorigin="anonymous"></script>
 
-Then, call the desired function to create the component:
-
-```
-alert('This is an alert!');
 ```
 
 # Components

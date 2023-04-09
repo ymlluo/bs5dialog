@@ -4,16 +4,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>bs5dialog demo</title>
 
-
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous"> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/mhDoLbDldZc3qpsJHpLogda//BVZbgYuw6kof4u2FrCedxOtgRZDTHgHUhOCVim" crossorigin="anonymous"></script> -->
-
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css"> -->
 
-    <!-- <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.js"></script> -->
 
     <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.3.4/axios.js"></script>
 
@@ -101,7 +97,7 @@
                 <div class="mb-3 row">
                   <label class="col-3 col-form-label required">spinner type</label>
                   <div class="col">
-                    <select  class="form-control" name="type" id="spinner-type">
+                    <select class="form-control" name="type" id="spinner-type">
                       <option value="primary">primary</option>
                       <option value="secondary">secondary</option>
                       <option value="success">success</option>
@@ -117,7 +113,7 @@
                 <div class="mb-3 row">
                   <label class="col-3 col-form-label">animation</label>
                   <div class="col">
-                    <select  class="form-control" name="animation" id="spinner-animation">
+                    <select class="form-control" name="animation" id="spinner-animation">
                       <option value="border">border</option>
                       <option value="grow">grow</option>
                       <option value="plane">plane</option>
@@ -138,65 +134,59 @@
                 <div class="mb-3 row">
                   <label class="col-3 col-form-label">timeout</label>
                   <div class="col">
-                    <input type="number" class="form-control" value="3000" id="spinner-timeout">
+                    <input type="number" class="form-control" value="3000" id="spinner-timeout" />
                     <small class="form-hint"></small>
                   </div>
                 </div>
-
 
                 <div class="row">
                   <label class="col-3 col-form-label pt-0">backdrop</label>
                   <div class="col">
                     <label class="form-check">
-                      <input class="form-check-input" type="checkbox" checked="" id="spinner-backdrop">
+                      <input class="form-check-input" type="checkbox" checked="" id="spinner-backdrop" />
                       <span class="form-check-label">backdrop</span>
                     </label>
-                
                   </div>
                 </div>
-
               </div>
               <div class="card-footer text-end">
                 <button type="button" class="btn btn-primary btn-show-spinner">Show Spinner</button>
               </div>
             </form>
           </div>
-              <div class="col-md-6">
-                <button class="show_loading btn mb-2" data-animal="border">border</button>
-                <button class="show_loading btn mb-2" data-animal="grow">grow</button>
-                <button class="show_loading btn mb-2" data-animal="plane">plane</button>
-                <button class="show_loading btn mb-2" data-animal="chase">chase</button>
-                <button class="show_loading btn mb-2" data-animal="bounce">bounce</button>
-                <button class="show_loading btn mb-2" data-animal="wave">wave</button>
-                <button class="show_loading btn mb-2" data-animal="pulse">pulse</button>
-                <button class="show_loading btn mb-2" data-animal="flow">flow</button>
-                <button class="show_loading btn mb-2" data-animal="swing">swing</button>
-                <button class="show_loading btn mb-2" data-animal="circle">circle</button>
-                <button class="show_loading btn mb-2" data-animal="grid">grid</button>
-                <button class="show_loading btn mb-2" data-animal="fold">fold</button>
-                <button class="show_loading btn mb-2" data-animal="wander">wander</button>
-                <button class="form-btn-loading btn mb-2" data-animal="">button</button>
-              </div>
+          <div class="col-md-6">
+            <button class="show_loading btn mb-2" data-animal="border">border</button>
+            <button class="show_loading btn mb-2" data-animal="grow">grow</button>
+            <button class="show_loading btn mb-2" data-animal="plane">plane</button>
+            <button class="show_loading btn mb-2" data-animal="chase">chase</button>
+            <button class="show_loading btn mb-2" data-animal="bounce">bounce</button>
+            <button class="show_loading btn mb-2" data-animal="wave">wave</button>
+            <button class="show_loading btn mb-2" data-animal="pulse">pulse</button>
+            <button class="show_loading btn mb-2" data-animal="flow">flow</button>
+            <button class="show_loading btn mb-2" data-animal="swing">swing</button>
+            <button class="show_loading btn mb-2" data-animal="circle">circle</button>
+            <button class="show_loading btn mb-2" data-animal="grid">grid</button>
+            <button class="show_loading btn mb-2" data-animal="fold">fold</button>
+            <button class="show_loading btn mb-2" data-animal="wander">wander</button>
+            <button class="form-btn-loading btn mb-2" data-animal="">button</button>
+          </div>
         </div>
         <div class="mb-3">
           <div col-xs-12>
             <div class="card">
-              <div class="card-header">Toast </div>
+              <div class="card-header">Toast</div>
               <div class="card-body">
-
-                <button class="btn btn-show-toast mb-1" data-type="primary"  data-position="center">center</button>
+                <button class="btn btn-show-toast mb-1" data-type="primary" data-position="center">center</button>
                 <button class="btn btn-show-toast mb-1" data-type="secondary" data-position="top">top</button>
                 <button class="btn btn-show-toast mb-1" data-type="success" data-position="bottom">bottom</button>
                 <button class="btn btn-show-toast mb-1" data-type="danger" data-position="left">left</button>
                 <button class="btn btn-show-toast mb-1" data-type="warning" data-position="right">right</button>
                 <button class="btn btn-show-toast mb-1" data-type="info" data-position="top-left">top-left</button>
-                <button class="btn btn-show-toast mb-1" data-type="light" data-position="top-right"> top-right</button>
-                <button class="btn btn-show-toast mb-1" data-type="dark" data-position="bottom-left"> bottom-left</button>
+                <button class="btn btn-show-toast mb-1" data-type="light" data-position="top-right">top-right</button>
+                <button class="btn btn-show-toast mb-1" data-type="dark" data-position="bottom-left">bottom-left</button>
                 <button class="btn btn-show-toast mb-1" data-type="link" data-position="bottom-right">bottom-right</button>
               </div>
-              <div class="card-footer">
-                
-              </div>
+              <div class="card-footer"></div>
             </div>
           </div>
         </div>
@@ -206,20 +196,18 @@
             <div class="card">
               <div class="card-header">Message</div>
               <div class="card-body">
-                <button class="btn btn-show-message mb-1" >default</button>
-                <button class="btn btn-show-message mb-1" data-type="primary"  data-position="center">center</button>
+                <button class="btn btn-show-message mb-1">default</button>
+                <button class="btn btn-show-message mb-1" data-type="primary" data-position="center">center</button>
                 <button class="btn btn-show-message mb-1" data-type="secondary" data-position="top">top</button>
                 <button class="btn btn-show-message mb-1" data-type="success" data-position="bottom">bottom</button>
                 <button class="btn btn-show-message mb-1" data-type="danger" data-position="left">left</button>
                 <button class="btn btn-show-message mb-1" data-type="warning" data-position="right">right</button>
                 <button class="btn btn-show-message mb-1" data-type="info" data-position="top-left">top-left</button>
-                <button class="btn btn-show-message mb-1" data-type="light" data-position="top-right"> top-right</button>
-                <button class="btn btn-show-message mb-1" data-type="dark" data-position="bottom-left"> bottom-left</button>
+                <button class="btn btn-show-message mb-1" data-type="light" data-position="top-right">top-right</button>
+                <button class="btn btn-show-message mb-1" data-type="dark" data-position="bottom-left">bottom-left</button>
                 <button class="btn btn-show-message mb-1" data-type="link" data-position="bottom-right">bottom-right</button>
               </div>
-              <div class="card-footer">
-                
-              </div>
+              <div class="card-footer"></div>
             </div>
           </div>
         </div>
@@ -240,7 +228,13 @@
                 <button class="btn btn-offcanvas mb-1" data-direction="start" data-scroll="false">offcanvas without scroll</button>
                 <button class="btn btn-offcanvas mb-1" data-direction="start" data-dark="true">offcanvas dark</button>
                 <button class="btn btn-offcanvas mb-1" data-direction="start" data-id="example-offcanvas">offcanvas static id</button>
-                <button class="btn btn-offcanvas mb-1" data-direction="start" data-size="800px" data-content="<button class='btn btn-lg btn-success'>Click Me</button>">offcanvas size 300px</button>
+                <button
+                  class="btn btn-offcanvas mb-1"
+                  data-direction="start"
+                  data-size="800px"
+                  data-content="<button class='btn btn-lg btn-success'>Click Me</button>">
+                  offcanvas size 300px
+                </button>
               </div>
 
               <div class="card-footer"></div>
@@ -257,7 +251,7 @@
                 <button class="btn btn-dark btn-open-content" data-content="/form1.html">open 404</button>
                 <button
                   class="btn btn-dark btn-open-content"
-                  data-backdrop=false
+                  data-backdrop="false"
                   data-title="lily's story"
                   data-content="<p>Once upon a time, in a small village nestled among the hills and forests, there lived a young girl named Lily. She was a curious and adventurous child, always eager to explore the world around her. One day, while wandering through the woods, she stumbled upon a mysterious old cottage hidden among the trees.</p><p></p><p>Without a second thought, Lily approached the cottage and peered inside. To her surprise, she found that the cottage was occupied by a wise old woman, who welcomed her with a warm smile. The woman's name was Abigail, and she was known throughout the village as a skilled healer and herbalist.</p><p></p><p>Lily was fascinated by Abigail's knowledge of plants and herbs, and she soon became a regular visitor to the cottage. Abigail taught her how to identify different plants and their medicinal properties, and Lily eagerly absorbed every bit of knowledge she could.</p><p></p><p>As time went by, Lily grew into a young woman, and her visits to Abigail's cottage became less frequent. She became busy with her own life and responsibilities, but she never forgot the lessons she had learned from Abigail.</p><p></p><p>One day, as she was walking through the woods, Lily came across a group of travelers who had set up camp by a nearby river. They were a friendly and boisterous bunch, and they welcomed Lily to join them for a meal and some lively conversation.</p><p></p><p>As they sat around the fire, Lily noticed that one of the travelers, a young man named Jack, had a deep gash on his leg. He had been injured while hunting, and the wound had become infected.</p><p></p><p>Lily remembered the lessons she had learned from Abigail, and she offered to help Jack with his wound. She gathered some herbs and prepared a poultice, and applied it to the wound. To everyone's surprise, the poultice had an almost immediate effect, and Jack's wound began to heal.</p><p></p><p>The travelers were amazed by Lily's knowledge of herbs and healing, and they urged her to come with them on their journey. They were traveling to a distant kingdom, where a great plague had struck, and they hoped that Lily's skills could help to save the people.</p><p></p><p>Lily was hesitant at first, but the travelers were persistent. They promised to keep her safe and provide her with all the resources she needed to help the sick. In the end, Lily agreed to go with them, and they set off on their journey.</p><p></p><p>The journey was long and perilous, and they encountered many obstacles along the way. But Lily's knowledge and skills proved invaluable, and she was able to heal many of the sick and suffering.</p><p></p><p>As they finally arrived at the kingdom, they were greeted by the grateful and relieved people. They hailed Lily as a hero, and she was honored by the king and queen for her bravery and compassion.</p><p></p><p>And so, Lily's journey had led her to a place where her knowledge and skills were needed most, and where she could truly make a difference in the lives of others. She had become a healer, a hero, and a legend in her own time, and her story lived on for generations to come.</p>">
                   open content
@@ -275,11 +269,10 @@
     <script>
       console.log(bs5dialog.i18n.setCurrentLang("zh"));
 
-
       document.querySelectorAll(".btn-alert").forEach(function (item) {
         item.onclick = function () {
           var type = item.getAttribute("data-type");
-          bs5dialog.alert("共删除一条记录.", { type: type, icon: "success", title: "操作完成", timeout: 5000, backdrop: false });
+          bs5dialog.alert("Total delete a record.", { type: type, icon: "success", title: "complete", timeout: 5000, backdrop: false });
         };
       });
       document.querySelectorAll(".btn-confirm").forEach(function (item) {
@@ -288,7 +281,7 @@
           bs5dialog.confirm("Are you sure you want to do this?", {
             type: type,
             onConfirm: () => {
-              bs5dialog.alert("ok", {type:type,timeout:3000});
+              bs5dialog.alert("ok", { type: type, timeout: 3000 });
             }
           });
         };
@@ -305,43 +298,41 @@
         };
       });
       document.querySelectorAll(".show_loading").forEach(function (item) {
-        item.addEventListener('click', ()=>{
+        item.addEventListener("click", () => {
           var animationName = item.getAttribute("data-animal");
-          bs5dialog.spinnerClean('#loading-form')
-          bs5dialog.spinner('#loading-form', {animation:animationName, timeout: 5000 });
+          bs5dialog.spinnerClean("#loading-form");
+          bs5dialog.spinner("#loading-form", { animation: animationName, timeout: 5000 });
         });
       });
 
-      document.querySelector('.btn-show-spinner').addEventListener('click',function(){
-        var form = document.getElementById('loading-form');
-        var type = document.getElementById("spinner-type").value
-        var animation = document.getElementById("spinner-animation").value
-        var timeout = document.getElementById("spinner-timeout").value
-        var backdrop = document.getElementById("spinner-backdrop").checked
-        console.log(backdrop)
-        bs5dialog.spinner('#loading-form', {type:type,animation:animation, timeout: timeout,backdrop:backdrop });
-      })
+      document.querySelector(".btn-show-spinner").addEventListener("click", function () {
+        var form = document.getElementById("loading-form");
+        var type = document.getElementById("spinner-type").value;
+        var animation = document.getElementById("spinner-animation").value;
+        var timeout = document.getElementById("spinner-timeout").value;
+        var backdrop = document.getElementById("spinner-backdrop").checked;
+        console.log(backdrop);
+        bs5dialog.spinner("#loading-form", { type: type, animation: animation, timeout: timeout, backdrop: backdrop });
+      });
 
-      document.querySelector('.form-btn-loading').addEventListener('click',function(){
-        
-        bs5dialog.spinner('#loading-form button', {animation:'border', timeout: 5000 });
-      })
+      document.querySelector(".form-btn-loading").addEventListener("click", function () {
+        bs5dialog.spinner("#loading-form button", { animation: "border", timeout: 5000 });
+      });
 
       document.querySelectorAll(".btn-show-toast").forEach(function (item) {
         item.onclick = function () {
           var position = item.getAttribute("data-position");
           var type = item.getAttribute("data-type");
           var color = item.getAttribute("data-text-color");
-          bs5dialog.toast("hello world!", {title:"New Message",subtitle:Date(),type:type,position: position, timeout: 10000});
+          bs5dialog.toast("hello world!", { title: "New Message", subtitle: Date(), type: type, position: position, timeout: 10000 });
         };
       });
 
-      
       document.querySelectorAll(".btn-show-message").forEach(function (item) {
         item.onclick = function () {
           var position = item.getAttribute("data-position");
           var type = item.getAttribute("data-type");
-          bs5dialog.message("hello world!", position?{type:type,position: position, timeout: 10000}:{});
+          bs5dialog.message("hello world!", position ? { type: type, position: position, timeout: 10000 } : {});
         };
       });
 
@@ -350,11 +341,15 @@
         item.onclick = function (e) {
           e.preventDefault();
           var content = item.getAttribute("data-content");
-          var title=item.getAttribute("data-title") || '';
-          var backdrop=item.getAttribute("data-backdrop") || '';
-          bs5dialog.load(content, {title:title, backdrop: backdrop, onSubmitDone(submitResult){
-            console.log(submitResult)
-          } });
+          var title = item.getAttribute("data-title") || "";
+          var backdrop = item.getAttribute("data-backdrop") || "";
+          bs5dialog.load(content, {
+            title: title,
+            backdrop: backdrop,
+            onSubmitDone(submitResult) {
+              console.log(submitResult);
+            }
+          });
         };
       });
 
@@ -373,14 +368,14 @@
           bs5dialog.offcanvas(
             content || "Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.",
             {
-              title: "购物车",
+              title: "shopping cart",
               size: size,
               id: id,
               direction: direction,
               backdrop: backdrop,
               scroll: scroll,
               dark: dark,
-              container:'.container'
+              container: ".container"
             }
           );
         };
