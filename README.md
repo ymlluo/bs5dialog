@@ -1,4 +1,6 @@
 [![Node.js Package](https://github.com/ymlluo/bs5dialog/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/ymlluo/bs5dialog/actions/workflows/npm-publish.yml)
+[![Version](https://img.shields.io/npm/v/@ymlluo/bs5dialog.svg)](https://www.npmjs.com/package/@ymlluo/bs5dialog)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
 
 Table of Contents
 =================
@@ -39,13 +41,13 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
 bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of components for creating alerts, prompts, confirms, messages, toasts, tabs, spinners, and offcanvas dialogs. It also includes a replayLock function for preventing multiple dialog instances from being opened at the same time.
 
-## EXAMPLES
+## Demo
 
 Here is a simple demo page, which will be completed later
+### ✨ [Demo](https://ymlluo.github.io/bs5dialog/dist/index.html)
 
-<a href="https://ymlluo.github.io/bs5dialog/dist/index.html" target="_blank"><b>examples</b></a>
 
-
+---
 
 # Installation
 
@@ -519,3 +521,22 @@ Then, set the language using the setLanguage function:
 ```
 bs5dialog.i18n.setCurrentLang("zh")
 ```
+
+
+# Acknowledgments
+
+[twbs/bootstrap](https://github.com/twbs/bootstrap)
+
+[tabler/tabler](https://github.com/tabler/tabler)
+
+[nakupanda/bootstrap3-dialog](https://github.com/nakupanda/bootstrap3-dialog)
+
+[layui/layer](https://github.com/layui/layer)
+
+A lot of inspiration and styling comes from these great libraries, big thanks to them
+
+
+
+# License 
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details

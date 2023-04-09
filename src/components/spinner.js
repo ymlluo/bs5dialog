@@ -15,9 +15,9 @@ import { getSpinnerHtml } from "../templates";
 export function spinner(element = document.body, options = {}) {
   const defaultOptions = {
     animation: "border",
-    type: "warning",
+    type: "",
     backdrop: true,
-    timeout: 3000
+    timeout: 2000
   };
 
   options = { ...defaultOptions, ...options };
@@ -43,6 +43,8 @@ export function spinner(element = document.body, options = {}) {
   spinnerElement.style.display = "flex";
   spinnerElement.style.justifyContent = "center";
   spinnerElement.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
+  spinnerElement.style.setProperty("z-index", targetZIndex + 1);
+  
   spinnerElement.classList.add("bs5-modal-spinner");
   if (options.backdrop === false || options.backdrop === "false") {
     spinnerElement.style.backgroundColor = "transparent";

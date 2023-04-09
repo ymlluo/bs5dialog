@@ -21,7 +21,7 @@ export function confirm(content = "", options = {}) {
   const defaultOptions = {
     title: i18n.getConfig("sure"),
     type: "danger",
-    size: "sm",
+    size: "md",
     btnOkText: "",
     btnCancelText: "",
     icon: "alert",
