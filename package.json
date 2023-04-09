@@ -5,8 +5,7 @@
   "main": "dist/bs5dialog.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "test":""
+    "dev": "rollup -c -w"
   },
   "type": "module",
   "keywords": [
@@ -42,3 +41,4 @@
     "spinkit": "^2.0.1"
   }
 }
+
