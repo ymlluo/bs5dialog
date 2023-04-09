@@ -35,7 +35,7 @@ export function message(message, options={}) {
     backdrop: false,
     icon: "",
     icon_class: "",
-    timeout: 3000,
+    timeout: 1500,
     onClose: function () {},
     onClosed: function () {}
   };

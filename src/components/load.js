@@ -41,7 +41,7 @@ export async function load(content, options = {}) {
     centered: true,
     scrollable: true,
     fullscreen: false,
-    backdrop: true,
+    backdrop: false,
     focus: true,
     keyboard: true,
     draggable: true,

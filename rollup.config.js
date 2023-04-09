@@ -18,7 +18,6 @@ export default {
       sourcemap: false,
       globals: {
         axios: "axios",
-        // bootstrap: "bootstrap"
       }
     },
     {
@@ -27,7 +26,6 @@ export default {
       sourcemap: false,
       globals: {
         axios: "axios",
-        // bootstrap: "bootstrap"
       }
     },
     {
@@ -36,7 +34,6 @@ export default {
       sourcemap: false,
       globals: {
         axios: "axios",
-        // bootstrap: "bootstrap"
       }
     }
   ],
@@ -52,8 +49,6 @@ export default {
     postcss({
       plugins: [postcssImport()],
       extract: true
-      // modules: true,
-      // minimize: true,
     }),
     terser(),
     watch({
@@ -69,6 +64,5 @@ export default {
   ],
   external: [
     "axios", 
-    // "bootstrap"
   ]
 };
