@@ -39,6 +39,14 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
 bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of components for creating alerts, prompts, confirms, messages, toasts, tabs, spinners, and offcanvas dialogs. It also includes a replayLock function for preventing multiple dialog instances from being opened at the same time.
 
+## EXAMPLES
+
+Here is a simple demo page, which will be completed later
+
+<a href="https://ymlluo.github.io/bs5dialog/dist/index.html" target="_blank"><b>examples</b></a>
+
+
+
 # Installation
 
 To install bs5dialog, run the following command:
@@ -56,6 +64,8 @@ Skip the download with jsDelivr to deliver cached version of bs5dialog's compile
 <script src="https://cdn.jsdelivr.net/gh/ymlluo/bs5dialog@master/dist/bs5dialog.js" crossorigin="anonymous"></script>
 
 ```
+
+
 
 # Components
 

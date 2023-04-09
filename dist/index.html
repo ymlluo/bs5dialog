@@ -40,7 +40,6 @@
                 <button class="btn btn-link btn-alert" data-type="link" data-timeout="30000">link</button>
               </div>
               <div class="card-footer">
-                <kbd> bs5dialog.alert("lalalalala", type,()=>{console.log("ok")}); </kbd>
               </div>
             </div>
           </div>
@@ -61,7 +60,7 @@
                 <button class="btn btn-link btn-confirm" data-type="link">link</button>
               </div>
               <div class="card-footer">
-                <kbd> bs5dialog.confirm("Are you sure you want to do this?", type,()=>{console.log("ok")}); </kbd>
+               
               </div>
             </div>
           </div>
@@ -82,7 +81,7 @@
                 <button class="btn btn-link btn-prompt" data-type="link">link</button>
               </div>
               <div class="card-footer">
-                <kbd> bs5dialog.prompt("Please enter your PIN:", type, (val) => { bs5dialog.alert("Your PIN:" + val, type); }); </kbd>
+               
               </div>
             </div>
           </div>
@@ -267,7 +266,7 @@
     <button onclick="bs5dialog.toast('asdaf')">toast</button>
 
     <script>
-      console.log(bs5dialog.i18n.setCurrentLang("zh"));
+      // console.log(bs5dialog.i18n.setCurrentLang("zh"));
 
       document.querySelectorAll(".btn-alert").forEach(function (item) {
         item.onclick = function () {
