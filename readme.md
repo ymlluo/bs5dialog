@@ -1,3 +1,5 @@
+
+[![Node.js Package](https://github.com/ymlluo/bs5dialog/actions/workflows/npm-publish.yml/badge.svg?branch=master)](https://github.com/ymlluo/bs5dialog/actions/workflows/npm-publish.yml)
 # README for bs5dialog
 
 Table of Contents
