@@ -1,47 +1,46 @@
 
 [![Node.js Package](https://github.com/ymlluo/bs5dialog/actions/workflows/npm-publish.yml/badge.svg?branch=master)](https://github.com/ymlluo/bs5dialog/actions/workflows/npm-publish.yml)
-# README for bs5dialog
 
 Table of Contents
 =================
 
-* [README for bs5dialog](#readme-for-bs5dialog)
-* [Table of Contents](#table-of-contents)
-   * [Introduction](#introduction)
-   * [Installation](#installation)
-   * [Usage](#usage)
-   * [Components](#components)
-      * [Alert](#alert)
-         * [Usage](#usage-1)
-         * [Parameters](#parameters)
-      * [Confirm](#confirm)
-         * [Usage](#usage-2)
-         * [Parameters](#parameters-1)
-      * [Prompt](#prompt)
-         * [Usage](#usage-3)
-         * [Parameters](#parameters-2)
-      * [Message](#message)
-         * [Usage](#usage-4)
-         * [Parameters](#parameters-3)
-      * [Spinner](#spinner)
-         * [Usage](#usage-5)
-         * [Parameters](#parameters-4)
-      * [Toast](#toast)
-         * [Usage](#usage-6)
-         * [Parameters](#parameters-5)
-      * [Offcanvas](#offcanvas)
-         * [Usage](#usage-7)
-         * [Parameters](#parameters-6)
-      * [Load](#load)
-         * [Usage](#usage-8)
-         * [Parameters](#parameters-7)
-   * [Internationalization](#internationalization)
+* [Introduction](#introduction)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Components](#components)
+   * [Alert](#alert)
+      * [Usage](#usage-1)
+      * [Parameters](#parameters)
+   * [Confirm](#confirm)
+      * [Usage](#usage-2)
+      * [Parameters](#parameters-1)
+   * [Prompt](#prompt)
+      * [Usage](#usage-3)
+      * [Parameters](#parameters-2)
+   * [Message](#message)
+      * [Usage](#usage-4)
+      * [Parameters](#parameters-3)
+   * [Spinner](#spinner)
+      * [Usage](#usage-5)
+      * [Parameters](#parameters-4)
+   * [Toast](#toast)
+      * [Usage](#usage-6)
+      * [Parameters](#parameters-5)
+   * [Offcanvas](#offcanvas)
+      * [Usage](#usage-7)
+      * [Parameters](#parameters-6)
+   * [Load](#load)
+      * [Usage](#usage-8)
+      * [Parameters](#parameters-7)
+* [Internationalization](#internationalization)
 
-## Introduction
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
+
+# Introduction
 
 bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of components for creating alerts, prompts, confirms, messages, toasts, tabs, spinners, and offcanvas dialogs. It also includes a replayLock function for preventing multiple dialog instances from being opened at the same time.
 
-## Installation
+# Installation
 
 To install bs5dialog, run the following command:
 
@@ -49,7 +48,7 @@ To install bs5dialog, run the following command:
 npm install bs5dialog
 ```
 
-## Usage
+# Usage
 
 To use bs5dialog, import the desired components from the library:
 
@@ -63,12 +62,12 @@ Then, call the desired function to create the component:
 alert('This is an alert!');
 ```
 
-## Components
+# Components
 
-### Alert
+## Alert
 
 The alert component creates a Bootstrap 5 alert dialog. To use it, call the alert function with the desired message:
-#### Usage
+### Usage
 
 To use the alert function, simply import it and call it with the desired parameters. Here's an example:
 
@@ -88,7 +87,7 @@ alert("This is an alert message.", {
   timeout: 5000
 });
 ```
-#### Parameters
+### Parameters
 The alert function takes two parameters:
 
 - content (string, required): The content to display in the modal.
@@ -110,11 +109,11 @@ For more information on the available options, please refer to the comments in t
 
 --- 
 
-### Confirm
+## Confirm
 
 The confirm function displays a confirmation dialog with the given content and options. It is used to confirm an action before proceeding.
 
-#### Usage
+### Usage
 
 To use the Confirm function, simply import it and call it with the desired parameters. Here's an example:
 
@@ -136,7 +135,7 @@ confirm("Are you sure you want to delete this item?", {
   }
 });
 ```
-#### Parameters
+### Parameters
 
 The content parameter is the message to display in the dialog. The options parameter is an object with the following properties:
 - title: The title of the dialog.
@@ -153,11 +152,11 @@ For more information on the available options, please refer to the comments in t
 
 --- 
 
-### Prompt
+## Prompt
 
 The prompt component creates a Bootstrap 5 prompt dialog. To use it, call the prompt function with the desired message and a callback function to handle the user's input:
 
-#### Usage
+### Usage
 
 To use the prompt function, simply import it and call it with the desired parameters. Here's an example:
 ```
@@ -181,7 +180,7 @@ prompt("Enter your name:", {
 });
 ```
 
-#### Parameters
+### Parameters
 
 The prompt function takes two parameters:
 
@@ -206,11 +205,11 @@ For more information on the available options, please refer to the comments in t
 ---
 
 
-### Message
+## Message
 
 The message component creates a Bootstrap 5 message dialog. 
 
-#### Usage
+### Usage
 
 
 To use the message function, simply import it and call it with the desired parameters. Here's an example:
@@ -238,8 +237,9 @@ message("Hello world!", {
   }
 });
 ```
+> Tips:You can also use the function alias `msg`
 
-#### Parameters
+### Parameters
 It takes in two parameters: message (string) and options (object). The available options are:
 
 - position (string): The position of the message on the screen (default: "center")
@@ -261,10 +261,10 @@ For more information on the available options, please refer to the comments in t
 ---
 
 
-### Spinner
+## Spinner
 
 The spinner component creates a Bootstrap 5 spinner. 
-#### Usage
+### Usage
 
 
 To use the spinner function, simply import it and call it with the desired parameters. Here's an example:
@@ -284,7 +284,9 @@ const mySpinner = spinner(targetElement, options);
 ```
 This will create a spinner element and append it to the my-element element with the specified options.
 
-#### Parameters
+> Tips:You can also use the function alias `showLoading`
+
+### Parameters
 
 The spinner function takes two parameters:
 
@@ -312,13 +314,14 @@ import { spinnerClean } from "bs5dialog";
 
 spinnerClean();
 ```
+> Tips:You can also use the function alias `hideLoading`
 
 ----
 
-### Toast
+## Toast
 The toast function displays a toast message with customizable options.
 
-#### Usage
+### Usage
 
 To use the toast function, simply import it and call it with the desired parameters. Here's an example:
 
@@ -329,7 +332,7 @@ toast("Hello, world!", { position: "right-bottom", type: "info", timeout: 5000 }
 ```
 This will display a toast message with the text "Hello, world!" at the right bottom of the screen, with an info icon and a timeout of 5 seconds.
 
-#### Parameters
+### Parameters
 
 The toast function takes two parameters:
 
@@ -360,11 +363,11 @@ For more information on the available options, please refer to the comments in t
 ---
 
 
-### Offcanvas
+## Offcanvas
 
 The offcanvas function creates an offcanvas element with the given content and options.
 
-#### Usage
+### Usage
 
 To use the toast function, simply import it and call it with the desired parameters. Here's an example:
 
@@ -389,8 +392,7 @@ offcanvas("Hello, world!", {
 ```
 
 
-
-#### Parameters
+### Parameters
 
 The offcanvas function takes two parameters:
 
@@ -415,7 +417,7 @@ For more information on the available options, please refer to the comments in t
 
 ---
 
-### Load
+## Load
 
 The load function is used to open a modal dialog with the given content and options.
 The load function is a powerful alternative to the Bootstrap modal. It allows you to open a modal dialog with the given content and options, and provides a lot of flexibility and customization options.
@@ -426,7 +428,7 @@ the load function can indeed load a form and replace form submit. You can achiev
 Regarding reloading a remote page, you can achieve this by passing a URL as the content parameter
 Finally, if a page renders an iframe, you can load the iframe content in a modal dialog by passing the iframe's src attribute as the content parameter.
 
-#### Usage
+### Usage
 
 To use the load function, simply import it and call it with the desired parameters. Here's an example:
 
@@ -466,7 +468,7 @@ load({
 ```
 
 
-#### Parameters
+### Parameters
 
 - options (object): An object containing the following properties:
 - id (string, optional): The ID of the modal element. If not provided, a unique ID will be generated.
@@ -497,7 +499,7 @@ For more information on the available options, please refer to the comments in t
 ---
 
 
-## Internationalization
+# Internationalization
 
 bs5dialog includes internationalization support through the i18n module. To use it, import the desired language file:
 
