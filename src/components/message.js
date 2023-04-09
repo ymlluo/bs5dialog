@@ -22,7 +22,7 @@ import { Alert as bs5Alert } from "bootstrap";
  * @param {function} options.onClose - The function to call when the message is closed (default: function() {})
  * @param {function} options.onClosed - The function to call after the message is closed (default: function() {})
  */ 
-export function message(message, options) {
+export function message(message, options={}) {
   // Set default options
   const defaultOptions = {
     position: "center",
@@ -40,7 +40,8 @@ export function message(message, options) {
     onClosed: function () {}
   };
 
-  if (options.type === "link" || !options.type) {
+
+  if (options.type === "link" || options.type ==='' || options.type ===undefined) {
     options.background = "rgba(0,0,0,0.5)";
     options.textColor = "#fff";
   }
@@ -48,8 +49,8 @@ export function message(message, options) {
   if (options.type === "light" && !options.icon_class) {
     options.icon_class = "text-dark";
   }
-
   options = { ...defaultOptions, ...options };
+
 
   const overlayElement = document.createElement("div");
   if (options.backdrop) {

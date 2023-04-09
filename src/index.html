@@ -394,7 +394,9 @@
         item.onclick = function (e) {
           e.preventDefault();
           var content = item.getAttribute("data-content");
-          bs5dialog.open(content, { backdrop: false });
+          bs5dialog.load(content, { backdrop: false, onSubmitDone(submitResult){
+            console.log(submitResult)
+          } });
         };
       });
 

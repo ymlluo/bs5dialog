@@ -1,7 +1,7 @@
 import "./bs5dialog.css";
 import {replayLock } from "./libs";
 import * as i18n from "./i18n.js";
-import { open } from './components/open'
+import { load } from './components/load'
 import { offcanvas } from './components/offcanvas'
 import { alert } from './components/alert'
 import { confirm } from './components/confirm'
@@ -22,7 +22,7 @@ export {
   tabs,
   spinner,
   spinnerClean,
-  open,
+  load,
   replayLock,
   offcanvas,
 };

@@ -8,8 +8,6 @@ import { getSpinnerHtml } from "../templates";
  * @param {string} options.animation - The type of animation for the spinner.
  * @param {string} options.type - The type of spinner.
  * @param {boolean} options.backdrop - Whether or not to include a backdrop.
- * @param {string} options.icon - The icon to use for the spinner.
- * @param {string} options.icon_class - The class to apply to the icon.
  * @param {number} options.timeout - The timeout for the spinner.
  * @returns {Object} An object with the target element, spinner element, and hide and clean functions.
  */
@@ -19,8 +17,6 @@ export function spinner(element = document.body, options = {}) {
     animation: "border",
     type: "warning",
     backdrop: true,
-    icon: "dot",
-    icon_class: "",
     timeout: 3000
   };
 

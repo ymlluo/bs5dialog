@@ -8,7 +8,6 @@ import { Offcanvas as bs5Offcanvas } from "bootstrap";
  * @param {string} options.title - The title of the offcanvas.
  * @param {string} options.direction - The direction of the offcanvas.
  * @param {string} options.size - The size of the offcanvas.
- * @param {string} options.type - The type of the offcanvas.
  * @param {string} options.id - The id of the offcanvas.
  * @param {boolean} options.backdrop - Whether or not to show a backdrop.
  * @param {boolean} options.scroll - Whether or not to allow scrolling.
@@ -24,7 +23,6 @@ export function offcanvas(content, options = {}) {
     title: "",
     direction: "start",
     size: "",
-    type: "dark",
     id: "",
     backdrop: true,
     scroll: true,
