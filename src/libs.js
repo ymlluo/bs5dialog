@@ -120,7 +120,6 @@ export function makeDraggable(elmnt, handler) {
   }
 }
 
-
 /**
  * Calculates the dimensions of the overlap between two divs.
  * @param {HTMLElement} div1 - The first div element.
@@ -141,8 +140,6 @@ export function getOverlapDimensions(div1, div2) {
 
   return { overlapWidth, overlapHeight };
 }
-
-
 
 /**
  * Generates a unique dialog ID.
@@ -237,8 +234,14 @@ export function getTextClass(bgColorClassName) {
   return perceivedBrightness > 150 ? "text-black" : "text-white";
 }
 
-
-
+/**
+ * Makes a request to the specified URL using either axios or fetch.
+ * @param {string} url - The URL to make the request to.
+ * @param {string} [method="GET"] - The HTTP method to use for the request.
+ * @param {Object} [headers={}] - The headers to include in the request.
+ * @param {FormData|Object|null} [body=null] - The body of the request.
+ * @returns {Promise<Object>} - A Promise that resolves to an object containing the success status, status code, and content of the response.
+ */
 export async function makeRequest(url, method = "GET", headers = {}, body = null) {
   const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
   if (csrfTokenMeta) {
