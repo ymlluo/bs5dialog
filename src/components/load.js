@@ -1,7 +1,7 @@
-import { makeRequest, isUrlOrPath, makeDraggable, makeResizable, genDialogId, setModalWrapper, replayLock } from "../utils";
+import { makeRequest, isUrlOrPath, makeDraggable, makeResizable, genDialogId, setModalWrapper, replayLock, triggerEvent } from "../utils";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
-import { getIconHtml } from "../templates";
+import { makeIcon } from "../resource/icons";
 import { message } from "./message";
 
 /**
@@ -14,7 +14,7 @@ import { message } from "./message";
  * @param {string} options.id - The ID of the modal dialog.
  * @param {boolean} options.centered - Whether the modal dialog should be centered on the screen.
  * @param {boolean} options.scrollable - Whether the modal dialog should be scrollable.
- * @param {boolean} options.fullscreen - Whether the modal dialog should be fullscreen.
+ * @param {boolean} options.maximize - Whether the modal dialog should be maximize.
  * @param {boolean} options.backdrop - Whether the modal dialog should have a backdrop.
  * @param {boolean} options.focus - Whether the modal dialog should be focused.
  * @param {boolean} options.keyboard - Whether the keyboard should be enabled for the modal dialog.
@@ -26,6 +26,7 @@ import { message } from "./message";
  * @param {function} options.onShown - A function to be called after the modal dialog is shown.
  * @param {function} options.onHide - A function to be called when the modal dialog is hidden.
  * @param {function} options.onHidden - A function to be called after the modal dialog is hidden.
+ * @param {boolean} options.isForm - Whether the modal dialog should be a form.
  * @param {function} options.onSubmit - A function to be called when the modal dialog is submitted.
  * @param {function} options.onSubmitSuccess - A function to be called after the modal dialog is successfully submitted.
  * @param {function} options.onSubmitError - A function to be called if there is an error submitting the modal dialog.
@@ -40,7 +41,7 @@ export async function load(content, options = {}) {
     id: "",
     centered: true,
     scrollable: true,
-    fullscreen: false,
+    maximize: false,
     backdrop: false,
     focus: true,
     keyboard: true,
@@ -52,6 +53,7 @@ export async function load(content, options = {}) {
     onShown: null,
     onHide: null,
     onHidden: null,
+    isForm: true,
     onSubmit: null,
     onSubmitSuccess: submitResult => {},
     onSubmitError: submitResult => {},
@@ -59,11 +61,12 @@ export async function load(content, options = {}) {
   };
   options = { ...defaultOptions, ...options };
   let modalElement;
-  if (document.getElementById(options.id)) {
+  if (options.id && document.getElementById(options.id)) {
     modalElement = document.getElementById(options.id);
   } else {
     modalElement = setModalWrapper();
-    modalElement.setAttribute("id", options.id || genDialogId());
+    options.id = options.id || genDialogId();
+    modalElement.setAttribute("id", options.id);
   }
 
   if (isUrlOrPath(content)) {
@@ -78,18 +81,17 @@ export async function load(content, options = {}) {
     }
   }
 
-  modalElement.innerHTML = `<div class="modal-dialog  ${options.fullscreen ? "modal-fullscreen" : "modal-" + options.size} ${
+  modalElement.innerHTML = `<div class="modal-dialog  ${options.maximize ? "modal-fullscreen" : "modal-" + options.size} ${
     options.centered ? "modal-dialog-centered" : ""
   } ${options.scrollable ? "modal-dialog-scrollable" : ""}" role="document">
     <div class="modal-content shadow">
     <div class="modal-status bg-${options.type}"></div>
        <div class="modal-header">
           <h5 class="modal-title">${options.title}</h5>
-          ${getIconHtml("fullscreen-exit", "btn-fullscreen-exit btn-fullscreen-toggle " + (options.fullscreen ? "" : "d-none"), "1rem")}
-          ${getIconHtml("fullscreen", "btn-fullscreen btn-fullscreen-toggle " + (options.fullscreen ? "d-none" : ""), "1rem")}
+          <div class='modal-maximize-toggle'></div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
        </div>
-       <div class="modal-body" ${options.scrollable?"style='min-height:30vh'":""}>
+       <div class="modal-body" ${options.scrollable ? "style='height:60vh'" : ""}>
           ${content}
        </div>
        <div class="modal-footer d-none">
@@ -108,13 +110,15 @@ export async function load(content, options = {}) {
   });
   modalInstance.show();
 
-  modalElement.addEventListener("show.bs.modal", () => {
+  modalElement.addEventListener("show.bs.modal", function () {
+    triggerEvent(modalElement, "bs5:dialog:show", { options: options });
     if (typeof options.onShow === "function") {
       options.onShow();
     }
   });
-  //hide form submit button and replace to btn-ok
-  modalElement.addEventListener("shown.bs.modal", () => {
+  modalElement.addEventListener("shown.bs.modal", function () {
+    triggerEvent(modalElement, "bs5:dialog:shown", { options: options });
+
     if (options.backdrop === false) {
       if (document.querySelector(".modal-backdrop")) {
         document.querySelector(".modal-backdrop").remove();
@@ -132,52 +136,63 @@ export async function load(content, options = {}) {
       options.onShown(modalElement);
     }
   });
-
   modalElement.addEventListener("hide.bs.modal", function () {
-    modalElement.classList.add("hide");
-    setTimeout(function () {
-      modalElement.classList.remove("show", "hide");
-    }, 300);
+    triggerEvent(modalElement, "bs5:dialog:hide", { options: options });
     if (typeof options.onHide === "function") {
       options.onHide();
     }
   });
 
   modalElement.addEventListener("hidden.bs.modal", function () {
+    triggerEvent(modalElement, "bs5:dialog:hidden", { options: options });
     if (typeof options.onHidden === "function") {
       options.onHidden();
     }
   });
 
+
+  const iconMinimizeElement = makeIcon(
+    "bs5-minimize",
+    "btn-minimize btn-maximize-toggle " + (options.maximize ? "" : "d-none"),
+    "width:1.438rem;height:1.438rem;cursor:pointer;"
+  );
+  const iconMaximizeElement = makeIcon(
+    "bs5-maximize",
+    "btn-maximize btn-maximize-toggle " + (options.maximize ? "d-none" : ""),
+    "width:1.438rem;height:1.438rem;cursor:pointer;"
+  );
+  modalElement.querySelector(".modal-maximize-toggle").appendChild(iconMinimizeElement);
+  modalElement.querySelector(".modal-maximize-toggle").appendChild(iconMaximizeElement);
   var modalDialog = modalElement.querySelector(".modal-dialog");
-  modalElement.querySelectorAll(".btn-fullscreen-toggle").forEach(function (el) {
+  modalElement.querySelectorAll(".btn-maximize-toggle").forEach(function (el) {
     el.addEventListener("click", function () {
-      console.log(this);
-      if (this.classList.contains("btn-fullscreen")) {
+      if (this.classList.contains("btn-maximize")) {
+        triggerEvent(modalElement, "bs5:dialog:maximize", { options: options });
         //fix drag
         modalDialog.parentElement.style.top = 0;
         modalDialog.parentElement.style.left = 0;
         //fix resize
         modalDialog.querySelector(".modal-content").style.width = null;
         modalDialog.querySelector(".modal-content").style.height = null;
+        console.log(modalDialog);
         modalDialog.classList.add("modal-fullscreen");
         modalDialog.classList.remove("modal-" + options.size);
         this.classList.add("d-none");
-        modalElement.querySelector(".btn-fullscreen-exit").classList.remove("d-none");
+        modalElement.querySelector(".btn-minimize").classList.remove("d-none");
       }
 
-      if (this.classList.contains("btn-fullscreen-exit")) {
-        modalDialog.parentElement.classList.remove("modal-fullscreen");
+      if (this.classList.contains("btn-minimize")) {
+        triggerEvent(modalElement, "bs5:dialog:minimize", { options: options });
         modalDialog.classList.remove("modal-fullscreen");
         modalDialog.classList.add("modal-" + options.size);
         this.classList.add("d-none");
-        modalElement.querySelector(".btn-fullscreen").classList.remove("d-none");
+        modalElement.querySelector(".btn-maximize").classList.remove("d-none");
       }
     });
   });
 
   const form = modalElement.querySelector("form");
-  if (form) {
+  if (options.isForm && form) {
     modalElement.querySelector(".modal-footer").classList.remove("d-none");
     const submitBtn = form.querySelector('button[type="submit"]');
     const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
@@ -187,21 +202,57 @@ export async function load(content, options = {}) {
     okBtn.addEventListener("click", function (event) {
       event.preventDefault();
       replayLock(okBtn);
+      triggerEvent(modalElement, "bs5:dialog:form:submit", {
+        options: options,
+        formEl: form,
+        formAction: form.action,
+        formMethod: form.method,
+        formData: new FormData(form)
+      });
       if (typeof options.onSubmit === "function") {
         options.onSubmit(modalElement);
       }
 
       makeRequest(form.action, form.method, {}, new FormData(form))
         .then(submitResult => {
+          triggerEvent(modalElement, "bs5:dialog:form:submit:complete", {
+            options: options,
+            formEl: form,
+            formAction: form.action,
+            formMethod: form.method,
+            formData: new FormData(form),
+            submitResult: submitResult
+          });
+          if (typeof options.onSubmitDone === "function") {
+            options.onSubmitDone(submitResult);
+          }
           if (submitResult.isSuccess && typeof options.onSubmitSuccess === "function") {
-            options.onSubmitSuccess(submitResult);
+            triggerEvent(modalElement, "bs5:dialog:form:submit:success", {
+              options: options,
+              formEl: form,
+              formAction: form.action,
+              formMethod: form.method,
+              formData: new FormData(form),
+              submitResult: submitResult
+            });
+            if (typeof options.onSubmitSuccess === "function") {
+              options.onSubmitSuccess(submitResult);
+            }
+
             modalInstance.hide();
           } else if (!submitResult.isSuccess && typeof options.onSubmitError === "function") {
-            options.onSubmitError(submitResult);
+            triggerEvent(modalElement, "bs5:dialog:form:submit:error", {
+              options: options,
+              formEl: form,
+              formAction: form.action,
+              formMethod: form.method,
+              formData: new FormData(form),
+              submitResult: submitResult
+            });
+            if (typeof options.onSubmitError === "function") {
+              options.onSubmitError(submitResult);
+            }
             message(submitResult.content);
-          }
-          if (typeof options.onSubmitError === "function") {
-            options.onSubmitDone(submitResult);
           }
         })
         .catch(error => {
@@ -209,4 +260,10 @@ export async function load(content, options = {}) {
         });
     });
   }
+
+    return {
+    el: modalElement,
+    content: content,
+    options: options
+  };
 }

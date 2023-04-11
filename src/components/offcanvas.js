@@ -1,4 +1,4 @@
-import { getOverlapDimensions, genDialogId } from "../utils.js";
+import { getOverlapDimensions, genDialogId ,triggerEvent} from "../utils.js";
 import { Offcanvas as bs5Offcanvas } from "bootstrap";
 
 /**
@@ -36,15 +36,17 @@ export function offcanvas(content, options = {}) {
   options = { ...defaultOptions, ...options };
 
   options.onStart();
-  const dialogId = options.id || genDialogId();
+
   let offcanvasElement;
-  if (document.getElementById(dialogId)) {
-    offcanvasElement = document.getElementById(dialogId);
+  if (options.id && document.getElementById(options.id)) {
+    offcanvasElement = document.getElementById(options.id);
   } else {
     offcanvasElement = document.createElement("div");
+    options.id = options.id || genDialogId();
+    offcanvasElement.setAttribute("id", options.id);
   }
   offcanvasElement.classList.add("offcanvas", "bs5dialog-offcanvas", "offcanvas-" + options.direction);
-  offcanvasElement.setAttribute("id", dialogId);
+
   offcanvasElement.setAttribute("tabindex", "-1");
   offcanvasElement.setAttribute("role", "dialog");
   if (options.scroll === true || options.scroll === "true") {
@@ -62,7 +64,7 @@ export function offcanvas(content, options = {}) {
   offcanvasElement.innerHTML = `
     <div class="offcanvas-header">
       <h5 class="offcanvas-title">${options.title || ""}</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#${dialogId}" aria-label="Close"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#${options.id}" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
       ${content}
@@ -74,30 +76,50 @@ export function offcanvas(content, options = {}) {
   }
 
   document.body.appendChild(offcanvasElement);
-  const oc = bs5Offcanvas.getOrCreateInstance(offcanvasElement);
-  oc.toggle();
+  const offcanvasInstance = bs5Offcanvas.getOrCreateInstance(offcanvasElement);
+  offcanvasInstance.toggle();
 
   const accordionDirection = options.direction === "start" ? "left" : options.direction === "end" ? "right" : options.direction || "";
   console.log(accordionDirection);
   const container = document.querySelector(options.container || "body");
 
   let prevContainerPanding = document.body.style.getPropertyValue("padding-" + accordionDirection);
-  offcanvasElement.addEventListener("shown.bs.offcanvas", () => {
+
+
+  offcanvasElement.addEventListener("show.bs.offcanvas", function () {
+    triggerEvent(offcanvasElement, "bs5:dialog:show", { options: options });
+  });
+
+  offcanvasElement.addEventListener("shown.bs.offcanvas", function () {
+    triggerEvent(offcanvasElement, "bs5:dialog:shown", { options: options });
     if (options.accordion) {
       let OverlapDimensions = getOverlapDimensions(offcanvasElement, container);
-      console.log(OverlapDimensions);
       const paddingSize = ["left", "right"].includes(accordionDirection)
         ? OverlapDimensions.overlapWidth + "px"
         : OverlapDimensions.overlapHeight + "px";
-      console.log(accordionDirection, paddingSize);
       container.style.setProperty("padding-" + accordionDirection, paddingSize);
     }
-    options.onShown(offcanvasElement);
+    if (typeof options.onShown === "function") {
+      options.onShown(offcanvasElement);
+    }
   });
-  offcanvasElement.addEventListener("hidden.bs.offcanvas", () => {
-    options.onHidden(offcanvasElement);
+
+  offcanvasElement.addEventListener("hide.bs.offcanvas", function () {
+    triggerEvent(offcanvasElement, "bs5:dialog:hide", { options: options });
+  });
+  offcanvasElement.addEventListener("hidden.bs.offcanvas", function () {
+    triggerEvent(offcanvasElement, "bs5:dialog:hidden", { options: options });
     if (options.accordion) {
       container.style.setProperty("padding-" + accordionDirection, prevContainerPanding);
     }
+    if (typeof options.onHidden === "function") {
+      options.onHidden(offcanvasElement);
+    }
   });
+
+  return {
+    el: offcanvasElement,
+    content: content,
+    options: options
+  };
 }

@@ -361,6 +361,7 @@ export function triggerEvent(element, eventName = "", detail = {}) {
   element.dispatchEvent(event);
 }
 
+
 export default {
   getTargetElement,
   isUrlOrPath,
