@@ -1,4 +1,4 @@
-import { getTargetElement, replayLock } from "../libs";
+import { getTargetElement, replayLock } from "../utils";
 import { getSpinnerHtml } from "../templates";
 
 /**

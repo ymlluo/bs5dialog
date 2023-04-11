@@ -1,4 +1,4 @@
-import { makeRequest, isUrlOrPath, makeDraggable, makeResizable, genDialogId, setModalWrapper, replayLock } from "../libs";
+import { makeRequest, isUrlOrPath, makeDraggable, makeResizable, genDialogId, setModalWrapper, replayLock } from "../utils";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
 import { getIconHtml } from "../templates";

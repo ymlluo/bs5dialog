@@ -1,4 +1,4 @@
-import {getMaxZIndex } from "../libs";
+import {getMaxZIndex } from "../utils";
 import { getIconHtml } from "../templates.js";
 import { Alert as bs5Alert } from "bootstrap";
 

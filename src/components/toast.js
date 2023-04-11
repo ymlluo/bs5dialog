@@ -1,4 +1,4 @@
-import { getMaxZIndex,getTextClass } from "../libs";
+import { getMaxZIndex,getTextClass } from "../utils";
 import { getIconHtml } from "../templates.js";
 import { Toast as bs5Toast } from "bootstrap";
 

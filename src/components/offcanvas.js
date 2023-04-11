@@ -1,4 +1,4 @@
-import { getOverlapDimensions, genDialogId } from "../libs.js";
+import { getOverlapDimensions, genDialogId } from "../utils.js";
 import { Offcanvas as bs5Offcanvas } from "bootstrap";
 
 /**
