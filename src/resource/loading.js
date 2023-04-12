@@ -25,7 +25,6 @@ export function makeSpinner(spinnerName, spinnerClass, spinnerStyle) {
   div.innerHTML = htmlString.trim();
   // Change this to div.childNodes to support multiple top-level nodes.
   let spinnerElement
-  console.log(div.firstChild);
   if (div.firstChild && div.firstChild instanceof Element) {
      spinnerElement = div.firstChild;
   } else {

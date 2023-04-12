@@ -5,7 +5,10 @@ import { makeSpinner } from "../resource/loading";
  * Creates a spinner element and appends it to the target element.
  * @param {HTMLElement} element - The target element to append the spinner to.
  * @param {Object} options - The options for the spinner.
- * @param {string} options.animation - The type of animation for the spinner.
+ * @param {string} options.animation - The animation for the spinner.
+ * @param {string} options.animationClass - The class of animation for the spinner.
+ * @param {string} options.animationStyle - The style of animation for the spinner.
+ * @param {string} options.text - The text of spinner.
  * @param {string} options.type - The type of spinner.
  * @param {boolean} options.backdrop - Whether or not to include a backdrop.
  * @param {number} options.timeout - The timeout for the spinner.
@@ -14,9 +17,9 @@ import { makeSpinner } from "../resource/loading";
 
 export function spinner(element = document.body, options = {}) {
   const defaultOptions = {
-    loader: "",
-    loaderClass: "text-warning",
-    loaderStyle: "",
+    animation: "border",
+    animationClass: "text-warning",
+    animationStyle: "",
     text: "Please wait...",
     type: "",
     backdrop: true,
@@ -35,6 +38,9 @@ export function spinner(element = document.body, options = {}) {
     targetElement.querySelector(".bs5-modal-spinner").remove();
   }
   targetElement.style.position = "relative";
+
+  const targetRect = targetElement.getBoundingClientRect();
+
   const overlay = document.createElement("div");
   overlay.style.position = "absolute";
   overlay.style.top = 0;
@@ -56,18 +62,22 @@ export function spinner(element = document.body, options = {}) {
 
   triggerEvent(targetElement, "bs5:dialog:show", { options: options, el: targetElement });
 
-  let loader = makeSpinner(options.loader, options.loaderClass, options.loaderStyle);
-  overlay.appendChild(loader);
+  let animation = makeSpinner(options.animation, options.animationClass, options.animationStyle);
+  const animationRect = animation.getBoundingClientRect();
+
+  overlay.appendChild(animation);
 
   if (options.text) {
-    const loaderRect = loader.getBoundingClientRect();
     let overlayText = document.createElement("div");
     overlayText.style.position = "relative";
     overlayText.style.textAlign = "center";
     overlayText.style.color = "#333";
-    overlayText.style.bottom = "-" + loaderRect.height + "px";
+    overlayText.style.bottom = "-" + animationRect.height + "px";
     overlayText.innerText = options.text;
     overlay.appendChild(overlayText);
+    if (targetRect.height <= 40) {
+      animation.remove();
+    }
   }
 
   let typeColor = getComputedStyle(document.documentElement).getPropertyValue("--bs-" + options.type + "-rgb");
@@ -75,6 +85,7 @@ export function spinner(element = document.body, options = {}) {
   let preCursor = targetElement.style.getPropertyValue("cursor");
   targetElement.appendChild(overlay);
   targetElement.style.cursor = "wait";
+
   let targetLockTimer = replayLock(targetElement, options.timeout);
 
   triggerEvent(targetElement, "bs5:dialog:shown", { options: options, el: targetElement });

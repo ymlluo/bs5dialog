@@ -3,14 +3,18 @@
  * @type {Object.<string, string>}
  */
 export const BS5_DIALOG_DEFAULT_ICONS = {
-  'bs5-check': `<svg xmlns="http://www.w3.org/2000/svg" class="" width="48" height="48" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  'bs5-check': `<svg xmlns="http://www.w3.org/2000/svg" class="" width="100%" height="100%" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
   <path d="M5 12l5 5l10 -10"></path>
 </svg>`,
-  "bs5-circle-check": `<svg xmlns="http://www.w3.org/2000/svg" class="" width="48" height="48" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  "bs5-circle-check": `<svg xmlns="http://www.w3.org/2000/svg" class="" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
 <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
 <path d="M9 12l2 2l4 -4"></path>
+</svg>`,
+"bs5-circle-check-filled":`<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-check-filled" width="24" height="24" viewBox="0 0 24 24" stroke-width="0.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+<path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" stroke-width="0" fill="currentColor"></path>
 </svg>`,
   'bs5-square': `<svg xmlns="http://www.w3.org/2000/svg" class="" width="48" height="48" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -94,6 +98,10 @@ export const BS5_DIALOG_DEFAULT_ICONS = {
 <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
 <path d="M9 12l2 2l4 -4"></path>
 </svg>`,
+'bs5-point':`<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-point" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+<path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path>
+</svg>`
 };
 
 /**
@@ -103,7 +111,7 @@ export const BS5_DIALOG_DEFAULT_ICONS = {
  * @param {string} iconStyle - The style of the icon.
  * @returns {HTMLElement} - The icon element.
  */
-export function makeIcon(iconName, iconClass, iconStyle) {
+export function makeIcon(iconName, iconClass='', iconStyle='') {
   iconName = iconName.replace(/\s+/g, ' ');
   iconClass = iconClass.replace(/\s+/g, ' ');
   iconStyle = iconStyle.replace(/\s+/g, ' ');

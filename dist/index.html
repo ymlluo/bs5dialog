@@ -13,7 +13,7 @@
       crossorigin="anonymous" />
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script> -->
 
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
 
     <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.3.4/axios.js"></script>
 
@@ -114,17 +114,6 @@
                         <select class="form-control" name="animation" id="spinner-animation">
                           <option value="border">border</option>
                           <option value="grow">grow</option>
-                          <option value="plane">plane</option>
-                          <option value="chase">chase</option>
-                          <option value="bounce">bounce</option>
-                          <option value="wave">wave</option>
-                          <option value="pulse">pulse</option>
-                          <option value="flow">flow</option>
-                          <option value="swing">swing</option>
-                          <option value="circle">circle</option>
-                          <option value="grid">grid</option>
-                          <option value="fold">fold</option>
-                          <option value="wander">wander</option>
                         </select>
                       </div>
                     </div>
@@ -132,7 +121,7 @@
                     <div class="mb-3 row">
                       <label class="col-3 col-form-label">timeout</label>
                       <div class="col">
-                        <input type="number" class="form-control" value="0" id="spinner-timeout" />
+                        <input type="number" class="form-control" value="2000" id="spinner-timeout" />
                         <small class="form-hint"></small>
                       </div>
                     </div>
@@ -152,22 +141,6 @@
                       </div>
                     </div>
                   </form>
-                </div>
-                <div class="col-sm-6">
-                  <button class="show_loading btn mb-2" data-animal="border">border</button>
-                  <button class="show_loading btn mb-2" data-animal="grow">grow</button>
-                  <button class="show_loading btn mb-2" data-animal="plane">plane</button>
-                  <button class="show_loading btn mb-2" data-animal="chase">chase</button>
-                  <button class="show_loading btn mb-2" data-animal="bounce">bounce</button>
-                  <button class="show_loading btn mb-2" data-animal="wave">wave</button>
-                  <button class="show_loading btn mb-2" data-animal="pulse">pulse</button>
-                  <button class="show_loading btn mb-2" data-animal="flow">flow</button>
-                  <button class="show_loading btn mb-2" data-animal="swing">swing</button>
-                  <button class="show_loading btn mb-2" data-animal="circle">circle</button>
-                  <button class="show_loading btn mb-2" data-animal="grid">grid</button>
-                  <button class="show_loading btn mb-2" data-animal="fold">fold</button>
-                  <button class="show_loading btn mb-2" data-animal="wander">wander</button>
-                  <button class="form-btn-loading btn mb-2" data-animal="">button</button>
                 </div>
               </div>
             </div>
@@ -308,13 +281,6 @@
           });
         };
       });
-      document.querySelectorAll(".show_loading").forEach(function (item) {
-        item.addEventListener("click", () => {
-          var animationName = item.getAttribute("data-animal");
-          bs5dialog.spinnerClean("#loading-form");
-          bs5dialog.spinner("#loading-form", { animation: animationName, timeout: 5000 });
-        });
-      });
 
       document.querySelector(".btn-show-spinner").addEventListener("click", function () {
         var form = document.getElementById("loading-form");
@@ -326,16 +292,13 @@
         bs5dialog.spinner("#loading-form", { type: type, animation: animation, timeout: timeout, backdrop: backdrop });
       });
 
-      document.querySelector(".form-btn-loading").addEventListener("click", function () {
-        bs5dialog.spinner("#loading-form button", { type: '',animation: "border", timeout: 0 });
-      });
 
       document.querySelectorAll(".btn-show-toast").forEach(function (item) {
         item.onclick = function () {
           var position = item.getAttribute("data-position");
           var type = item.getAttribute("data-type");
           var color = item.getAttribute("data-text-color");
-          bs5dialog.toast("hello world!", { title: "New Message", subtitle: Date(), type: type, position: position, timeout: 10000 });
+          bs5dialog.toast("Your post has been archived!", { title: "New Message", subtitle: Date(), type: type, position: position, timeout: 1000 });
         };
       });
 
@@ -343,7 +306,7 @@
         item.onclick = function () {
           var position = item.getAttribute("data-position");
           var type = item.getAttribute("data-type");
-          bs5dialog.message("hello world!", position ? { type: type, position: position, timeout: 10000 } : {});
+          bs5dialog.message("Your post has been archived!", position ? { type: type, position: position, timeout: 1000 } : {});
         };
       });
 

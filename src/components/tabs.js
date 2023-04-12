@@ -1,5 +1,5 @@
-import { setModalWrapper, replayLock } from "../utils";
-import { getIconHtml } from "../templates.js";
+
+
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
 

@@ -1,4 +1,4 @@
-@import "spinkit/spinkit.css";
+
 .bs5-dialog-msg {
   position: fixed;
   animation-name: bs5MsgBoxShow;
@@ -252,3 +252,4 @@
   padding-top: 0;
   padding-bottom: 0.75rem;
 }
+
