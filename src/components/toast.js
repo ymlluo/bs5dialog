@@ -1,5 +1,5 @@
-import { getMaxZIndex,getTextClass } from "../utils";
-import { getIconHtml } from "../templates.js";
+import { getMaxZIndex, getTextClass } from "../utils";
+import { makeIcon } from "../resource/icons";
 import { Toast as bs5Toast } from "bootstrap";
 
 /**
@@ -15,10 +15,9 @@ import { Toast as bs5Toast } from "bootstrap";
  * @param {string} options.background - The background color of the toast.
  * @param {string} options.textColor - The text color of the toast.
  * @param {string} options.fontsize - The font size of the toast.
- * @param {number} options.opacity - The opacity of the toast.
- * @param {boolean} options.backdrop - Whether or not to display a backdrop behind the toast.
  * @param {string} options.icon - The icon to display on the toast.
- * @param {string} options.icon_class - The class to apply to the icon on the toast.
+ * @param {string} options.iconClass - The class to apply to the icon on the toast.
+ * @param {string} options.iconStyle - The style to apply to the icon on the toast.
  * @param {number} options.timeout - The amount of time (in milliseconds) to display the toast.
  * @param {function} options.onShow - A function to call when the toast is shown.
  * @param {function} options.onShown - A function to call after the toast is shown.
@@ -33,15 +32,14 @@ export function toast(message, options) {
     subtitle: "",
     position: "bottom-right",
     type: "success",
-    border:0,
+    border: 0,
     closeBtn: false,
     background: "#fff",
     textColor: "",
     fontsize: "",
-    opacity: 1,
-    backdrop: false,
     icon: "dot",
-    icon_class: "",
+    iconClass: "",
+    iconStyle: "",
     timeout: 3000,
     onShow: function () {},
     onShown: function () {},
@@ -52,23 +50,33 @@ export function toast(message, options) {
   options = { ...defaultOptions, ...options };
 
   const toastElement = document.createElement("div");
-  toastElement.classList.add("toast", "bs5-dialog-msg", "bs5-dialog-msg-" + options.position,'border-'+options.border);
+  toastElement.classList.add("toast", "bs5-dialog-msg", "bs5-dialog-msg-" + options.position, "border-" + options.border);
   toastElement.setAttribute("role", "alert");
-  toastElement.style.zIndex=getMaxZIndex() + 1;
+  toastElement.style.zIndex = getMaxZIndex() + 1;
   // Create toast body element
   const toastBodyElement = document.createElement("div");
   toastBodyElement.classList.add("toast-body");
   toastBodyElement.innerHTML = message;
 
+  if (options.icon) {
+    //make icon
+    const $iconElement = makeIcon(options.icon, options.iconClass, options.iconStyle);
+    //todo 
+  }
+
   // Add header and body to toast element
   // Create toast header element
   if (options.title) {
     const toastHeaderElement = document.createElement("div");
-    let textColor = getTextClass('bg-'+options.type)
-    toastHeaderElement.classList.add("toast-header", `bg-${options.type}`,textColor);
-    toastHeaderElement.innerHTML = `${options.icon_custom || getIconHtml(options.icon, 'text-red '+ (options.icon_class || textColor),'1rem') || ""}<strong class="me-auto">${
-      options.title || ''
-    }</strong> <small class="text-truncate" style="max-width: 50%;">${options.subtitle}</small><button type="button" class="btn-close ${textColor==='text-white'?"btn-close-white":""}" data-bs-dismiss="toast" aria-label="Close"></button>`;
+    let textColor = getTextClass("bg-" + options.type);
+    toastHeaderElement.classList.add("toast-header", `bg-${options.type}`, textColor);
+    toastHeaderElement.innerHTML = `${
+      options.icon_custom || getIconHtml(options.icon, "text-red " + (options.icon_class || textColor), "1rem") || ""
+    }<strong class="me-auto">${options.title || ""}</strong> <small class="text-truncate" style="max-width: 50%;">${
+      options.subtitle
+    }</small><button type="button" class="btn-close ${
+      textColor === "text-white" ? "btn-close-white" : ""
+    }" data-bs-dismiss="toast" aria-label="Close"></button>`;
     toastElement.appendChild(toastHeaderElement);
   }
 
@@ -81,7 +89,7 @@ export function toast(message, options) {
   if (options.fontsize) {
     toastElement.style.fontSize = options.fontsize;
   }
-  
+
   toastElement.appendChild(toastBodyElement);
   document.body.appendChild(toastElement);
 
@@ -109,5 +117,4 @@ export function toast(message, options) {
       options.onShown(event);
     }
   });
-
 }

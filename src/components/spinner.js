@@ -1,5 +1,5 @@
-import { getTargetElement, replayLock } from "../utils";
-import { getSpinnerHtml } from "../templates";
+import { getMaxZIndex, getTargetElement, replayLock, triggerEvent } from "../utils";
+import { makeSpinner } from "../resource/loading";
 
 /**
  * Creates a spinner element and appends it to the target element.
@@ -14,7 +14,10 @@ import { getSpinnerHtml } from "../templates";
 
 export function spinner(element = document.body, options = {}) {
   const defaultOptions = {
-    animation: "border",
+    loader: "",
+    loaderClass: "text-warning",
+    loaderStyle: "",
+    text: "Please wait...",
     type: "",
     backdrop: true,
     timeout: 2000
@@ -32,53 +35,64 @@ export function spinner(element = document.body, options = {}) {
     targetElement.querySelector(".bs5-modal-spinner").remove();
   }
   targetElement.style.position = "relative";
-  var targetZIndex = targetElement.style.zIndex;
+  const overlay = document.createElement("div");
+  overlay.style.position = "absolute";
+  overlay.style.top = 0;
+  overlay.style.left = 0;
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.display = "flex";
+  overlay.style.flexDirection = "column";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.pointerEvents = "auto";
+  overlay.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
+  overlay.style.setProperty("z-index", getMaxZIndex() + 1);
 
-  const spinnerElement = document.createElement("div");
-  spinnerElement.style.position = "absolute";
-  spinnerElement.style.top = 0;
-  spinnerElement.style.left = 0;
-  spinnerElement.style.width = "100%";
-  spinnerElement.style.height = "100%";
-  spinnerElement.style.display = "flex";
-  spinnerElement.style.justifyContent = "center";
-  spinnerElement.style.backgroundColor = "rgba(0, 0, 0, 0.4)";
-  spinnerElement.style.setProperty("z-index", targetZIndex + 1);
-  
-  spinnerElement.classList.add("bs5-modal-spinner");
   if (options.backdrop === false || options.backdrop === "false") {
-    spinnerElement.style.backgroundColor = "transparent";
-    spinnerElement.style.pointerEvents = "none";
+    overlay.style.backgroundColor = "transparent";
+    overlay.style.pointerEvents = "none";
   }
 
-  if (options.animation === "border" || options.animation == "grow") {
-    spinnerElement.innerHTML = `<div class="spinner-${options.animation} text-${options.type}" role="status"><span class="visually-hidden">Loading...</span></div>`;
-  } else {
-    spinnerElement.classList.add("text-white");
-    spinnerElement.innerHTML = getSpinnerHtml(options.animation);
+  triggerEvent(targetElement, "bs5:dialog:show", { options: options, el: targetElement });
+
+  let loader = makeSpinner(options.loader, options.loaderClass, options.loaderStyle);
+  overlay.appendChild(loader);
+
+  if (options.text) {
+    const loaderRect = loader.getBoundingClientRect();
+    let overlayText = document.createElement("div");
+    overlayText.style.position = "relative";
+    overlayText.style.textAlign = "center";
+    overlayText.style.color = "#333";
+    overlayText.style.bottom = "-" + loaderRect.height + "px";
+    overlayText.innerText = options.text;
+    overlay.appendChild(overlayText);
   }
 
   let typeColor = getComputedStyle(document.documentElement).getPropertyValue("--bs-" + options.type + "-rgb");
-  let skColor = typeColor ? "rgb(" + typeColor + ")" : options.backdrop ? "#fff" : "#333";
-  const rootStyles = `:root {--sk-color: ${skColor};--sk-size: ${options.size || "40px"};} `;
-
-  document.head.insertAdjacentHTML("beforeend", `<style>${rootStyles}</style>`);
 
   let preCursor = targetElement.style.getPropertyValue("cursor");
-  targetElement.appendChild(spinnerElement);
+  targetElement.appendChild(overlay);
   targetElement.style.cursor = "wait";
   let targetLockTimer = replayLock(targetElement, options.timeout);
+
+  triggerEvent(targetElement, "bs5:dialog:shown", { options: options, el: targetElement });
+
   let timer;
   if (options.timeout > 0) {
+    triggerEvent(targetElement, "bs5:dialog:hide", { options: options, el: targetElement });
+
     timer = setTimeout(() => {
       hidespinner();
     }, options.timeout);
   }
-  var hidespinner = function () {
-    spinnerElement.remove();
+  var hidespinner = function (el = targetElement) {
+    overlay.remove();
     targetElement.style.cursor = preCursor;
     clearTimeout(timer);
     clearTimeout(targetLockTimer);
+    triggerEvent(targetElement, "bs5:dialog:shown", { options: options, el: targetElement });
   };
 
   return {
@@ -86,12 +100,12 @@ export function spinner(element = document.body, options = {}) {
      * The target element to append the spinner to.
      * @type {HTMLElement}
      */
-    targetElement: targetElement,
+    el: targetElement,
     /**
      * The spinner element.
      * @type {HTMLElement}
      */
-    spinnerElement: spinnerElement,
+    overlay: overlay,
     /**
      * Hides the spinner.
      */
@@ -104,7 +118,7 @@ export function spinner(element = document.body, options = {}) {
     clean() {
       spinnerClean();
     }
-  }
+  };
 }
 
 /**
@@ -120,7 +134,5 @@ export function spinnerClean() {
   }
 }
 
-export const showLoading =spinner
-export const hideLoading = spinnerClean
-
-
+export const showLoading = spinner;
+export const hideLoading = spinnerClean;

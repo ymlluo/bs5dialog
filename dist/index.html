@@ -132,7 +132,7 @@
                     <div class="mb-3 row">
                       <label class="col-3 col-form-label">timeout</label>
                       <div class="col">
-                        <input type="number" class="form-control" value="3000" id="spinner-timeout" />
+                        <input type="number" class="form-control" value="0" id="spinner-timeout" />
                         <small class="form-hint"></small>
                       </div>
                     </div>
@@ -327,7 +327,7 @@
       });
 
       document.querySelector(".form-btn-loading").addEventListener("click", function () {
-        bs5dialog.spinner("#loading-form button", { animation: "border", timeout: 1500 });
+        bs5dialog.spinner("#loading-form button", { type: '',animation: "border", timeout: 0 });
       });
 
       document.querySelectorAll(".btn-show-toast").forEach(function (item) {

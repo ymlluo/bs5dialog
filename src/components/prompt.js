@@ -1,4 +1,4 @@
-import { setModalWrapper, replayLock ,triggerEvent} from "../utils";
+import { setModalWrapper, replayLock ,triggerEvent,genDialogId} from "../utils";
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -48,7 +48,7 @@ export function prompt(content, options = {}) {
     <div class="modal-dialog modal-${options.size} modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-status bg-${options.type}"></div>
-      <div class="modal-body text-center py-3">
+      <div class="modal-body text-center py-4">
       <div class='modal-icon'></div>
         <h5 class="modal-title mb-2">${options.title}</h5>
         <div class="text-muted mb-2">${content}</div>

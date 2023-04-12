@@ -17,12 +17,20 @@ export const BS5_DIALOG_DEFAULT_SPINNERS = {
  * @returns {HTMLElement} - The spinner element.
  */
 export function makeSpinner(spinnerName, spinnerClass, spinnerStyle) {
-
   const htmlString = BS5_DIALOG_DEFAULT_SPINNERS[spinnerName] || spinnerName;
   const div = document.createElement("div");
+  if (!spinnerName) {
+    return div;
+  }
   div.innerHTML = htmlString.trim();
   // Change this to div.childNodes to support multiple top-level nodes.
-  const spinnerElement = div.firstChild;
+  let spinnerElement
+  console.log(div.firstChild);
+  if (div.firstChild && div.firstChild instanceof Element) {
+     spinnerElement = div.firstChild;
+  } else {
+     spinnerElement = div;
+  }
 
   // add spinnerClass to the spinner element
   if (spinnerClass.trim()) {

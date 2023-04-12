@@ -1,8 +1,6 @@
-import {getMaxZIndex } from "../utils";
+import { getMaxZIndex } from "../utils";
 import { getIconHtml } from "../templates.js";
 import { Alert as bs5Alert } from "bootstrap";
-
-
 
 /**
  * Displays a message with customizable options
@@ -21,8 +19,8 @@ import { Alert as bs5Alert } from "bootstrap";
  * @param {number} options.timeout - The time in milliseconds before the message disappears (default: 3000)
  * @param {function} options.onClose - The function to call when the message is closed (default: function() {})
  * @param {function} options.onClosed - The function to call after the message is closed (default: function() {})
- */ 
-export function message(message, options={}) {
+ */
+export function message(message, options = {}) {
   // Set default options
   const defaultOptions = {
     position: "center",
@@ -40,8 +38,7 @@ export function message(message, options={}) {
     onClosed: function () {}
   };
 
-
-  if (options.type === "link" || options.type ==='' || options.type ===undefined) {
+  if (options.type === "link" || options.type === "" || options.type === undefined) {
     options.background = "rgba(0,0,0,0.5)";
     options.textColor = "#fff";
   }
@@ -50,7 +47,6 @@ export function message(message, options={}) {
     options.icon_class = "text-dark";
   }
   options = { ...defaultOptions, ...options };
-
 
   const overlayElement = document.createElement("div");
   if (options.backdrop) {
@@ -62,13 +58,7 @@ export function message(message, options={}) {
 
   // Create alert element
   const alertElement = document.createElement("div");
-  alertElement.classList.add(
-    "alert",
-    `alert-${options.type}`,
-    "bs5-dialog-msg",
-    'text-center'
-  );
-
+  alertElement.classList.add("alert", `alert-${options.type}`, "bs5-dialog-msg", "text-center");
 
   const positionClass = `bs5-dialog-msg-${options.position}`;
   alertElement.classList.add(positionClass);
@@ -118,5 +108,4 @@ export function message(message, options={}) {
   }
 }
 
-
-export const msg = message
+export const msg = message;
