@@ -249,6 +249,7 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
   }
 
   if (typeof axios !== "undefined") {
+
     axios.defaults.crossDomain = true;
     axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
     // Use axios if it's available
@@ -272,11 +273,22 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
       }
 
       const response = await axios(axiosConfig);
-      return {
-        isSuccess: true,
-        statusCode: response.status,
-        content: response.data
-      };
+      const contentType = response.headers["content-type"];
+      if (contentType && contentType.indexOf("text/html") !== -1) {
+        const data = await response.data;
+        return {
+          isSuccess: response.status >= 200 && response.status < 300,
+          statusCode: response.status,
+          content: data
+        };
+      } else {
+        const data = await response.data;
+        return {
+          isSuccess: response.status >= 200 && response.status < 300,
+          statusCode: response.status,
+          content: data
+        };
+      }
     } catch (error) {
       return {
         isSuccess: false,
@@ -284,13 +296,16 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
         content: error.response?.data || error.message
       };
     }
+    
+
+
   } else {
     // Use fetch if axios is not available
     const options = {
       method,
       headers: {
-        ...headers,
-        Accept: "application/json"
+        "Content-Type":"application/json",
+        ...headers
       },
       credentials: "include" // Allow cookies to be sent and received for cross-domain requests
     };
@@ -302,18 +317,27 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
       } else {
         // If body is not a FormData object, assume it's JSON data
         options.body = JSON.stringify(body);
-        options.headers["Content-Type"] = "application/json";
       }
     }
 
     try {
       const response = await fetch(url, options);
-      const data = await response.json();
-      return {
-        isSuccess: response.ok,
-        statusCode: response.status,
-        content: data
-      };
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("text/html") !== -1) {
+        const data = await response.text();
+        return {
+          isSuccess: response.ok,
+          statusCode: response.status,
+          content: data
+        };
+      } else {
+        const data = await response.json();
+        return {
+          isSuccess: response.ok,
+          statusCode: response.status,
+          content: data
+        };
+      }
     } catch (error) {
       return {
         isSuccess: false,
@@ -321,6 +345,10 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
         content: error.message
       };
     }
+
+
+
+
   }
 }
 
@@ -353,13 +381,17 @@ export function makeEvent(eventName, detail) {
  * @param {string} eventName - The name of the event to trigger
  * @param {object} detail - The detail object to be attached to the event
  */
-export function triggerEvent(element, eventName = "", detail = {}) {
-  if (!element || !eventName) {
+export function triggerEvent(eventName = "", detail = {}) {
+  if (!eventName) {
     return;
   }
-  const event = makeEvent(eventName, detail);
-  element.dispatchEvent(event);
+  const mewEvent = makeEvent(eventName, detail);
+  // element.dispatchEvent(mewEvent);
+  if(event && event.target){
+    event.target.dispatchEvent(mewEvent);
+  }
 }
+
 
 export default {
   getTargetElement,

@@ -30,8 +30,36 @@ export const bs5LangConfigs = {
     close: "閉じる",
     prompt: "促す",
     sure: "もちろん"
+  },
+  fr: {
+    ok: "D'accord",
+    confirm: "Confirmer",
+    cancel: "Annuler",
+    save: "Enregistrer",
+    close: "Fermer",
+    prompt: "Invite",
+    sure: "Êtes-vous sûr?"
+  },
+  es: {
+    ok: "Aceptar",
+    confirm: "Confirmar",
+    cancel: "Cancelar",
+    save: "Guardar",
+    close: "Cerrar",
+    prompt: "Indicación",
+    sure: "¿Estás seguro?"
+  },
+  de: {
+    ok: "OK",
+    confirm: "Bestätigen",
+    cancel: "Abbrechen",
+    save: "Speichern",
+    close: "Schließen",
+    prompt: "Aufforderung",
+    sure: "Bist du sicher?"
   }
 };
+
 
 // 获取当前语言
 export const getCurrentLang = () => bs5LangCurrentLang;

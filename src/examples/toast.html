@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Include Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
+    <!-- Include Bootstrap icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="../bs5dialog.css" />
+    <script src="../bs5dialog.js"></script>
+  </head>
+
+  <body>
+    <button id="toastButton">Show Toast</button>
+    <script>
+      const toastButton = document.getElementById("toastButton");
+      toastButton.addEventListener("click", () => {
+      const toastInstance=  bs5dialog.toast("Hello world!", {
+          position: "right-top",
+          type: "warning",
+          title: "My Title",
+          subtitle: "My Subtitle",
+          icon: "bi bi-alarm",
+          iconClass: "me-2",
+          iconStyle: '{ fontSize: "1.5rem" }',
+          timeout: 5000,
+          onHide: () => console.log("Toast hidden"),
+          onHidden: () => console.log("Toast fully hidden"),
+          onShow: () => console.log("Toast shown"),
+          onShown: () => console.log("Toast fully shown")
+        });
+        console.log(toastInstance);
+
+        toastInstance.el.addEventListener('bs5:dialog:hidden', event => {
+  console.log('Toast hidden:', event.detail.options);
+});
+
+      });
+
+      bs5dialog.toast("Hello world!");
+    </script>
+  </body>
+</html>

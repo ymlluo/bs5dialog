@@ -1,5 +1,5 @@
 import "./bs5dialog.css";
-import * as helper from "./libs";
+import * as utils from "./utils";
 import * as i18n from "./i18n.js";
 import { load } from './components/load'
 import { offcanvas } from './components/offcanvas'
@@ -26,6 +26,6 @@ export {
   load,
   offcanvas,
   tabs,
-  helper,
+  utils,
   i18n,
 };

@@ -1,11 +1,10 @@
-@import "spinkit/spinkit.css";
+
 .bs5-dialog-msg {
   position: fixed;
   animation-name: bs5MsgBoxShow;
   animation-duration: 0.5s;
   animation-fill-mode: forwards;
   min-width: 8rem;
-  /* text-align: center; */
 }
 
 .bs5-dialog-msg-hide {
@@ -94,8 +93,6 @@
   transform: translate(-50%, -50%);
 }
 
-/*..*/
-
 /* spinner动画样式 */
 .bs5-modal-spinner {
   position: absolute;
@@ -108,15 +105,6 @@
   align-items: center;
   background-color: rgba(0, 0, 0, 0.4);
 }
-
-/* .bs5-modal-spinner {
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-left-color: var(--sk-color);
-  border-radius: 50%;
-  width: var(--sk-size);
-  height: var(--sk-size);
-  animation: spin 1s linear infinite;
-} */
 
 @keyframes spin {
   to {
@@ -136,11 +124,6 @@
   animation-duration: 0.5s;
   animation-fill-mode: forwards;
 }
-
-/* .bs5dialog-modal .modal-dialog .modal-content {
-  height: 100%;
-  overflow: auto;
-} */
 
 .bs5dialog-modal .modal-dialog .modal-content .btn-close {
   position: absolute;
@@ -181,21 +164,17 @@
 /* Add an animation to the Offcanvas element */
 .bs5dialog-offcanvas.offcanvas-start {
   animation: slideInStart 0.3s ease-in-out;
-  /* transform: translateX(-100%); */
 }
 
 .bs5dialog-offcanvas.offcanvas-end {
   animation: slideInEnd 0.3s ease-in-out;
-  /* transform: translateX(100%); */
 }
 .bs5dialog-offcanvas.offcanvas-top {
   animation: slideInTop 0.3s ease-in-out;
-  /* transform: translateX(-100%); */
 }
 
 .bs5dialog-offcanvas.offcanvas-bottom {
   animation: slideInBottom 0.3s ease-in-out;
-  /* transform: translateX(100%); */
 }
 
 @keyframes slideInStart {
@@ -252,3 +231,4 @@
   padding-top: 0;
   padding-bottom: 0.75rem;
 }
+

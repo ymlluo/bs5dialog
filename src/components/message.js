@@ -1,8 +1,5 @@
-import {getMaxZIndex } from "../libs";
-import { getIconHtml } from "../templates.js";
-import { Alert as bs5Alert } from "bootstrap";
-
-
+import { getMaxZIndex,triggerEvent } from "../utils";
+import { makeIcon } from "../resource/icons";
 
 /**
  * Displays a message with customizable options
@@ -14,109 +11,118 @@ import { Alert as bs5Alert } from "bootstrap";
  * @param {string} options.background - The background color of the message (default: "")
  * @param {string} options.textColor - The text color of the message (default: "")
  * @param {string} options.fontsize - The font size of the message (default: "")
- * @param {number} options.opacity - The opacity of the message (default: 1)
- * @param {boolean} options.backdrop - Whether to display a backdrop (default: false)
  * @param {string} options.icon - The icon to display with the message (default: "")
- * @param {string} options.icon_class - The class of the icon to display with the message (default: "")
+ * @param {string} options.iconClass - The class of the icon to display with the message (default: "")
+ * @param {string} options.iconStyle - The style of the icon to display with the message (default: "")
  * @param {number} options.timeout - The time in milliseconds before the message disappears (default: 3000)
  * @param {function} options.onClose - The function to call when the message is closed (default: function() {})
  * @param {function} options.onClosed - The function to call after the message is closed (default: function() {})
- */ 
-export function message(message, options={}) {
+ */
+export function message(message, options = {}) {
   // Set default options
   const defaultOptions = {
     position: "center",
     type: "",
     closeBtn: false,
     background: "",
-    textColor: "",
+    textColor: "white",
     fontsize: "",
-    opacity: 1,
-    backdrop: false,
     icon: "",
-    icon_class: "",
-    timeout: 1500,
+    iconClass: "",
+    iconStyle: "",
+    timeout: 3000,
     onClose: function () {},
     onClosed: function () {}
   };
 
-
-  if (options.type === "link" || options.type ==='' || options.type ===undefined) {
-    options.background = "rgba(0,0,0,0.5)";
-    options.textColor = "#fff";
-  }
-
-  if (options.type === "light" && !options.icon_class) {
-    options.icon_class = "text-dark";
-  }
   options = { ...defaultOptions, ...options };
 
-
-  const overlayElement = document.createElement("div");
-  if (options.backdrop) {
-    overlayElement.classList.add("modal-backdrop", "fade", "show");
-    document.body.appendChild(overlayElement);
-    document.body.style.setProperty("overflow", "hidden");
-    overlayElement.style.setProperty("z-index", getMaxZIndex() + 1);
-  }
-
   // Create alert element
-  const alertElement = document.createElement("div");
-  alertElement.classList.add(
-    "alert",
-    `alert-${options.type}`,
-    "bs5-dialog-msg",
-    'text-center'
-  );
+  const messageElement = document.createElement("div");
 
-
+  messageElement.classList.add(`bg-${options.type || 'dark'}`, "bs5-dialog-msg", "text-start", "rounded-1", "py-0", "ps-3", "pe-2", "fw-normal");
+  messageElement.style.setProperty("height", "3rem");
+  messageElement.style.setProperty("line-height", "3rem");
+  messageElement.style.setProperty("padding", "0.375rem 1px");
   const positionClass = `bs5-dialog-msg-${options.position}`;
-  alertElement.classList.add(positionClass);
-  alertElement.style.opacity = options.opacity;
-  alertElement.style.setProperty("z-index", getMaxZIndex() + 1);
-  alertElement.setAttribute("role", "alert");
+  messageElement.classList.add(positionClass);
+  messageElement.style.setProperty("z-index", getMaxZIndex() + 1);
+  messageElement.setAttribute("role", "alert");
 
   if (options.background) {
-    alertElement.style.background = options.background;
+    messageElement.style.background = options.background;
   }
   if (options.textColor) {
-    alertElement.style.color = options.textColor;
+    messageElement.style.color = options.textColor;
   }
   if (options.fontsize) {
-    alertElement.style.fontSize = options.fontsize;
+    messageElement.style.fontSize = options.fontsize;
   }
 
-  alertElement.innerHTML = `<span>${
-    options.icon_custom || getIconHtml(options.icon, options.icon_class || "text-" + options.type) || ""
-  } ${message} ${
-    options.closeBtn ? `<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>` : ""
-  }</span>`;
+  messageElement.innerHTML = message;
+
+  if (options.icon) {
+    const iconElment = makeIcon(options.icon, options.iconClass, options.iconStyle);
+    iconElment.style.setProperty("margin-inline-end", "8px");
+    iconElment.style.setProperty("margin-bottom", "4px");
+    messageElement.prepend(iconElment);
+  }
+  if (options.closeBtn) {
+    const closeBtn = makeIcon(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="margin-bottom:4px;cursor:pointer"  onMouseOver="this.style.color='#e0e0e0;'" onMouseOut="this.style.color='#eaeaea'"  class="btn-x"  stroke-width="1"  viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M18 6l-12 12"></path>
+    <path d="M6 6l12 12"></path>
+ </svg>`,'btn-x','')
+    closeBtn.role = "button";
+    closeBtn.style.setProperty("margin-inline-start", "8px");
+    closeBtn.setAttribute("aria-label", "Close");
+    messageElement.appendChild(closeBtn);
+  }
 
   // Add alert element to body
-  document.body.appendChild(alertElement);
-  const alertInstance = bs5Alert.getOrCreateInstance(alertElement);
+  document.body.appendChild(messageElement);
+  triggerEvent('bs5:dialog:shown',{options:options})
 
-  alertElement.addEventListener("close.bs.alert", event => {
-    if (typeof options.onClose === "function") {
-      options.onClose(event);
-    }
-  });
-  alertElement.addEventListener("closed.bs.alert", event => {
-    if (typeof options.onClosed === "function") {
-      options.onClosed(event);
-    }
-  });
   if (options.timeout) {
     setTimeout(() => {
-      alertElement.classList.add("bs5-dialog-msg-hide");
+      messageElement.classList.add("bs5-dialog-msg-hide");
       setTimeout(() => {
-        alertInstance.close();
-        overlayElement.remove();
-        document.body.style.removeProperty("overflow");
+        messageElement.remove()
       }, 500);
     }, options.timeout);
   }
+
+
+  
+
+  const btnX = messageElement.querySelector('.btn-x');
+  if(btnX){
+    btnX.addEventListener('click',()=>{
+      messageElement.classList.add('bs5-dialog-msg-hide');
+      setTimeout(()=>{
+       
+        messageElement.remove()
+      },500)
+  
+    })
+  
+  }
+
+  return {
+    el:messageElement,
+    message,
+    options,
+    hide: () => {
+      triggerEvent('bs5:dialog:hidden',{options:options})
+      messageElement.classList.add('bs5-dialog-msg-hide');
+      setTimeout(()=>{
+        triggerEvent('bs5:dialog:hidden',{options:options})
+        messageElement.remove()
+      },500)
+    }
+  }
+
 }
 
+export const msg = message;
 
-export const msg = message
