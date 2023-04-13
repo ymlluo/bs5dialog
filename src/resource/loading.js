@@ -49,3 +49,4 @@ export function makeSpinner(spinnerName, spinnerClass, spinnerStyle) {
 
   return spinnerElement;
 }
+

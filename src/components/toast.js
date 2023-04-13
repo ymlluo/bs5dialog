@@ -1,4 +1,4 @@
-import { getMaxZIndex,getTextClass } from "../utils";
+import { getMaxZIndex, getTextClass, triggerEvent } from "../utils";
 import { Toast as bs5Toast } from "bootstrap";
 import { makeIcon } from "../resource/icons";
 
@@ -42,63 +42,73 @@ export function toast(message, options) {
 
   options = { ...defaultOptions, ...options };
 
-//    triggerEvent(modalElement,'bs5:dialog:show',{options:options})
+  const eventTarget = event?event.target:null
 
   const toastElement = document.createElement("div");
   toastElement.classList.add("toast", "bs5-dialog-msg", "bs5-dialog-msg-" + options.position);
   toastElement.setAttribute("role", "alert");
-  toastElement.style.zIndex=getMaxZIndex() + 1;
+  toastElement.style.zIndex = getMaxZIndex() + 1;
   // Create toast body element
   const toastBodyElement = document.createElement("div");
-  toastBodyElement.classList.add("toast-body",'bg-white');
+  toastBodyElement.classList.add("toast-body", "bg-white");
   toastBodyElement.innerHTML = message;
 
   // Add header and body to toast element
   // Create toast header element
   if (options.title) {
     const toastHeaderElement = document.createElement("div");
-    let textColor = getTextClass('bg-'+options.type)
-    toastHeaderElement.classList.add("toast-header", `bg-${options.type}`,textColor);
+    let textColor = getTextClass("bg-" + options.type);
+    toastHeaderElement.classList.add("toast-header", `bg-${options.type}`, textColor);
     toastHeaderElement.innerHTML = `<strong class="me-auto">${
-      options.title || ''
-    }</strong> <small class="text-truncate" style="max-width: 50%;">${options.subtitle}</small><button type="button" class="btn-close ${textColor==='text-white'?"btn-close-white":""}" data-bs-dismiss="toast" aria-label="Close"></button>`;
+      options.title || ""
+    }</strong> <small class="text-truncate" style="max-width: 50%;">${options.subtitle}</small><button type="button" class="btn-close ${
+      textColor === "text-white" ? "btn-close-white" : ""
+    }" data-bs-dismiss="toast" aria-label="Close"></button>`;
     toastElement.appendChild(toastHeaderElement);
 
-    if(options.icon){
-      const iconElement = makeIcon(options.icon,options.iconClass,options.iconStyle)
+    if (options.icon) {
+      const iconElement = makeIcon(options.icon, options.iconClass, options.iconStyle);
       iconElement.classList.add(textColor);
       toastHeaderElement.prepend(iconElement);
-      toastHeaderElement.classList.add('ps-1')
+      toastHeaderElement.classList.add("ps-1");
     }
   }
 
-
   toastElement.appendChild(toastBodyElement);
   document.body.appendChild(toastElement);
-
   const toastInstance = new bs5Toast(toastElement, { delay: options.timeout, autohide: options.timeout ? true : false });
   toastInstance.show();
   toastElement.addEventListener("hide.bs.toast", event => {
+    triggerEvent(toastElement, "bs5:dialog:hide", { options: options });
     toastElement.classList.add("bs5-dialog-msg-hide");
     if (typeof options.onHide === "function") {
       options.onHide(event);
     }
   });
   toastElement.addEventListener("hidden.bs.toast", event => {
+    triggerEvent(toastElement, "bs5:dialog:hidden", { options: options });
     if (typeof options.onHidden === "function") {
       options.onHidden(event);
     }
   });
 
   toastElement.addEventListener("show.bs.toast", event => {
+    triggerEvent(toastElement, "bs5:dialog:show", { options: options });
     if (typeof options.onShow === "function") {
       options.onShow(event);
     }
   });
+
   toastElement.addEventListener("shown.bs.toast", event => {
+    triggerEvent(toastElement, "bs5:dialog:shown", { options: options });
     if (typeof options.onShown === "function") {
       options.onShown(event);
     }
   });
 
+  return {
+    el:toastElement,
+    message,
+    options
+  }
 }

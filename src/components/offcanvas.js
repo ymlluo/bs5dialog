@@ -123,3 +123,4 @@ export function offcanvas(content, options = {}) {
     options: options
   };
 }
+

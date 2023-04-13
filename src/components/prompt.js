@@ -4,22 +4,22 @@ import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
 
 /**
- * Displays a prompt modal with customizable options.
- * @param {string} content - The content to display in the modal body.
- * @param {Object} options - An object containing optional parameters.
- * @param {string} options.title - The title of the modal.
- * @param {string} options.type - The type of the modal (e.g. primary, secondary, success, etc.).
- * @param {string} options.size - The size of the modal (e.g. sm, md, lg, etc.).
- * @param {string} options.btnText - The text to display on the confirmation button.
- * @param {string} options.icon - The icon to display in the modal.
- * @param {string} options.icon_class - The class of the icon to display in the modal.
- * @param {string} options.icon_style - The style of the icon to display in the modal.
- * @param {boolean} options.secret - Whether or not the input should be a required field.
- * @param {boolean} options.secret - Whether or not the input should be a password field.
- * @param {function} options.onConfirm - A function to call when the confirmation button is clicked.
- * @param {function} options.onCancel - A function to call when the cancel button is clicked.
+ * Displays a prompt dialog with customizable options.
+ * @param {string} content - The content to display in the dialog.
+ * @param {Object} options - The options for the dialog.
+ * @param {string} options.title - The title of the dialog.
+ * @param {string} options.type - The type of the dialog.
+ * @param {string} options.size - The size of the dialog.
+ * @param {string} options.btnText - The text to display on the button.
+ * @param {string} options.icon - The icon to display in the dialog.
+ * @param {string} options.iconClass - The class of the icon to display in the dialog.
+ * @param {string} options.iconStyle - The style of the icon to display in the dialog.
+ * @param {boolean} options.required - Whether the input is required.
+ * @param {boolean} options.secret - Whether the input should be hidden.
+ * @param {function} options.onConfirm - The function to call when the user confirms the dialog.
+ * @param {function} options.onCancel - The function to call when the user cancels the dialog.
+ * @returns {Object} - An object containing the dialog element, content, and options.
  */
-
 export function prompt(content, options = {}) {
   const defaultOptions = {
     title: "",
@@ -27,8 +27,8 @@ export function prompt(content, options = {}) {
     size: "md",
     btnText: "",
     icon: null,
-    icon_class: "",
-    icon_style: "",
+    iconClass: "",
+    iconStyle: "",
     required: true,
     secret: false,
     onConfirm: null,
@@ -74,9 +74,9 @@ export function prompt(content, options = {}) {
 
   if (options.type && options.icon == null) {
     options.icon = "bs5-code";
-    options.icon_class = "text-" + options.type;
+    options.iconClass = "text-" + options.type;
   }
-  const iconElement = makeIcon(options.icon, options.icon_class, options.icon_style);
+  const iconElement = makeIcon(options.icon, options.iconClass, options.iconStyle);
   modalElement.querySelector(".modal-icon").appendChild(iconElement);
   document.body.appendChild(modalElement);
   const modalInstance = new bs5Modal(modalElement);
@@ -133,8 +133,8 @@ export function prompt(content, options = {}) {
 
   return {
     el:modalElement,
-    content:content,
-    options:options
+    content,
+    options
   }
-
 }
+

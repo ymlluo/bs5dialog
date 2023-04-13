@@ -33,9 +33,9 @@ export function spinner(element = document.body, options = {}) {
     console.error("target element not found");
     return;
   }
-  // 如果已经存在 spinner 动画，直接返回
-  if (targetElement.querySelector(".bs5-modal-spinner")) {
-    targetElement.querySelector(".bs5-modal-spinner").remove();
+  const existingSpinner = targetElement.querySelector(".bs5-modal-spinner");
+  if (existingSpinner) {
+    existingSpinner.remove();
   }
   targetElement.style.position = "relative";
 
@@ -147,3 +147,4 @@ export function spinnerClean() {
 
 export const showLoading = spinner;
 export const hideLoading = spinnerClean;
+

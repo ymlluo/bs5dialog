@@ -23,14 +23,14 @@ export function message(message, options = {}) {
   const defaultOptions = {
     position: "center",
     type: "",
-    closeBtn: true,
-    background: "#333",
-    textColor: "#fff",
-    fontsize: "0.875rem",
-    icon: "bs5-circle-check",
+    closeBtn: false,
+    background: "",
+    textColor: "white",
+    fontsize: "",
+    icon: "",
     iconClass: "",
-    iconStyle: "text-white",
-    timeout: 1500,
+    iconStyle: "",
+    timeout: 3000,
     onClose: function () {},
     onClosed: function () {}
   };
@@ -40,7 +40,7 @@ export function message(message, options = {}) {
   // Create alert element
   const messageElement = document.createElement("div");
 
-  messageElement.classList.add(`bg-${options.type}`, "bs5-dialog-msg", "text-start", "rounded-1", "py-0", "ps-3", "pe-2", "fw-normal");
+  messageElement.classList.add(`bg-${options.type || 'dark'}`, "bs5-dialog-msg", "text-start", "rounded-1", "py-0", "ps-3", "pe-2", "fw-normal");
   messageElement.style.setProperty("height", "3rem");
   messageElement.style.setProperty("line-height", "3rem");
   messageElement.style.setProperty("padding", "0.375rem 1px");
@@ -60,8 +60,6 @@ export function message(message, options = {}) {
   }
 
   messageElement.innerHTML = message;
-
-
 
   if (options.icon) {
     const iconElment = makeIcon(options.icon, options.iconClass, options.iconStyle);
@@ -95,17 +93,33 @@ export function message(message, options = {}) {
     }, options.timeout);
   }
 
+  const btnX = messageElement.querySelector('.btn-x');
+  if(btnX){
+    btnX.addEventListener('click',()=>{
+      messageElement.classList.add('bs5-dialog-msg-hide');
+      setTimeout(()=>{
+        triggerEvent(messageElement,'bs5:dialog:hidden',{options:options})
+        messageElement.remove()
+      },500)
+  
+    })
+  
+  }
 
-  messageElement.querySelector('.btn-x').addEventListener('click',()=>{
-    messageElement.classList.add('bs5-dialog-msg-hide');
-    setTimeout(()=>{
-      triggerEvent(messageElement,'bs5:dialog:hidden',{options:options})
-      messageElement.remove()
-    },500)
-
-  })
+  return {
+    el:messageElement,
+    message,
+    options,
+    hide: () => {
+      messageElement.classList.add('bs5-dialog-msg-hide');
+      setTimeout(()=>{
+        triggerEvent(messageElement,'bs5:dialog:hidden',{options:options})
+        messageElement.remove()
+      },500)
+    }
+  }
 
 }
 
-
 export const msg = message;
+

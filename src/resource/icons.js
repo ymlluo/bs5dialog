@@ -3,7 +3,7 @@
  * @type {Object.<string, string>}
  */
 export const BS5_DIALOG_DEFAULT_ICONS = {
-  'bs5-check': `<svg xmlns="http://www.w3.org/2000/svg" class="" width="100%" height="100%" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  'bs5-check': `<svg xmlns="http://www.w3.org/2000/svg" class="" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
   <path d="M5 12l5 5l10 -10"></path>
 </svg>`,
@@ -111,7 +111,7 @@ export const BS5_DIALOG_DEFAULT_ICONS = {
  * @param {string} iconStyle - The style of the icon.
  * @returns {HTMLElement} - The icon element.
  */
-export function makeIcon(iconName, iconClass='', iconStyle='') {
+export function makeIcon(iconName='', iconClass='', iconStyle='') {
   iconName = iconName.replace(/\s+/g, ' ');
   iconClass = iconClass.replace(/\s+/g, ' ');
   iconStyle = iconStyle.replace(/\s+/g, ' ');

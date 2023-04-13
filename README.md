@@ -73,46 +73,109 @@ Skip the download with jsDelivr to deliver cached version of bs5dialog's compile
 
 ## Alert
 
-The alert component creates a Bootstrap 5 alert dialog. To use it, call the alert function with the desired message:
-### Usage
+### Introduction
 
-To use the alert function, simply import it and call it with the desired parameters. Here's an example:
+The alert component creates a Bootstrap 5 alert dialog. To use it, call the alert function with the desired message:
+
+### Usage Example
+
+#### ESM
 
 ```
-import { alert } from "bs5dialog";
+ import { alert } from '@ymlluo/bs5dialog';
 
-alert("This is an alert message.", {
-  title: "Alert",
-  type: "warning",
-  size: "md",
-  btnOkText: "OK",
-  icon: "warning",
-  icon_class: "text-warning",
+alert('This is an alert message!', {
+  title: 'Alert',
+  type: 'warning',
+  size: 'md',
+  btnOkText: 'OK',
   onOk: () => {
-    console.log("OK button clicked.");
+    console.log('OK button clicked!');
   },
-  timeout: 5000
 });
 ```
+
+#### CJS
+
+```
+const { alert } = require('@ymlluo/bs5dialog');
+
+alert('This is an alert message!', {
+  title: 'Alert',
+  type: 'warning',
+  size: 'md',
+  btnOkText: 'OK',
+  onOk: () => {
+    console.log('OK button clicked!');
+  },
+});
+```
+#### UMD
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Alert Example</title>
+  </head>
+  <body>
+    <button id="alert-btn">Show Alert</button>
+    <script src="https://unpkg.com/@ymlluo/bs5dialog"></script>
+    <script>
+      const alertBtn = document.getElementById('alert-btn');
+      alertBtn.addEventListener('click', () => {
+        bs5dialog.alert('This is an alert message!', {
+          title: 'Alert',
+          type: 'warning',
+          size: 'md',
+          btnOkText: 'OK',
+          onOk: () => {
+            console.log('OK button clicked!');
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
+
+```
+
 ### Parameters
-The alert function takes two parameters:
 
-- content (string, required): The content to display in the modal.
-- options (object, optional): The options for the modal.
-
-The options object can have the following properties:
-
-- title (string, default: ""): The title of the modal.
-- type (string, default: "success"): The type of the modal. Possible values are "success", "info", "warning", and "danger".
-- size (string, default: "sm"): The size of the modal. Possible values are "sm", "md", and "lg".
-- btnOkText (string, default: ""): The text to display on the OK button.
-- icon (string, default: "ok"): The icon to display in the modal. Possible values are "ok", "info", "warning", "danger", "question", and "custom".
-- icon_class (string, default: ""): The class of the icon to display in the modal.
-- icon_custom (string, default: ""): The custom icon to display in the modal.
-- onOk (function, default: null): The function to call when the OK button is clicked.
-- timeout (number, default: 0): The time in milliseconds before the modal automatically closes.
+- content (string) - The content to display in the alert modal.
+- options (Object) - The options for the alert modal.
+- title (string) - The title of the alert modal.
+- type (string) - The type of the alert modal (e.g. "success", "warning", "danger").
+- size (string) - The size of the alert modal (e.g. "sm", "md", "lg").
+- id (string) - The ID of the alert modal.
+- btnOkText (string) - The text to display on the OK button.
+- icon (string) - The name of the icon to display in the alert modal.
+- iconClass (string) - The CSS class for the icon.
+- iconStyle (string) - The CSS style for the icon.
+- onOk (function) - The function to call when the OK button is clicked.
+- timeout (number) - The time in milliseconds before the alert modal automatically closes.
 
 For more information on the available options, please refer to the comments in the alert.js file.
+
+### Custom Event
+
+The triggerEvent function in alert makes a CustomEvent and dispatches it on the alert modal element. You can listen for these events using addEventListener. The available events are:
+
+- bs5:dialog:show - Triggered when the alert modal is shown.
+- bs5:dialog:shown - Triggered after the alert modal is shown.
+- bs5:dialog:hide - Triggered when the alert modal is hidden.
+- bs5:dialog:hidden - Triggered after the alert modal is hidden.
+
+Example:
+
+```js
+const alertEl = document.getElementById('alert');
+alertEl.addEventListener('bs5:dialog:show', (event) => {
+  console.log('Alert modal shown!', event.detail.options);
+});
+
+```
+
 
 --- 
 

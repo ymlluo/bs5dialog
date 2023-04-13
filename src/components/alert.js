@@ -5,20 +5,20 @@ import { Modal as bs5Modal } from "bootstrap";
 
 /**
  * Displays an alert modal with the given content and options.
- * @param {string} content - The content to display in the modal.
- * @param {Object} options - The options for the modal.
- * @param {string} options.title - The title of the modal.
- * @param {string} options.type - The type of the modal.
- * @param {string} options.size - The size of the modal.
- * @param {string} options.id - The ID of the modal.
+ * @param {string} content - The content to display in the alert modal.
+ * @param {Object} options - The options for the alert modal.
+ * @param {string} options.title - The title of the alert modal.
+ * @param {string} options.type - The type of the alert modal (e.g. "success", "warning", "danger").
+ * @param {string} options.size - The size of the alert modal (e.g. "sm", "md", "lg").
+ * @param {string} options.id - The ID of the alert modal.
  * @param {string} options.btnOkText - The text to display on the OK button.
- * @param {string} options.icon - The icon to display in the modal.
- * @param {string} options.icon_class - The class of the icon to display in the modal.
- * @param {string} options.icon_style - The style of the icon to display in the modal.
+ * @param {string} options.icon - The name of the icon to display in the alert modal.
+ * @param {string} options.iconClass - The CSS class for the icon.
+ * @param {string} options.iconStyle - The CSS style for the icon.
  * @param {function} options.onOk - The function to call when the OK button is clicked.
- * @param {number} options.timeout - The time in milliseconds before the modal automatically closes.
+ * @param {number} options.timeout - The time in milliseconds before the alert modal automatically closes.
+ * @returns {Object} - An object containing the alert modal element, content, and options.
  */
-
 export function alert(content, options = {}) {
   const defaultOptions = {
     title: "",
@@ -27,8 +27,8 @@ export function alert(content, options = {}) {
     id:"",
     btnOkText: "",
     icon: null,
-    icon_class: "",
-    icon_style: "",
+    iconClass: "",
+    iconStyle: "",
     onOk: null,
     timeout: 0
   };
@@ -71,7 +71,7 @@ export function alert(content, options = {}) {
   if (options.type && options.icon == null) {
     options.icon = "bs5-alert-" + options.type;
   }
-  const iconElement = makeIcon(options.icon, options.icon_class, options.icon_style);
+  const iconElement = makeIcon(options.icon, options.iconClass, options.iconStyle);
   modalElement.querySelector(".modal-icon").appendChild(iconElement);
 
   document.body.appendChild(modalElement);
@@ -109,7 +109,9 @@ export function alert(content, options = {}) {
   }
   return {
     el:modalElement,
-    content:content,
-    options:options
+    content,
+    options
   }
 }
+
+

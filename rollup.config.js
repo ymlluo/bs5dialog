@@ -57,7 +57,9 @@ export default {
     copy({
       targets: [
         { src: "src/index.html", dest: "dist" },
-        { src: "src/form.html", dest: "dist" }
+        { src: "src/form.html", dest: "dist" },
+        { src: "src/examples", dest: "dist" },
+        { src: "src/docs", dest: "dist" }
       ],
       hook: "buildStart"
     })

@@ -14,8 +14,8 @@ import { Modal as bs5Modal } from "bootstrap";
  * @param {string} options.btnOkText - The text to display on the OK button.
  * @param {string} options.btnCancelText - The text to display on the Cancel button.
  * @param {string} options.icon - The icon to display in the modal.
- * @param {string} options.icon_class - The class of the icon to display in the modal.
- * @param {string} options.icon_style - The style of the icon to display in the modal.
+ * @param {string} options.iconClass - The class of the icon to display in the modal.
+ * @param {string} options.iconStyle - The style of the icon to display in the modal.
  * @param {function} options.onConfirm - The function to call when the OK button is clicked.
  * @param {function} options.onCancel - The function to call when the Cancel button is clicked.
  */
@@ -28,8 +28,8 @@ export function confirm(content = "", options = {}) {
     btnOkText: "",
     btnCancelText: "",
     icon: null,
-    icon_class: "",
-    icon_style: "",
+    iconClass: "",
+    iconStyle: "",
     onConfirm: null,
     onCancel: null
   };
@@ -46,37 +46,37 @@ export function confirm(content = "", options = {}) {
   modalElement.classList.add("bs5dialog-modal-confirm");
   modalElement.innerHTML = `
     <div class="modal-dialog modal-${options.size} modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-status bg-${options.type}"></div>
-      <div class="modal-body text-center py-4">
-      <div class='modal-icon'></div>
-      <h3 class="modal-title mb-1">${options.title}</h3>
-        <div class="text-muted">${content}</div>
-      </div>
-      <div class="modal-footer">
-        <div class="w-100">
-          <div class="row">
-            <div class="col">
-              <button type="button" class="w-100 btn btn-default btn-cancel text-truncate mb-2" data-bs-dismiss="modal">${
-                options.btnCancelText || i18n.getConfig("cancel")
-              }</button>
-            </div>
-            <div class="col">
-              <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok text-truncate mb-2">${
-    options.btnOkText || i18n.getConfig("confirm")
-  }</button>
+      <div class="modal-content">
+        <div class="modal-status bg-${options.type}"></div>
+        <div class="modal-body text-center py-4">
+          <div class='modal-icon'></div>
+          <h3 class="modal-title mb-1">${options.title}</h3>
+          <div class="text-muted">${content}</div>
+        </div>
+        <div class="modal-footer">
+          <div class="w-100">
+            <div class="row">
+              <div class="col">
+                <button type="button" class="w-100 btn btn-default btn-cancel text-truncate mb-2" data-bs-dismiss="modal">${
+                  options.btnCancelText || i18n.getConfig("cancel")
+                }</button>
+              </div>
+              <div class="col">
+                <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok text-truncate mb-2">${
+                  options.btnOkText || i18n.getConfig("confirm")
+                }</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-    `;
+  `;
 
   if (options.type && options.icon == null) {
     options.icon = "bs5-alert-" + options.type;
   }
-  const iconElement = makeIcon(options.icon, options.icon_class, options.icon_style);
+  const iconElement = makeIcon(options.icon, options.iconClass, options.iconStyle);
   modalElement.querySelector(".modal-icon").appendChild(iconElement);
 
   document.body.appendChild(modalElement);
@@ -118,7 +118,8 @@ export function confirm(content = "", options = {}) {
 
   return {
     el: modalElement,
-    content: content,
-    options: options
+    content,
+    options
   };
 }
+
