@@ -36,9 +36,9 @@
           onHidden: () => console.log('Modal is fully hidden'),
           isForm: true,
           onSubmit: () => console.log('Modal is submitted'),
-          onSubmitSuccess: () => console.log('Modal is successfully submitted'),
+          onSubmitSuccess: (submitResult) => console.log('Modal is successfully submitted:',submitResult),
           onSubmitError: () => console.log('Modal submission error'),
-          onSubmitDone: () => console.log('Modal submission is done')
+          onSubmitDone: (submitResult) => console.log('Modal submission is done:',submitResult)
         });
       });
     </script>

@@ -60,7 +60,7 @@ export function spinner(element = document.body, options = {}) {
     overlay.style.pointerEvents = "none";
   }
 
-  triggerEvent( "bs5:dialog:show", { options: options, el: targetElement });
+  triggerEvent("bs5:dialog:show", { options: options, el: targetElement });
 
   let animation = makeSpinner(options.animation, options.animationClass, options.animationStyle);
   const animationRect = animation.getBoundingClientRect();
@@ -88,11 +88,11 @@ export function spinner(element = document.body, options = {}) {
 
   let targetLockTimer = replayLock(targetElement, options.timeout);
 
-  triggerEvent( "bs5:dialog:shown", { options: options, el: targetElement });
+  triggerEvent("bs5:dialog:shown", { options: options, el: targetElement });
 
   let timer;
   if (options.timeout > 0) {
-    triggerEvent( "bs5:dialog:hide", { options: options, el: targetElement });
+    triggerEvent("bs5:dialog:hide", { options: options, el: targetElement });
 
     timer = setTimeout(() => {
       hidespinner();
@@ -103,30 +103,14 @@ export function spinner(element = document.body, options = {}) {
     targetElement.style.cursor = preCursor;
     clearTimeout(timer);
     clearTimeout(targetLockTimer);
-    triggerEvent( "bs5:dialog:shown", { options: options, el: targetElement });
+    triggerEvent("bs5:dialog:shown", { options: options, el: targetElement });
   };
-
   return {
-    /**
-     * The target element to append the spinner to.
-     * @type {HTMLElement}
-     */
     el: targetElement,
-    /**
-     * The spinner element.
-     * @type {HTMLElement}
-     */
-    overlay: overlay,
-    /**
-     * Hides the spinner.
-     */
-    hide() {
+    hide: () => {
       hidespinner();
     },
-    /**
-     * Cleans up all spinner elements.
-     */
-    clean() {
+    clean: () => {
       spinnerClean();
     }
   };
@@ -147,4 +131,3 @@ export function spinnerClean() {
 
 export const showLoading = spinner;
 export const hideLoading = spinnerClean;
-
