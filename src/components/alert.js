@@ -1,4 +1,4 @@
-import { setModalWrapper, replayLock,triggerEvent,genDialogId} from "../utils";
+import { setModalWrapper, replayLock, triggerEvent, genDialogId } from "../utils";
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -24,7 +24,7 @@ export function alert(content, options = {}) {
     title: "",
     type: "success",
     size: "md",
-    id:"",
+    id: "",
     btnOkText: "",
     icon: null,
     iconClass: "",
@@ -38,7 +38,7 @@ export function alert(content, options = {}) {
     modalElement = document.getElementById(options.id);
   } else {
     modalElement = setModalWrapper();
-    options.id = options.id ||  genDialogId();
+    options.id = options.id || genDialogId();
     modalElement.setAttribute("id", options.id);
   }
   modalElement.classList.add("bs5dialog-modal-alert");
@@ -83,23 +83,22 @@ export function alert(content, options = {}) {
     if (typeof options.onOk === "function") {
       options.onOk();
     }
-    triggerEvent(modalElement,'bs5:dialog:ok',{options:options})
+    triggerEvent("bs5:dialog:ok", { options: options });
     modalInstance.hide();
   });
 
-  modalElement.addEventListener("show.bs.modal", function () {
-    triggerEvent(modalElement,'bs5:dialog:show',{options:options})
-  });
+  triggerEvent("bs5:dialog:show", { options: options });
+
   modalElement.addEventListener("shown.bs.modal", function () {
-    triggerEvent(modalElement,'bs5:dialog:shown',{options:options})
+    triggerEvent("bs5:dialog:shown", { options: options });
   });
 
   modalElement.addEventListener("hide.bs.modal", function () {
-    triggerEvent(modalElement,'bs5:dialog:hide',{options:options})
+    triggerEvent("bs5:dialog:hide", { options: options });
   });
 
   modalElement.addEventListener("hidden.bs.modal", function () {
-    triggerEvent(modalElement,'bs5:dialog:hidden',{options:options})
+    triggerEvent("bs5:dialog:hidden", { options: options });
   });
 
   if (options.timeout) {
@@ -108,10 +107,8 @@ export function alert(content, options = {}) {
     }, options.timeout);
   }
   return {
-    el:modalElement,
+    el: modalElement,
     content,
     options
-  }
+  };
 }
-
-

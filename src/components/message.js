@@ -81,24 +81,26 @@ export function message(message, options = {}) {
 
   // Add alert element to body
   document.body.appendChild(messageElement);
-  triggerEvent(messageElement,'bs5:dialog:shown',{options:options})
+  triggerEvent('bs5:dialog:shown',{options:options})
 
   if (options.timeout) {
     setTimeout(() => {
       messageElement.classList.add("bs5-dialog-msg-hide");
       setTimeout(() => {
-        triggerEvent(messageElement,'bs5:dialog:hidden',{options:options})
         messageElement.remove()
       }, 500);
     }, options.timeout);
   }
+
+
+  
 
   const btnX = messageElement.querySelector('.btn-x');
   if(btnX){
     btnX.addEventListener('click',()=>{
       messageElement.classList.add('bs5-dialog-msg-hide');
       setTimeout(()=>{
-        triggerEvent(messageElement,'bs5:dialog:hidden',{options:options})
+       
         messageElement.remove()
       },500)
   
@@ -111,9 +113,10 @@ export function message(message, options = {}) {
     message,
     options,
     hide: () => {
+      triggerEvent('bs5:dialog:hidden',{options:options})
       messageElement.classList.add('bs5-dialog-msg-hide');
       setTimeout(()=>{
-        triggerEvent(messageElement,'bs5:dialog:hidden',{options:options})
+        triggerEvent('bs5:dialog:hidden',{options:options})
         messageElement.remove()
       },500)
     }

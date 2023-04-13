@@ -1,4 +1,4 @@
-import { setModalWrapper, replayLock ,triggerEvent,genDialogId} from "../utils";
+import { setModalWrapper, replayLock, triggerEvent, genDialogId } from "../utils";
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -40,7 +40,7 @@ export function prompt(content, options = {}) {
     modalElement = document.getElementById(options.id);
   } else {
     modalElement = setModalWrapper();
-    options.id = options.id ||  genDialogId();
+    options.id = options.id || genDialogId();
     modalElement.setAttribute("id", options.id);
   }
   modalElement.classList.add("bs5dialog-modal-prompt");
@@ -80,9 +80,9 @@ export function prompt(content, options = {}) {
   modalElement.querySelector(".modal-icon").appendChild(iconElement);
   document.body.appendChild(modalElement);
   const modalInstance = new bs5Modal(modalElement);
-  triggerEvent(modalElement,'bs5dialog:prompt:show',{options:options})
+  triggerEvent("bs5dialog:prompt:show", { options: options });
   modalInstance.show();
-  triggerEvent(modalElement,'bs5dialog:prompt:shown',{options:options})
+  triggerEvent("bs5dialog:prompt:shown", { options: options });
   const okBtnEl = modalElement.querySelector(".modal-footer .btn-ok");
   const inputEl = modalElement.querySelector(".modal-body input");
   if (options.required) {
@@ -90,7 +90,7 @@ export function prompt(content, options = {}) {
   }
   inputEl.addEventListener("keyup", function (event) {
     event.preventDefault();
-    triggerEvent(modalElement,'bs5:dialog:typing',{options:options,value:inputEl.value})
+    triggerEvent("bs5:dialog:typing", { options: options, value: inputEl.value });
     inputEl.value.length > 0 ? okBtnEl.classList.remove("disabled") : okBtnEl.classList.add("disabled");
     if (event.keyCode === 13 && !okBtnEl.classList.contains("disabled")) {
       okBtnEl.click();
@@ -99,7 +99,7 @@ export function prompt(content, options = {}) {
 
   okBtnEl.addEventListener("click", () => {
     replayLock(okBtnEl);
-    triggerEvent(modalElement,'bs5:dialog:ok',{options:options,value:inputEl.value})
+    triggerEvent("bs5:dialog:ok", { options: options, value: inputEl.value });
     if (typeof options.onConfirm === "function") {
       options.onConfirm(inputEl.value);
     }
@@ -108,33 +108,30 @@ export function prompt(content, options = {}) {
   const cancelBtnEl = modalElement.querySelector(".modal-footer .btn-cancel");
   cancelBtnEl.addEventListener("click", () => {
     replayLock(cancelBtnEl);
-    triggerEvent(modalElement,'bs5:dialog:cancel',{options:options})
+    triggerEvent("bs5:dialog:cancel", { options: options });
     if (typeof options.onCancel === "function") {
       options.onCancel();
     }
     modalInstance.hide();
   });
 
+  triggerEvent("bs5:dialog:show", { options: options });
 
-  modalElement.addEventListener("show.bs.modal", function () {
-    triggerEvent(modalElement,'bs5:dialog:show',{options:options})
-  });
   modalElement.addEventListener("shown.bs.modal", function () {
-    triggerEvent(modalElement,'bs5:dialog:shown',{options:options})
+    triggerEvent("bs5:dialog:shown", { options: options });
   });
 
   modalElement.addEventListener("hide.bs.modal", function () {
-    triggerEvent(modalElement,'bs5:dialog:hide',{options:options})
+    triggerEvent("bs5:dialog:hide", { options: options });
   });
 
   modalElement.addEventListener("hidden.bs.modal", function () {
-    triggerEvent(modalElement,'bs5:dialog:hidden',{options:options})
+    triggerEvent("bs5:dialog:hidden", { options: options });
   });
 
   return {
-    el:modalElement,
+    el: modalElement,
     content,
     options
-  }
+  };
 }
-

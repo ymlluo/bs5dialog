@@ -1,4 +1,4 @@
-import { getOverlapDimensions, genDialogId ,triggerEvent} from "../utils.js";
+import { getOverlapDimensions, genDialogId, triggerEvent } from "../utils.js";
 import { Offcanvas as bs5Offcanvas } from "bootstrap";
 
 /**
@@ -85,13 +85,10 @@ export function offcanvas(content, options = {}) {
 
   let prevContainerPanding = document.body.style.getPropertyValue("padding-" + accordionDirection);
 
-
-  offcanvasElement.addEventListener("show.bs.offcanvas", function () {
-    triggerEvent(offcanvasElement, "bs5:dialog:show", { options: options });
-  });
+  triggerEvent("bs5:dialog:show", { options: options });
 
   offcanvasElement.addEventListener("shown.bs.offcanvas", function () {
-    triggerEvent(offcanvasElement, "bs5:dialog:shown", { options: options });
+    triggerEvent("bs5:dialog:shown", { options: options });
     if (options.accordion) {
       let OverlapDimensions = getOverlapDimensions(offcanvasElement, container);
       const paddingSize = ["left", "right"].includes(accordionDirection)
@@ -105,10 +102,10 @@ export function offcanvas(content, options = {}) {
   });
 
   offcanvasElement.addEventListener("hide.bs.offcanvas", function () {
-    triggerEvent(offcanvasElement, "bs5:dialog:hide", { options: options });
+    triggerEvent("bs5:dialog:hide", { options: options });
   });
   offcanvasElement.addEventListener("hidden.bs.offcanvas", function () {
-    triggerEvent(offcanvasElement, "bs5:dialog:hidden", { options: options });
+    triggerEvent("bs5:dialog:hidden", { options: options });
     if (options.accordion) {
       container.style.setProperty("padding-" + accordionDirection, prevContainerPanding);
     }
@@ -123,4 +120,3 @@ export function offcanvas(content, options = {}) {
     options: options
   };
 }
-

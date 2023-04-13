@@ -1,4 +1,4 @@
-import { setModalWrapper, replayLock ,triggerEvent,genDialogId} from "../utils";
+import { setModalWrapper, replayLock, triggerEvent, genDialogId } from "../utils";
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -63,8 +63,8 @@ export function confirm(content = "", options = {}) {
               </div>
               <div class="col">
                 <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok text-truncate mb-2">${
-                  options.btnOkText || i18n.getConfig("confirm")
-                }</button>
+    options.btnOkText || i18n.getConfig("confirm")
+  }</button>
               </div>
             </div>
           </div>
@@ -85,7 +85,7 @@ export function confirm(content = "", options = {}) {
   const okBtnEl = modalElement.querySelector(".modal-footer .btn-ok");
   okBtnEl.addEventListener("click", () => {
     replayLock(okBtnEl);
-    triggerEvent(modalElement, "bs5:dialog:ok", { options: options });
+    triggerEvent("bs5:dialog:ok", { options: options });
     if (typeof options.onConfirm === "function") {
       options.onConfirm();
     }
@@ -95,25 +95,24 @@ export function confirm(content = "", options = {}) {
   const cancelBtnEl = modalElement.querySelector(".modal-footer .btn-cancel");
   cancelBtnEl.addEventListener("click", () => {
     replayLock(cancelBtnEl);
-    triggerEvent(modalElement, "bs5:dialog:cancel", { options: options });
+    triggerEvent("bs5:dialog:cancel", { options: options });
     if (typeof options.onCancel === "function") {
       options.onCancel();
     }
     modalInstance.hide();
   });
 
-  modalElement.addEventListener("show.bs.modal", function () {
-    triggerEvent(modalElement, "bs5:dialog:show", { options: options });
-  });
+  triggerEvent("bs5:dialog:show", { options: options });
+
   modalElement.addEventListener("shown.bs.modal", function () {
-    triggerEvent(modalElement, "bs5:dialog:shown", { options: options });
+    triggerEvent("bs5:dialog:shown", { options: options });
   });
   modalElement.addEventListener("hide.bs.modal", function () {
-    triggerEvent(modalElement, "bs5:dialog:hide", { options: options });
+    triggerEvent("bs5:dialog:hide", { options: options });
   });
 
   modalElement.addEventListener("hidden.bs.modal", function () {
-    triggerEvent(modalElement, "bs5:dialog:hidden", { options: options });
+    triggerEvent("bs5:dialog:hidden", { options: options });
   });
 
   return {
@@ -122,4 +121,3 @@ export function confirm(content = "", options = {}) {
     options
   };
 }
-

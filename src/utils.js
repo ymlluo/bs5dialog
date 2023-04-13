@@ -381,12 +381,15 @@ export function makeEvent(eventName, detail) {
  * @param {string} eventName - The name of the event to trigger
  * @param {object} detail - The detail object to be attached to the event
  */
-export function triggerEvent(element, eventName = "", detail = {}) {
-  if (!element || !eventName) {
+export function triggerEvent(eventName = "", detail = {}) {
+  if (!eventName) {
     return;
   }
-  const event = makeEvent(eventName, detail);
-  element.dispatchEvent(event);
+  const mewEvent = makeEvent(eventName, detail);
+  // element.dispatchEvent(mewEvent);
+  if(event && event.target){
+    event.target.dispatchEvent(mewEvent);
+  }
 }
 
 

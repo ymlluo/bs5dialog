@@ -60,7 +60,7 @@ export function spinner(element = document.body, options = {}) {
     overlay.style.pointerEvents = "none";
   }
 
-  triggerEvent(targetElement, "bs5:dialog:show", { options: options, el: targetElement });
+  triggerEvent( "bs5:dialog:show", { options: options, el: targetElement });
 
   let animation = makeSpinner(options.animation, options.animationClass, options.animationStyle);
   const animationRect = animation.getBoundingClientRect();
@@ -88,11 +88,11 @@ export function spinner(element = document.body, options = {}) {
 
   let targetLockTimer = replayLock(targetElement, options.timeout);
 
-  triggerEvent(targetElement, "bs5:dialog:shown", { options: options, el: targetElement });
+  triggerEvent( "bs5:dialog:shown", { options: options, el: targetElement });
 
   let timer;
   if (options.timeout > 0) {
-    triggerEvent(targetElement, "bs5:dialog:hide", { options: options, el: targetElement });
+    triggerEvent( "bs5:dialog:hide", { options: options, el: targetElement });
 
     timer = setTimeout(() => {
       hidespinner();
@@ -103,7 +103,7 @@ export function spinner(element = document.body, options = {}) {
     targetElement.style.cursor = preCursor;
     clearTimeout(timer);
     clearTimeout(targetLockTimer);
-    triggerEvent(targetElement, "bs5:dialog:shown", { options: options, el: targetElement });
+    triggerEvent( "bs5:dialog:shown", { options: options, el: targetElement });
   };
 
   return {

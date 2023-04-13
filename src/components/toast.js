@@ -42,7 +42,7 @@ export function toast(message, options) {
 
   options = { ...defaultOptions, ...options };
 
-  const eventTarget = event?event.target:null
+
 
   const toastElement = document.createElement("div");
   toastElement.classList.add("toast", "bs5-dialog-msg", "bs5-dialog-msg-" + options.position);
@@ -76,31 +76,37 @@ export function toast(message, options) {
 
   toastElement.appendChild(toastBodyElement);
   document.body.appendChild(toastElement);
+
+  triggerEvent("bs5:dialog:show", { options: options });
+  if (typeof options.onShow === "function") {
+    options.onShow();
+  }
+
+
   const toastInstance = new bs5Toast(toastElement, { delay: options.timeout, autohide: options.timeout ? true : false });
   toastInstance.show();
   toastElement.addEventListener("hide.bs.toast", event => {
-    triggerEvent(toastElement, "bs5:dialog:hide", { options: options });
+    console.log('hide.bs.toast')
+    triggerEvent( "bs5:dialog:hide", { options: options });
     toastElement.classList.add("bs5-dialog-msg-hide");
     if (typeof options.onHide === "function") {
       options.onHide(event);
     }
   });
   toastElement.addEventListener("hidden.bs.toast", event => {
-    triggerEvent(toastElement, "bs5:dialog:hidden", { options: options });
+    console.log('hidden.bs.toast')
+    triggerEvent( "bs5:dialog:hidden", { options: options });
     if (typeof options.onHidden === "function") {
       options.onHidden(event);
     }
   });
 
-  toastElement.addEventListener("show.bs.toast", event => {
-    triggerEvent(toastElement, "bs5:dialog:show", { options: options });
-    if (typeof options.onShow === "function") {
-      options.onShow(event);
-    }
-  });
+
+
 
   toastElement.addEventListener("shown.bs.toast", event => {
-    triggerEvent(toastElement, "bs5:dialog:shown", { options: options });
+    console.log('shown.bs.toast')
+    triggerEvent("bs5:dialog:shown", { options: options });
     if (typeof options.onShown === "function") {
       options.onShown(event);
     }
