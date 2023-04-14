@@ -72,7 +72,6 @@ export async function load(content, options = {}) {
   if (isUrlOrPath(content)) {
     let apiUrl = content;
     const res = await makeRequest(apiUrl, "GET");
-    console.log(res);
     content = res.content;
     if (content.includes("<!DOCTYPE html>") || content.includes("<html")) {
       //frame

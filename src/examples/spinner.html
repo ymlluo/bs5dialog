@@ -24,11 +24,31 @@
         text: "Please wait...",
         type: "",
         backdrop: true,
-        timeout: 2000
+        timeout: 0
       };
 
+      let loading;
+
       myButton.addEventListener("click", () => {
-        bs5dialog.spinner(targetElement, options);
+
+        loading= bs5dialog.spinner(targetElement, {});
+
+        targetElement.addEventListener('bs5:spinner:shown', (e) => {
+          console.log("shown",e);
+        },{once: true});
+        targetElement.addEventListener('bs5:spinner:show', (e) => {
+          console.log("show",e);
+        },{once: true})
+        targetElement.addEventListener('bs5:spinner:hide', (e) => {
+          console.log("hide",e);
+        },{once: true})
+        targetElement.addEventListener('bs5:spinner:hidden', (e) => {
+          console.log("hidden",e.detail);
+        },{once: true})
+        setTimeout(() => {
+          loading.hide();
+          console.log("hide");
+        },3000)
       });
     </script>
   </body>

@@ -249,7 +249,6 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
   }
 
   if (typeof axios !== "undefined") {
-
     axios.defaults.crossDomain = true;
     axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
     // Use axios if it's available
@@ -296,15 +295,12 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
         content: error.response?.data || error.message
       };
     }
-    
-
-
   } else {
     // Use fetch if axios is not available
     const options = {
       method,
       headers: {
-        "Content-Type":"application/json",
+        "Content-Type": "application/json",
         ...headers
       },
       credentials: "include" // Allow cookies to be sent and received for cross-domain requests
@@ -345,10 +341,6 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
         content: error.message
       };
     }
-
-
-
-
   }
 }
 
@@ -381,17 +373,41 @@ export function makeEvent(eventName, detail) {
  * @param {string} eventName - The name of the event to trigger
  * @param {object} detail - The detail object to be attached to the event
  */
-export function triggerEvent(eventName = "", detail = {}) {
-  if (!eventName) {
+export function triggerEvent(element, eventName = "", detail = {}) {
+  if (!eventName || !element) {
     return;
   }
   const mewEvent = makeEvent(eventName, detail);
-  // element.dispatchEvent(mewEvent);
-  if(event && event.target){
-    event.target.dispatchEvent(mewEvent);
-  }
+  element.dispatchEvent(mewEvent);
 }
 
+/**
+ * Returns a promise that resolves when an element matching the given selector or element is rendered.
+ * @param {string|Element} selectorOrElement - The selector string or element to observe.
+ * @returns {Promise<Element>} A promise that resolves with the rendered element.
+ */
+export function onElementRendered(selectorOrElement) {
+  var selector = typeof selectorOrElement === "string" ? selectorOrElement : null;
+  var element = selector ? null : selectorOrElement;
+
+  return new Promise(function (resolve) {
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        var nodes = Array.from(mutation.addedNodes);
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
+          if (node.matches && (node.matches(selector) || node === element)) {
+            observer.disconnect();
+            resolve(node);
+            return;
+          }
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  });
+}
 
 export default {
   getTargetElement,
@@ -406,5 +422,6 @@ export default {
   getMaxZIndex,
   getTextClass,
   makeEvent,
-  triggerEvent
+  triggerEvent,
+  onElementRendered
 };

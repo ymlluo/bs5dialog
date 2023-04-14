@@ -1,4 +1,4 @@
-import { getMaxZIndex, getTargetElement, replayLock, triggerEvent } from "../utils";
+import { getMaxZIndex, getTargetElement, replayLock, triggerEvent, onElementRendered } from "../utils";
 import { makeSpinner } from "../resource/loading";
 
 /**
@@ -23,7 +23,7 @@ export function spinner(element = document.body, options = {}) {
     text: "Please wait...",
     type: "",
     backdrop: true,
-    timeout: 2000
+    timeout: 0
   };
 
   options = { ...defaultOptions, ...options };
@@ -33,9 +33,14 @@ export function spinner(element = document.body, options = {}) {
     console.error("target element not found");
     return;
   }
+  triggerEvent(targetElement,"bs5:spinner:show", { options: options, el: targetElement });
+
   const existingSpinner = targetElement.querySelector(".bs5-modal-spinner");
   if (existingSpinner) {
     existingSpinner.remove();
+  }
+  if (["fixed", "absolute"].includes(window.getComputedStyle(targetElement).getPropertyValue("position")) && targetElement.firstChild) {
+    targetElement = targetElement.firstChild;
   }
   targetElement.style.position = "relative";
 
@@ -60,7 +65,6 @@ export function spinner(element = document.body, options = {}) {
     overlay.style.pointerEvents = "none";
   }
 
-  triggerEvent("bs5:dialog:show", { options: options, el: targetElement });
 
   let animation = makeSpinner(options.animation, options.animationClass, options.animationStyle);
   const animationRect = animation.getBoundingClientRect();
@@ -79,35 +83,33 @@ export function spinner(element = document.body, options = {}) {
       animation.remove();
     }
   }
-
-  let typeColor = getComputedStyle(document.documentElement).getPropertyValue("--bs-" + options.type + "-rgb");
-
+  console.log('befor onElementRendered');
+  onElementRendered(overlay).then(() => {
+    console.log('onElementRendered');
+    triggerEvent(targetElement,"bs5:spinner:shown", { options: options, el: targetElement });
+    if (options.timeout > 0) {
+      triggerEvent(targetElement, "bs5:spinner:hide", { options: options, el: targetElement });
+      timer = setTimeout(() => {
+        hidespinner();
+      }, options.timeout);
+    }
+  });
+  
   let preCursor = targetElement.style.getPropertyValue("cursor");
   targetElement.appendChild(overlay);
   targetElement.style.cursor = "wait";
-
-  let targetLockTimer = replayLock(targetElement, options.timeout);
-
-  triggerEvent("bs5:dialog:shown", { options: options, el: targetElement });
-
   let timer;
-  if (options.timeout > 0) {
-    triggerEvent("bs5:dialog:hide", { options: options, el: targetElement });
 
-    timer = setTimeout(() => {
-      hidespinner();
-    }, options.timeout);
-  }
-  var hidespinner = function (el = targetElement) {
+
+  var hidespinner = function () {
     overlay.remove();
     targetElement.style.cursor = preCursor;
     clearTimeout(timer);
-    clearTimeout(targetLockTimer);
-    triggerEvent("bs5:dialog:shown", { options: options, el: targetElement });
+    triggerEvent(targetElement,"bs5:spinner:hidden", { options: options, el: targetElement });
   };
   return {
     el: targetElement,
-    hide: () => {
+    hide() {
       hidespinner();
     },
     clean: () => {
