@@ -28,12 +28,13 @@ export function spinner(element = document.body, options = {}) {
 
   options = { ...defaultOptions, ...options };
 
+  let evt = event && event.target?event.target:null;
+
   const targetElement = getTargetElement(element);
   if (!targetElement) {
     console.error("target element not found");
     return;
   }
-  triggerEvent(targetElement,"bs5:spinner:show", { options: options, el: targetElement });
 
   const existingSpinner = targetElement.querySelector(".bs5-modal-spinner");
   if (existingSpinner) {
@@ -83,12 +84,10 @@ export function spinner(element = document.body, options = {}) {
       animation.remove();
     }
   }
-  console.log('befor onElementRendered');
+
   onElementRendered(overlay).then(() => {
-    console.log('onElementRendered');
     triggerEvent(targetElement,"bs5:spinner:shown", { options: options, el: targetElement });
     if (options.timeout > 0) {
-      triggerEvent(targetElement, "bs5:spinner:hide", { options: options, el: targetElement });
       timer = setTimeout(() => {
         hidespinner();
       }, options.timeout);
@@ -106,6 +105,8 @@ export function spinner(element = document.body, options = {}) {
     targetElement.style.cursor = preCursor;
     clearTimeout(timer);
     triggerEvent(targetElement,"bs5:spinner:hidden", { options: options, el: targetElement });
+    triggerEvent(evt,"bs5:spinner:hidden", { options: options, el: targetElement });
+
   };
   return {
     el: targetElement,

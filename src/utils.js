@@ -160,6 +160,14 @@ export function setModalWrapper() {
   modal.setAttribute("data-bs-backdrop", "static");
   modal.setAttribute("tabindex", "-1");
 
+  observeElement(modal, {
+    createCallback: () => console.log("modal created"),
+    renderedCallback: () => console.log("modal rendered"),
+    hiddenCallback: () => console.log("modal hidden"),
+    removeCallback: () => console.log("modal removed"),
+    resizeCallback: () => console.log("modal resized"),
+    positionChangedCallback: newPos => console.log(`modal position changed to (${newPos.x}, ${newPos.y})`)
+  });
   return modal;
 }
 
@@ -377,8 +385,10 @@ export function triggerEvent(element, eventName = "", detail = {}) {
   if (!eventName || !element) {
     return;
   }
-  const mewEvent = makeEvent(eventName, detail);
-  element.dispatchEvent(mewEvent);
+  console.log(eventName, element, event ? event.target : event);
+  const newEvent = makeEvent(eventName, detail);
+  element.dispatchEvent(newEvent);
+  event && event.target ? event.target.dispatchEvent(newEvent) : null;
 }
 
 /**
@@ -409,6 +419,195 @@ export function onElementRendered(selectorOrElement) {
   });
 }
 
+// export function observeElement(targetElement, options) {
+//   return new Promise((resolve) => {
+//     const observer = new MutationObserver((mutationsList) => {
+//       mutationsList.forEach((mutation) => {
+//         const { type, target } = mutation;
+//         if (target !== targetElement) return;
+
+//         switch (type) {
+//           case "childList":
+//             if (target.childNodes.length === 1 && target.childNodes[0].nodeName === "#text") return; // Ignore text nodes
+//             if (mutation.addedNodes.length > 0) {
+//               options.createCallback && options.createCallback();
+//               resolve("added");
+//             }
+//             if (mutation.removedNodes.length > 0) {
+//               options.removeCallback && options.removeCallback();
+//               resolve("removed");
+//             }
+//             break;
+//           case "attributes":
+//             if (target.style.display === "none") {
+//               options.hiddenCallback && options.hiddenCallback();
+//               resolve("hidden");
+//             } else {
+//               options.renderedCallback && options.renderedCallback();
+//               resolve("rendered");
+//             }
+//             break;
+//           default:
+//             break;
+//         }
+//       });
+//     });
+
+//     observer.observe(targetElement, {
+//       childList: true,
+//       attributes: true,
+//       attributeFilter: ["style"],
+//     });
+//   });
+// }
+
+// export function observeElement(targetElement, options) {
+//   return new Promise((resolve) => {
+//     let rendered = false;
+//     let position = {};
+
+//     const observer = new MutationObserver((mutationsList) => {
+//       mutationsList.forEach((mutation) => {
+//         const { type, target } = mutation;
+//         if (target !== targetElement) return;
+
+//         switch (type) {
+//           case "childList":
+//             if (target.childNodes.length === 1 && target.childNodes[0].nodeName === "#text") return; // Ignore text nodes
+//             if (mutation.addedNodes.length > 0) {
+//               options.createCallback && options.createCallback();
+//               resolve("added");
+//             }
+//             if (mutation.removedNodes.length > 0) {
+//               options.removeCallback && options.removeCallback();
+//               resolve("removed");
+//             }
+//             break;
+//           case "attributes":
+//             if (target.style.display === "none") {
+//               options.hiddenCallback && options.hiddenCallback();
+//               resolve("hidden");
+//             } else {
+//               if (!rendered) {
+//                 options.renderedCallback && options.renderedCallback();
+//                 resolve("rendered");
+//                 rendered = true;
+//               }
+//             }
+//             break;
+//           default:
+//             break;
+//         }
+//       });
+//     });
+
+//     const resizeObserver = new ResizeObserver(() => {
+//       options.resizeCallback && options.resizeCallback();
+//     });
+
+//     const positionObserver = new MutationObserver(() => {
+//       const newPos = {
+//         x: targetElement.offsetLeft,
+//         y: targetElement.offsetTop,
+//       };
+//       if (newPos.x !== position.x || newPos.y !== position.y) {
+//         options.positionChangedCallback && options.positionChangedCallback(newPos);
+//         position = newPos;
+//       }
+//     });
+
+//     observer.observe(targetElement, {
+//       childList: true,
+//       attributes: true,
+//       attributeFilter: ["style"],
+//     });
+
+//     resizeObserver.observe(targetElement);
+
+//     positionObserver.observe(targetElement, {
+//       attributes: true,
+//       attributeFilter: ["style"],
+//     });
+//   });
+// }
+
+export function observeElement(targetElement, options) {
+  return new Promise(resolve => {
+    let rendered = false;
+    let position = {};
+    const observer = new MutationObserver(mutationsList => {
+      mutationsList.forEach(mutation => {
+        const { type, target } = mutation;
+        if (target !== targetElement) return;
+
+        switch (type) {
+          case "childList":
+            if (target.childNodes.length === 1 && target.childNodes[0].nodeName === "#text") return; // Ignore text nodes
+            if (mutation.addedNodes.length > 0) {
+              options.createCallback && options.createCallback();
+              resolve("added");
+            }
+            if (mutation.removedNodes.length > 0) {
+              options.removeCallback && options.removeCallback();
+              resolve("removed");
+            }
+            break;
+          case "attributes":
+            if (target.style.display === "none") {
+              options.hiddenCallback && options.hiddenCallback();
+              resolve("hidden");
+            } else {
+              if (!rendered) {
+                options.renderedCallback && options.renderedCallback();
+                resolve("rendered");
+                rendered = true;
+
+                // Find the child element with 'resize' style
+                const children = targetElement.querySelectorAll("div");
+                if (children) {
+                  children.forEach(el => {
+                   let isResize = window.getComputedStyle(el).getPropertyValue('resize')
+                    if (isResize === "both") {
+                      new ResizeObserver(() => {
+                        options.resizeCallback && options.resizeCallback();
+                      }).observe(el);
+                    }
+                  });
+                }
+
+              }
+            }
+            break;
+          default:
+            break;
+        }
+      });
+    });
+
+    const positionObserver = new MutationObserver(() => {
+      const newPos = {
+        x: targetElement.offsetLeft,
+        y: targetElement.offsetTop
+      };
+      if (newPos.x !== position.x || newPos.y !== position.y) {
+        options.positionChangedCallback && options.positionChangedCallback(newPos);
+        position = newPos;
+      }
+    });
+
+    observer.observe(targetElement, {
+      childList: true,
+      attributes: true,
+      attributeFilter: ["style"]
+    });
+
+    positionObserver.observe(targetElement, {
+      attributes: true,
+      attributeFilter: ["style"]
+    });
+  });
+}
+
 export default {
   getTargetElement,
   isUrlOrPath,
@@ -423,5 +622,6 @@ export default {
   getTextClass,
   makeEvent,
   triggerEvent,
-  onElementRendered
+  onElementRendered,
+  observeElement
 };

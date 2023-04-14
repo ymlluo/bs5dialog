@@ -1,4 +1,4 @@
-import { makeRequest, isUrlOrPath, makeDraggable, makeResizable, genDialogId, setModalWrapper, replayLock, triggerEvent } from "../utils";
+import { makeRequest, isUrlOrPath, makeDraggable, makeResizable, genDialogId, setModalWrapper, replayLock, triggerEvent,observeElement } from "../utils";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
 import { makeIcon } from "../resource/icons";
@@ -69,6 +69,12 @@ export async function load(content, options = {}) {
     modalElement.setAttribute("id", options.id);
   }
 
+
+
+  // onElementRendered(modalElement).then(modalElement=>{
+  //   triggerEvent("bs5:dialog:shown", { options: options,dialog:modalElement });
+  // })
+
   if (isUrlOrPath(content)) {
     let apiUrl = content;
     const res = await makeRequest(apiUrl, "GET");
@@ -100,7 +106,16 @@ export async function load(content, options = {}) {
     </div>
   </div>`;
 
+  if (options.draggable) {
+    makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
+  }
+  if (options.resizable) {
+    makeResizable(modalElement.querySelector(".modal-content"));
+  }
+
   document.body.appendChild(modalElement);
+
+
 
   const modalInstance = bs5Modal.getOrCreateInstance(modalElement, {
     keyboard: options.keyboard,
@@ -109,12 +124,12 @@ export async function load(content, options = {}) {
   });
   modalInstance.show();
 
-  triggerEvent("bs5:dialog:show", { options: options });
+  // triggerEvent("bs5:dialog:show", { options: options });
   if (typeof options.onShow === "function") {
     options.onShow();
   }
   modalElement.addEventListener("shown.bs.modal", function () {
-    triggerEvent("bs5:dialog:shown", { options: options });
+
 
     if (options.backdrop === false) {
       if (document.querySelector(".modal-backdrop")) {
@@ -123,25 +138,20 @@ export async function load(content, options = {}) {
       modalElement.style.pointerEvents = "none";
     }
 
-    if (options.draggable) {
-      makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
-    }
-    if (options.resizable) {
-      makeResizable(modalElement.querySelector(".modal-content"));
-    }
+
     if (typeof options.onShown === "function") {
       options.onShown(modalElement);
     }
   });
   modalElement.addEventListener("hide.bs.modal", function () {
-    triggerEvent("bs5:dialog:hide", { options: options });
+    // triggerEvent("bs5:dialog:hide", { options: options });
     if (typeof options.onHide === "function") {
       options.onHide();
     }
   });
 
   modalElement.addEventListener("hidden.bs.modal", function () {
-    triggerEvent("bs5:dialog:hidden", { options: options });
+    // triggerEvent("bs5:dialog:hidden", { options: options });
     if (typeof options.onHidden === "function") {
       options.onHidden();
     }
@@ -164,7 +174,7 @@ export async function load(content, options = {}) {
   modalElement.querySelectorAll(".btn-maximize-toggle").forEach(function (el) {
     el.addEventListener("click", function () {
       if (this.classList.contains("btn-maximize")) {
-        triggerEvent("bs5:dialog:maximize", { options: options });
+        // triggerEvent("bs5:dialog:maximize", { options: options });
         //fix drag
         modalDialog.parentElement.style.top = 0;
         modalDialog.parentElement.style.left = 0;
@@ -177,7 +187,7 @@ export async function load(content, options = {}) {
         this.classList.add("d-none");
         modalElement.querySelector(".btn-minimize").classList.remove("d-none");
       } else if (this.classList.contains("btn-minimize")) {
-        triggerEvent("bs5:dialog:minimize", { options: options });
+        // triggerEvent("bs5:dialog:minimize", { options: options });
         modalDialog.classList.remove("modal-fullscreen");
         modalDialog.classList.add("modal-" + options.size);
         this.classList.add("d-none");
@@ -198,53 +208,53 @@ export async function load(content, options = {}) {
     okBtn.addEventListener("click", async function (event) {
       event.preventDefault();
       replayLock(okBtn);
-      triggerEvent("bs5:dialog:form:submit", {
-        options: options,
-        formEl: form,
-        formAction: form.action,
-        formMethod: form.method,
-        formData: new FormData(form)
-      });
+      // triggerEvent("bs5:dialog:form:submit", {
+      //   options: options,
+      //   formEl: form,
+      //   formAction: form.action,
+      //   formMethod: form.method,
+      //   formData: new FormData(form)
+      // });
       if (typeof options.onSubmit === "function") {
         options.onSubmit(modalElement);
       }
 
       try {
         const submitResult = await makeRequest(form.action, form.method, {}, new FormData(form));
-        triggerEvent("bs5:dialog:form:submit:complete", {
-          options: options,
-          formEl: form,
-          formAction: form.action,
-          formMethod: form.method,
-          formData: new FormData(form),
-          submitResult: submitResult
-        });
+        // triggerEvent("bs5:dialog:form:submit:complete", {
+        //   options: options,
+        //   formEl: form,
+        //   formAction: form.action,
+        //   formMethod: form.method,
+        //   formData: new FormData(form),
+        //   submitResult: submitResult
+        // });
         if (typeof options.onSubmitDone === "function") {
           options.onSubmitDone(submitResult);
         }
         if (submitResult.isSuccess && typeof options.onSubmitSuccess === "function") {
-          triggerEvent("bs5:dialog:form:submit:success", {
-            options: options,
-            formEl: form,
-            formAction: form.action,
-            formMethod: form.method,
-            formData: new FormData(form),
-            submitResult: submitResult
-          });
+          // triggerEvent("bs5:dialog:form:submit:success", {
+          //   options: options,
+          //   formEl: form,
+          //   formAction: form.action,
+          //   formMethod: form.method,
+          //   formData: new FormData(form),
+          //   submitResult: submitResult
+          // });
           if (typeof options.onSubmitSuccess === "function") {
             options.onSubmitSuccess(submitResult);
           }
 
           modalInstance.hide();
         } else if (!submitResult.isSuccess && typeof options.onSubmitError === "function") {
-          triggerEvent("bs5:dialog:form:submit:error", {
-            options: options,
-            formEl: form,
-            formAction: form.action,
-            formMethod: form.method,
-            formData: new FormData(form),
-            submitResult: submitResult
-          });
+          // triggerEvent("bs5:dialog:form:submit:error", {
+          //   options: options,
+          //   formEl: form,
+          //   formAction: form.action,
+          //   formMethod: form.method,
+          //   formData: new FormData(form),
+          //   submitResult: submitResult
+          // });
           if (typeof options.onSubmitError === "function") {
             options.onSubmitError(submitResult);
           }
