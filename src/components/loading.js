@@ -1,27 +1,27 @@
-import { getMaxZIndex, getTargetElement, replayLock, triggerEvent, onElementRendered } from "../utils";
+import { getMaxZIndex, getTargetElement, observeElement, triggerEvent } from "../utils";
 import { makeSpinner } from "../resource/loading";
 
 /**
- * Creates a spinner element and appends it to the target element.
- * @param {HTMLElement} element - The target element to append the spinner to.
- * @param {Object} options - The options for the spinner.
- * @param {string} options.animation - The animation for the spinner.
- * @param {string} options.animationClass - The class of animation for the spinner.
- * @param {string} options.animationStyle - The style of animation for the spinner.
- * @param {string} options.text - The text of spinner.
- * @param {string} options.type - The type of spinner.
+ * Creates a loading element and appends it to the target element.
+ * @param {HTMLElement} element - The target element to append the loading to.
+ * @param {Object} options - The options for the loading.
+ * @param {string} options.animation - The animation for the loading.
+ * @param {string} options.animationClass - The class of animation for the loading.
+ * @param {string} options.animationStyle - The style of animation for the loading.
+ * @param {string} options.text - The text of loading.
+ * @param {string} options.type - The type of loading.
  * @param {boolean} options.backdrop - Whether or not to include a backdrop.
- * @param {number} options.timeout - The timeout for the spinner.
- * @returns {Object} An object with the target element, spinner element, and hide and clean functions.
+ * @param {number} options.timeout - The timeout for the loading.
+ * @returns {Object} An object with the target element, loading element, and hide and clean functions.
  */
 
-export function spinner(element = document.body, options = {}) {
+export function loading(element = document.body, options = {}) {
   const defaultOptions = {
     animation: "border",
-    animationClass: "text-warning",
+    animationClass: "",
     animationStyle: "",
     text: "Please wait...",
-    type: "",
+    type: "warning",
     backdrop: true,
     timeout: 0
   };
@@ -36,7 +36,7 @@ export function spinner(element = document.body, options = {}) {
     return;
   }
 
-  const existingSpinner = targetElement.querySelector(".bs5-modal-spinner");
+  const existingSpinner = targetElement.querySelector(".bs5-dialog-loading");
   if (existingSpinner) {
     existingSpinner.remove();
   }
@@ -60,12 +60,37 @@ export function spinner(element = document.body, options = {}) {
   overlay.style.pointerEvents = "auto";
   overlay.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
   overlay.style.setProperty("z-index", getMaxZIndex() + 1);
+  overlay.classList.add('bs5-dailog-loading')
+
+  observeElement(overlay, {
+    created: () => {
+      triggerEvent(overlay, "bs5:dialog:loading:created", { options: options, el: overlay });
+    },
+    rendered: () => {
+      triggerEvent(overlay, "bs5:dialog:loading:rendered", { options: options, el: overlay });
+    },
+    hidden: () => {
+      triggerEvent(overlay, "bs5:dialog:loading:hidden", { options: options, el: overlay });
+    },
+    remove: () => {
+      triggerEvent(overlay, "bs5:dialog:loading:remove", { options: options, el: overlay });
+    }
+  });
+
+
 
   if (options.backdrop === false || options.backdrop === "false") {
     overlay.style.backgroundColor = "transparent";
     overlay.style.pointerEvents = "none";
   }
 
+  if(options.type){
+    if (!options.type.startsWith("text-")){ 
+      options.type='text-'+options.type
+    }
+      options.animationClass = options.animationClass+ ' '+options.type
+  
+  }
 
   let animation = makeSpinner(options.animation, options.animationClass, options.animationStyle);
   const animationRect = animation.getBoundingClientRect();
@@ -84,53 +109,47 @@ export function spinner(element = document.body, options = {}) {
       animation.remove();
     }
   }
-
-  onElementRendered(overlay).then(() => {
-    triggerEvent(targetElement,"bs5:spinner:shown", { options: options, el: targetElement });
-    if (options.timeout > 0) {
-      timer = setTimeout(() => {
-        hidespinner();
-      }, options.timeout);
-    }
-  });
-  
+  let timer;
   let preCursor = targetElement.style.getPropertyValue("cursor");
   targetElement.appendChild(overlay);
   targetElement.style.cursor = "wait";
-  let timer;
 
 
-  var hidespinner = function () {
+  var hideloading = function () {
     overlay.remove();
     targetElement.style.cursor = preCursor;
     clearTimeout(timer);
-    triggerEvent(targetElement,"bs5:spinner:hidden", { options: options, el: targetElement });
-    triggerEvent(evt,"bs5:spinner:hidden", { options: options, el: targetElement });
-
   };
+
+  if (options.timeout > 0) {
+    timer = setTimeout(() => {
+      hideloading();
+    }, options.timeout);
+  }
+  
+
+  targetElement.hide= function(){
+    hideloading()
+  }
+
   return {
     el: targetElement,
-    hide() {
-      hidespinner();
-    },
-    clean: () => {
-      spinnerClean();
-    }
+    options:options,
   };
 }
 
 /**
- * Removes all spinner elements from the document.
+ * Removes all loading elements from the document.
  */
-export function spinnerClean() {
-  let spinners = document.querySelectorAll(".bs5-modal-spinner");
-  if (spinners) {
-    spinners.forEach(el => {
+export function loadingClean() {
+  let loadings = document.querySelectorAll(".bs5-dailog-loading");
+  if (loadings) {
+    loadings.forEach(el => {
       el.parentNode.style.cursor = "auto";
       el.remove();
     });
   }
 }
 
-export const showLoading = spinner;
-export const hideLoading = spinnerClean;
+export const showLoading = loading;
+export const hideLoading = loadingClean;

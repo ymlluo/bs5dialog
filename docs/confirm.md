@@ -1,4 +1,5 @@
 ## Introduction
+
 The confirm function is exported from the @ymlluo/bs5dialog package and is used to display a confirmation modal with customizable options.
 
 ## Usage
@@ -81,7 +82,6 @@ const { el, content, options: confirmedOptions } = confirm('Are you sure you wan
 </html>
 ```
 
-
 ## Parameters
 
 The confirm function takes in two parameters:
@@ -101,50 +101,26 @@ The confirm function takes in two parameters:
 - onConfirm (function): The function to call when the OK button is clicked.
 - onCancel (function): The function to call when the Cancel button is clicked.
 
-
-
 ## List of Event Listeners
 
-- bs5:dialog:ok
-- bs5:dialog:cancel
-- bs5:dialog:show
-- bs5:dialog:shown
-- bs5:dialog:hide
-- bs5:dialog:hidden
+- bs5:dialog:confirm:created
+- bs5:dialog:confirm:rendered
+- bs5:dialog:confirm:hidden
+- bs5:dialog:confirm:remove
+- bs5:dialog:confirm:ok
+- bs5:dialog:confirm:cancel
 
 ## Usage of addEventListener
 
 ```
-const modalElement = document.getElementById('modalElement');
+ const confirmBtn = document.getElementById('confirm-btn');
+ confirmBtn.addEventListener('click', () => {
+     bs5dialog.confirm('Are you sure you want to do this?');
+  })
 
-modalElement.addEventListener('bs5:dialog:ok', (event) => {
+confirmBtn.addEventListener('bs5:dialog:confirm:ok', () => {
   console.log('OK button clicked.');
-  console.log(event.detail.options);
 });
 
-modalElement.addEventListener('bs5:dialog:cancel', (event) => {
-  console.log('cancel button clicked.');
-  console.log(event.detail.options);
-});
-
-modalElement.addEventListener('bs5:dialog:show', (event) => {
-  console.log('Modal is about to be shown.');
-  console.log(event.detail.options);
-});
-
-modalElement.addEventListener('bs5:dialog:shown', (event) => {
-  console.log('Modal is shown.');
-  console.log(event.detail.options);
-});
-
-modalElement.addEventListener('bs5:dialog:hide', (event) => {
-  console.log('Modal is about to be hidden.');
-  console.log(event.detail.options);
-});
-
-modalElement.addEventListener('bs5:dialog:hidden', (event) => {
-  console.log('Modal is hidden.');
-  console.log(event.detail.options);
-});
 
 ```

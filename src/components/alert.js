@@ -1,4 +1,4 @@
-import { setModalWrapper, replayLock, triggerEvent, genDialogId } from "../utils";
+import { setModalWrapper, replayLock, triggerEvent, genDialogId,observeElement,debounce } from "../utils";
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -41,6 +41,41 @@ export function alert(content, options = {}) {
     options.id = options.id || genDialogId();
     modalElement.setAttribute("id", options.id);
   }
+
+  observeElement(modalElement, {
+    created: () => {
+      triggerEvent(modalElement, "bs5:dialog:alert:created", { options: options, el: modalElement });
+    },
+    rendered: () => {
+      triggerEvent(modalElement, "bs5:dialog:alert:rendered", { options: options, el: modalElement });
+      const modalInstance =  bs5Modal.getOrCreateInstance(modalElement);
+      const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
+      if(okBtn){
+        okBtn.addEventListener("click", () => {
+          replayLock(okBtn);
+          triggerEvent(modalElement,"bs5:dialog:alert:ok", { options: options });
+          options.onOk?.();
+          modalInstance.hide();
+        });
+      }
+      const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
+      if(cancelBtn){
+        cancelBtn.addEventListener("click", () => {
+          replayLock(cancelBtn);
+          triggerEvent(modalElement,"bs5:dialog:alert:cancel", { options: options });
+          options.onCancel?.();
+          modalInstance.hide();
+        });
+      }
+    },
+    hidden: () => {
+      triggerEvent(modalElement, "bs5:dialog:alert:hidden", { options: options, el: modalElement });
+    },
+    remove: () => {
+      triggerEvent(modalElement, "bs5:dialog:alert:remove", { options: options, el: modalElement });
+    },
+  });
+
   modalElement.classList.add("bs5dialog-modal-alert");
   modalElement.innerHTML = `
     <div class="modal-dialog modal-${options.size || "sm"} modal-dialog-centered">
@@ -77,33 +112,15 @@ export function alert(content, options = {}) {
   document.body.appendChild(modalElement);
   const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
   modalInstance.show();
-  const okBtnEl = modalElement.querySelector(".modal-footer .btn-ok");
-  okBtnEl.addEventListener("click", () => {
-    replayLock(okBtnEl);
-    if (typeof options.onOk === "function") {
-      options.onOk();
-    }
-    triggerEvent("bs5:dialog:ok", { options: options });
-    modalInstance.hide();
-  });
 
-  triggerEvent("bs5:dialog:show", { options: options });
-
-  modalElement.addEventListener("shown.bs.modal", function () {
-    triggerEvent("bs5:dialog:shown", { options: options });
-  });
-
-  modalElement.addEventListener("hide.bs.modal", function () {
-    triggerEvent("bs5:dialog:hide", { options: options });
-  });
-
-  modalElement.addEventListener("hidden.bs.modal", function () {
-    triggerEvent("bs5:dialog:hidden", { options: options });
-  });
+  modalElement.addEventListener('hidden.bs.modal', event => {
+    modalElement.remove();
+  })
 
   if (options.timeout) {
     setTimeout(() => {
       modalInstance.hide();
+    
     }, options.timeout);
   }
   return {

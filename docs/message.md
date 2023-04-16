@@ -81,7 +81,6 @@ const msg = message("This is a success message", options);
           iconClass: "",
           iconStyle: "",
           timeout: 0,
-          onClose: function () {},
           onClosed: function () {}
         };
         const msg = bs5dialog.message("This is a success message", options);
@@ -107,18 +106,11 @@ const msg = message("This is a success message", options);
 - iconClass (string): The class of the icon to display with the message (default: "").
 - iconStyle (string): The style of the icon to display with the message (default: "").
 - timeout (number): The time in milliseconds before the message disappears (default: 3000).
-- onClose (function): The function to call when the message is closed (default: function() {}).
 - onClosed (function): The function to call after the message is closed (default: function() {}).
 
 ## List of Event Listeners
 
-- bs5:dialog:shown: Triggered when the message is shown.
-- bs5:dialog:hidden: Triggered when the message is hidden.
-
-```
-These events can be listened to using the addEventListener method. For example:
-
-msg.el.addEventListener('bs5:dialog:shown', (event) => {
-  console.log(event.detail);
-});
-```
+- bs5:dialog:message:created
+- bs5:dialog:message:rendered
+- bs5:dialog:message:hidden
+- bs5:dialog:message:remove

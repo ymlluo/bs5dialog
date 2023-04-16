@@ -89,40 +89,22 @@ alert('This is an alert message.', {
 
 ## List of Event Listeners
 
-- bs5:dialog:ok
-- bs5:dialog:show
-- bs5:dialog:shown
-- bs5:dialog:hide
-- bs5:dialog:hidden
+- bs5:dialog:alert:created
+- bs5:dialog:alert:rendered
+- bs5:dialog:alert:hidden
+- bs5:dialog:alert:remove
+- bs5:dialog:alert:ok
+- bs5:dialog:alert:cancel
 
 ## Usage of addEventListener
 
 ```
-const modalElement = document.getElementById('modalElement');
-
-modalElement.addEventListener('bs5:dialog:ok', (event) => {
-  console.log('OK button clicked.');
-  console.log(event.detail.options);
-});
-
-modalElement.addEventListener('bs5:dialog:show', (event) => {
-  console.log('Modal is about to be shown.');
-  console.log(event.detail.options);
-});
-
-modalElement.addEventListener('bs5:dialog:shown', (event) => {
-  console.log('Modal is shown.');
-  console.log(event.detail.options);
-});
-
-modalElement.addEventListener('bs5:dialog:hide', (event) => {
-  console.log('Modal is about to be hidden.');
-  console.log(event.detail.options);
-});
-
-modalElement.addEventListener('bs5:dialog:hidden', (event) => {
-  console.log('Modal is hidden.');
-  console.log(event.detail.options);
+ const alertBtn = document.getElementById('alertBtn');
+      alertBtn.addEventListener('click', () => {
+        bs5dialog.alert('This is an alert message.');
+      });
+alertBtn.addEventListener('bs5:dialog:alert:ok', (event) => {
+  console.log('ok.');
 });
 
 ```

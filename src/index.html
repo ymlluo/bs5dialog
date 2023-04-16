@@ -93,9 +93,9 @@
                 <div class="col-sm-6">
                   <form class="" id="loading-form">
                     <div class="mb-3 row">
-                      <label class="col-3 col-form-label required">spinner type</label>
+                      <label class="col-3 col-form-label required">loading type</label>
                       <div class="col">
-                        <select class="form-control" name="type" id="spinner-type">
+                        <select class="form-control" name="type" id="loading-type">
                           <option value="primary">primary</option>
                           <option value="secondary">secondary</option>
                           <option value="success">success</option>
@@ -111,7 +111,7 @@
                     <div class="mb-3 row">
                       <label class="col-3 col-form-label">animation</label>
                       <div class="col">
-                        <select class="form-control" name="animation" id="spinner-animation">
+                        <select class="form-control" name="animation" id="loading-animation">
                           <option value="border">border</option>
                           <option value="grow">grow</option>
                         </select>
@@ -121,7 +121,7 @@
                     <div class="mb-3 row">
                       <label class="col-3 col-form-label">timeout</label>
                       <div class="col">
-                        <input type="number" class="form-control" value="2000" id="spinner-timeout" />
+                        <input type="number" class="form-control" value="2000" id="loading-timeout" />
                         <small class="form-hint"></small>
                       </div>
                     </div>
@@ -130,14 +130,14 @@
                       <label class="col-3 col-form-label pt-0">backdrop</label>
                       <div class="col">
                         <label class="form-check">
-                          <input class="form-check-input" type="checkbox" checked="" id="spinner-backdrop" />
+                          <input class="form-check-input" type="checkbox" checked="" id="loading-backdrop" />
                           <span class="form-check-label">backdrop</span>
                         </label>
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-3 my-2 ms-auto">
-                        <button type="button" class="btn btn-sm btn-primary btn-show-spinner">Show Spinner</button>
+                        <button type="button" class="btn btn-sm btn-primary btn-show-loading">Show Spinner</button>
                       </div>
                     </div>
                   </form>
@@ -282,14 +282,14 @@
         };
       });
 
-      document.querySelector(".btn-show-spinner").addEventListener("click", function () {
+      document.querySelector(".btn-show-loading").addEventListener("click", function () {
         var form = document.getElementById("loading-form");
-        var type = document.getElementById("spinner-type").value;
-        var animation = document.getElementById("spinner-animation").value;
-        var timeout = document.getElementById("spinner-timeout").value;
-        var backdrop = document.getElementById("spinner-backdrop").checked;
+        var type = document.getElementById("loading-type").value;
+        var animation = document.getElementById("loading-animation").value;
+        var timeout = document.getElementById("loading-timeout").value;
+        var backdrop = document.getElementById("loading-backdrop").checked;
         console.log(backdrop);
-        bs5dialog.spinner("#loading-form", { type: type, animation: animation, timeout: timeout, backdrop: backdrop });
+        bs5dialog.loading("#loading-form", { type: type, animation: animation, timeout: timeout, backdrop: backdrop });
       });
 
 
@@ -298,7 +298,10 @@
           var position = item.getAttribute("data-position");
           var type = item.getAttribute("data-type");
           var color = item.getAttribute("data-text-color");
-          bs5dialog.toast("Your post has been archived!", { title: "New Message", subtitle: Date(), type: type, position: position, timeout: 1000 });
+          let toast = bs5dialog.toast("Your post has been archived!", { title: "New Message", subtitle: Date(), type: type, position: position, timeout: 30000 });
+          toast.el.addEventListener('click',function(){
+            toast.el.hide()
+          })
         };
       });
 
@@ -326,13 +329,13 @@
               console.log(submitResult);
             }
           }).then((loadPage)=>{
-            console.log(loadPage)
+            // console.log(loadPage)
                       loadPage.el.addEventListener('bs5:dialog:shown',function(e){
-            console.log(e)
+            // console.log(e)
           })
 
           loadPage.el.addEventListener('bs5:dialog:form:submit:complete',function(e){
-            console.log(e)
+            // console.log(e)
           })
           });
 
