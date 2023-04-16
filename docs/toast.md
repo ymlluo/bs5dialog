@@ -74,7 +74,6 @@ toast("Hello world!", {
           iconClass: "me-2",
           iconStyle: '{ fontSize: "1.5rem" }',
           timeout: 5000,
-          onHide: () => console.log("Toast hidden"),
           onHidden: () => console.log("Toast fully hidden"),
           onShow: () => console.log("Toast shown"),
           onShown: () => console.log("Toast fully shown")
@@ -101,24 +100,12 @@ toast("Hello world!", {
 - timeout (number): The amount of time (in milliseconds) to display the toast.
 - onShow (function): A function to call when the toast is shown.
 - onShown (function): A function to call after the toast is shown.
-- onHide (function): A function to call when the toast is hidden.
 - onHidden (function): A function to call after the toast is hidden.
 
 
 # List of Event Listeners
 
-- bs5:dialog:show: Triggered when the toast is shown.
-- bs5:dialog:shown: Triggered after the toast is shown.
-- bs5:dialog:hide: Triggered when the toast is hidden.
-- bs5:dialog:hidden: Triggered after the toast is hidden.
-
-Example of adding an event listener:
-
-```
-const toastElement = bs5dialog.toast('Hello, world!', { onShow: () => console.log('Toast is showing...') });
-toastElement.el.addEventListener('bs5:dialog:show', event => {
-  console.log('Toast shown:', event.detail.options);
-});
-
-
-```
+- bs5:dialog:toast:created
+- bs5:dialog:toast:rendered
+- bs5:dialog:toast:hidden
+- bs5:dialog:toast:remove

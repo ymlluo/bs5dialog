@@ -4,7 +4,7 @@
 
 # Introduction
 
-bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of components for creating alerts, prompts, confirms, messages, toasts, tabs, spinners, and offcanvas dialogs.
+bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of components for creating alerts, prompts, confirms, messages, toasts, tabs, loadings, and offcanvas dialogs.
 
 ## Demo
 
@@ -48,8 +48,8 @@ Displays a prompt dialog with customizable options.
 ## [Message](docs/message.md)
 Displays a message with customizable options
 
-## [Spinner](docs/spinner.md)
-Creates a spinner element and appends it to the target element.
+## [Loading](docs/loading.md)
+Creates a loading element and appends it to the target element.
 > Tips:You can also use the function alias `showLoading`
 
 ## [Toast](docs/toast.md)

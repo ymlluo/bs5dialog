@@ -8,8 +8,7 @@ import { confirm } from './components/confirm'
 import { prompt } from './components/prompt'
 import { message,msg } from './components/message'
 import { toast } from './components/toast'
-import { tabs } from './components/tabs'
-import { spinner,spinnerClean,showLoading,hideLoading} from './components/spinner'
+import { loading,showLoading,loadingClean,hideLoading} from './components/loading'
 
 
 export {
@@ -19,13 +18,12 @@ export {
   message,
   msg,
   toast,
-  spinner,
+  loading,
   showLoading,
-  spinnerClean,
+  loadingClean,
   hideLoading,
   load,
   offcanvas,
-  tabs,
   utils,
   i18n,
 };

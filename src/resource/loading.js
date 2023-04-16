@@ -16,7 +16,12 @@ export const BS5_DIALOG_DEFAULT_SPINNERS = {
  * @param {string} spinnerStyle - The custom styles to add to the spinner element.
  * @returns {HTMLElement} - The spinner element.
  */
-export function makeSpinner(spinnerName, spinnerClass, spinnerStyle) {
+export function makeSpinner(spinnerName='', spinnerClass='', spinnerStyle='') {
+
+  spinnerName = spinnerName.trim()
+  spinnerClass = spinnerClass.trim()
+  spinnerStyle = spinnerStyle.trim()
+
   const htmlString = BS5_DIALOG_DEFAULT_SPINNERS[spinnerName] || spinnerName;
   const div = document.createElement("div");
   if (!spinnerName) {

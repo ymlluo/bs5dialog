@@ -155,12 +155,15 @@ load('https://example.com', {
 
 ## List of Event Listeners
 
-- bs5:dialog:ok
-- bs5:dialog:cancel
-- bs5:dialog:show
-- bs5:dialog:shown
-- bs5:dialog:hide
-- bs5:dialog:hidden
+
+
+
+- bs5:dialog:load:created
+- bs5:dialog:load:rendered
+- bs5:dialog:load:hidden
+
+- bs5:dialog:load:ok
+- bs5:dialog:load:cancel
 
 If options.isForm is true, when the form is submitted 
 

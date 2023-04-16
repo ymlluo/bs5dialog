@@ -1,4 +1,4 @@
-import { getMaxZIndex, getTextClass, triggerEvent } from "../utils";
+import { getMaxZIndex, getTextClass, triggerEvent,observeElement, debounce } from "../utils";
 import { Toast as bs5Toast } from "bootstrap";
 import { makeIcon } from "../resource/icons";
 
@@ -36,16 +36,32 @@ export function toast(message, options) {
     timeout: 3000,
     onShow: function () {},
     onShown: function () {},
-    onHide: function () {},
     onHidden: function () {}
   };
 
   options = { ...defaultOptions, ...options };
 
-
-
   const toastElement = document.createElement("div");
-  toastElement.classList.add("toast", "bs5-dialog-msg", "bs5-dialog-msg-" + options.position);
+
+  observeElement(toastElement, {
+    created: () => {
+      options.onShow?.();
+      triggerEvent(toastElement, "bs5:dialog:toast:created", { options: options, el: toastElement });
+    },
+    rendered: () => {
+      options.onShown?.();
+      triggerEvent(toastElement, "bs5:dialog:toast:rendered", { options: options, el: toastElement });
+    },
+    hidden: () => {
+      options.onHidden?.();
+      triggerEvent(toastElement, "bs5:dialog:toast:hidden", { options: options, el: toastElement });
+    },
+    remove: () => {
+      triggerEvent(toastElement, "bs5:dialog:toast:remove", { options: options, el: toastElement });
+    }
+  });
+
+  toastElement.classList.add("toast","show", "bs5-dialog-msg", "bs5-dialog-msg-" + options.position);
   toastElement.setAttribute("role", "alert");
   toastElement.style.zIndex = getMaxZIndex() + 1;
   // Create toast body element
@@ -61,7 +77,7 @@ export function toast(message, options) {
     toastHeaderElement.classList.add("toast-header", `bg-${options.type}`, textColor);
     toastHeaderElement.innerHTML = `<strong class="me-auto">${
       options.title || ""
-    }</strong> <small class="text-truncate" style="max-width: 50%;">${options.subtitle}</small><button type="button" class="btn-close ${
+    }</strong> <small class="text-truncate" style="max-width: 50%;">${options.subtitle}</small><button type="button" class="btn-x btn-close ${
       textColor === "text-white" ? "btn-close-white" : ""
     }" data-bs-dismiss="toast" aria-label="Close"></button>`;
     toastElement.appendChild(toastHeaderElement);
@@ -77,44 +93,48 @@ export function toast(message, options) {
   toastElement.appendChild(toastBodyElement);
   document.body.appendChild(toastElement);
 
-  triggerEvent("bs5:dialog:show", { options: options });
-  if (typeof options.onShow === "function") {
-    options.onShow();
+  // const toastInstance = new bs5Toast(toastElement, { delay: options.timeout, autohide: options.timeout ? true : false });
+  // toastInstance.show();
+  
+  if(options.timeout){
+    debounce(() => {
+      hideToast();
+    }, options.timeout);
   }
 
 
-  const toastInstance = new bs5Toast(toastElement, { delay: options.timeout, autohide: options.timeout ? true : false });
-  toastInstance.show();
-  toastElement.addEventListener("hide.bs.toast", event => {
-    console.log('hide.bs.toast')
-    triggerEvent( "bs5:dialog:hide", { options: options });
+  const hideToast=function() {
+    console.log('hidden')
     toastElement.classList.add("bs5-dialog-msg-hide");
-    if (typeof options.onHide === "function") {
-      options.onHide(event);
+    debounce(() => {
+      toastElement.style.display = "none";
+      debounce(() => {
+        toastElement.remove();
+      }, 500);
+    }, 300);
+  }
+
+  toastElement.hide= function(){
+    hideToast()
+  }
+  if(event && event.target){
+    event.target.hide = function(){
+      hideToast()
     }
-  });
-  toastElement.addEventListener("hidden.bs.toast", event => {
-    console.log('hidden.bs.toast')
-    triggerEvent( "bs5:dialog:hidden", { options: options });
-    if (typeof options.onHidden === "function") {
-      options.onHidden(event);
-    }
-  });
+  }
 
 
 
-
-  toastElement.addEventListener("shown.bs.toast", event => {
-    console.log('shown.bs.toast')
-    triggerEvent("bs5:dialog:shown", { options: options });
-    if (typeof options.onShown === "function") {
-      options.onShown(event);
-    }
-  });
+  const btnX = toastElement.querySelector(".btn-x");
+  if (btnX) {
+    btnX.addEventListener("click", () => {
+      hideToast();
+    });
+  }
 
   return {
-    el:toastElement,
+    el: toastElement,
     message,
     options
-  }
+  };
 }

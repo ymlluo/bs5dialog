@@ -120,23 +120,14 @@ The prompt function takes two parameters:
 
 ## List of Event Listeners
 
-- bs5:dialog:typing
-- bs5:dialog:ok
-- bs5:dialog:cancel
-- bs5:dialog:show
-- bs5:dialog:shown
-- bs5:dialog:hide
-- bs5:dialog:hidden
+- bs5:dialog:prompt:created
+- bs5:dialog:prompt:rendered
+- bs5:dialog:prompt:hidden
+- bs5:dialog:prompt:remove
+- bs5:dialog:prompt:ok
+- bs5:dialog:prompt:cancel
+- bs5:dialog:prompt:typing
 
-
-These events can be listened to using the addEventListener method. For example:
-
-
-```
-modalElement.addEventListener('bs5:dialog:ok', function(event) {
-  // Handle the event here
-});
-```
 
 
 

@@ -1,4 +1,4 @@
-import { getOverlapDimensions, genDialogId, triggerEvent } from "../utils.js";
+import { getOverlapDimensions, genDialogId, triggerEvent,observeElement } from "../utils.js";
 import { Offcanvas as bs5Offcanvas } from "bootstrap";
 
 /**
@@ -29,13 +29,10 @@ export function offcanvas(content, options = {}) {
     dark: false,
     accordion: true,
     container: "",
-    onStart: function () {},
     onShown: function () {},
     onHidden: function () {}
   };
   options = { ...defaultOptions, ...options };
-
-  options.onStart();
 
   let offcanvasElement;
   if (options.id && document.getElementById(options.id)) {
@@ -45,6 +42,39 @@ export function offcanvas(content, options = {}) {
     options.id = options.id || genDialogId();
     offcanvasElement.setAttribute("id", options.id);
   }
+  let prevContainerPanding;
+  const container = document.querySelector(options.container || "body");
+  const accordionDirection = options.direction === "start" ? "left" : options.direction === "end" ? "right" : options.direction || "";
+  observeElement(offcanvasElement, {
+    created: () => {
+      triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:created", { options: options, el: offcanvasElement });
+    },
+    rendered: () => {
+      prevContainerPanding = document.body.style.getPropertyValue("padding-" + accordionDirection);
+      if (options.accordion) {
+        let OverlapDimensions = getOverlapDimensions(offcanvasElement, container);
+        const paddingSize = ["left", "right"].includes(accordionDirection)
+          ? OverlapDimensions.overlapWidth + "px"
+          : OverlapDimensions.overlapHeight + "px";
+        container.style.setProperty("padding-" + accordionDirection, paddingSize);
+      }
+
+      triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:rendered", { options: options, el: offcanvasElement });
+      options.onShown?.(offcanvasElement);
+    },
+    hidden: () => {
+      if (options.accordion) {
+        container.style.setProperty("padding-" + accordionDirection, prevContainerPanding);
+      }
+      triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:hidden", { options: options, el: offcanvasElement });
+      options.onHidden?.(offcanvasElement);
+    },
+    remove: () => {
+
+      triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:remove", { options: options, el: offcanvasElement });
+    }
+  });
+
   offcanvasElement.classList.add("offcanvas", "bs5dialog-offcanvas", "offcanvas-" + options.direction);
 
   offcanvasElement.setAttribute("tabindex", "-1");
@@ -79,40 +109,6 @@ export function offcanvas(content, options = {}) {
   const offcanvasInstance = bs5Offcanvas.getOrCreateInstance(offcanvasElement);
   offcanvasInstance.toggle();
 
-  const accordionDirection = options.direction === "start" ? "left" : options.direction === "end" ? "right" : options.direction || "";
-  console.log(accordionDirection);
-  const container = document.querySelector(options.container || "body");
-
-  let prevContainerPanding = document.body.style.getPropertyValue("padding-" + accordionDirection);
-
-  triggerEvent("bs5:dialog:show", { options: options });
-
-  offcanvasElement.addEventListener("shown.bs.offcanvas", function () {
-    triggerEvent("bs5:dialog:shown", { options: options });
-    if (options.accordion) {
-      let OverlapDimensions = getOverlapDimensions(offcanvasElement, container);
-      const paddingSize = ["left", "right"].includes(accordionDirection)
-        ? OverlapDimensions.overlapWidth + "px"
-        : OverlapDimensions.overlapHeight + "px";
-      container.style.setProperty("padding-" + accordionDirection, paddingSize);
-    }
-    if (typeof options.onShown === "function") {
-      options.onShown(offcanvasElement);
-    }
-  });
-
-  offcanvasElement.addEventListener("hide.bs.offcanvas", function () {
-    triggerEvent("bs5:dialog:hide", { options: options });
-  });
-  offcanvasElement.addEventListener("hidden.bs.offcanvas", function () {
-    triggerEvent("bs5:dialog:hidden", { options: options });
-    if (options.accordion) {
-      container.style.setProperty("padding-" + accordionDirection, prevContainerPanding);
-    }
-    if (typeof options.onHidden === "function") {
-      options.onHidden(offcanvasElement);
-    }
-  });
 
   return {
     el: offcanvasElement,

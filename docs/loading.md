@@ -1,13 +1,13 @@
 # Introduction
 
-The spinner function is a utility function exported by the @ymlluo/bs5dialog package. It creates a spinner element and appends it to the target element. The function returns an object with the target element, spinner element, and hide and clean functions.
+The loading function is a utility function exported by the @ymlluo/bs5dialog package. It creates a loading element and appends it to the target element. The function returns an object with the target element, loading element, and hide and clean functions.
 
 # Usage Example
 
 ## ESM
 
 ```
-import { spinner } from '@ymlluo/bs5dialog';
+import { loading } from '@ymlluo/bs5dialog';
 
 const targetElement = document.getElementById('my-element');
 const options = {
@@ -20,9 +20,9 @@ const options = {
   timeout: 2000
 };
 
-const { hide } = spinner(targetElement, options);
+const { hide } = loading(targetElement, options);
 
-// To hide the spinner:
+// To hide the loading:
 hide();
 ```
 
@@ -30,7 +30,7 @@ hide();
 
 
 ```
-const { spinner } = require('@ymlluo/bs5dialog');
+const { loading } = require('@ymlluo/bs5dialog');
 
 const targetElement = document.getElementById('my-element');
 const options = {
@@ -43,9 +43,9 @@ const options = {
   timeout: 2000
 };
 
-const { hide } = spinner(targetElement, options);
+const { hide } = loading(targetElement, options);
 
-// To hide the spinner:
+// To hide the loading:
 hide();
 ```
 
@@ -82,7 +82,7 @@ hide();
       };
 
       myButton.addEventListener("click", () => {
-        bs5dialog.spinner(targetElement, options);
+        bs5dialog.loading(targetElement, options);
       });
     </script>
   </body>
@@ -92,30 +92,23 @@ hide();
 
 # Parameters
 
-The spinner function takes two parameters:
+The loading function takes two parameters:
 
-- element (optional): The target element to append the spinner to. Defaults to document.body.
+- element (optional): The target element to append the loading to. Defaults to document.body.
 - options (optional): An object with the following properties:
-- animation (optional): The animation for the spinner. Defaults to "border".
-- animationClass (optional): The class of animation for the spinner. Defaults to "text-warning".
-- animationStyle (optional): The style of animation for the spinner. Defaults to "".
-- text (optional): The text of spinner. Defaults to "Please wait...".
-- type (optional): The type of spinner. Defaults to "".
+- animation (optional): The animation for the loading. Defaults to "border".
+- animationClass (optional): The class of animation for the loading. Defaults to "text-warning".
+- animationStyle (optional): The style of animation for the loading. Defaults to "".
+- text (optional): The text of loading. Defaults to "Please wait...".
+- type (optional): The type of loading. Defaults to "".
 - backdrop (optional): Whether or not to include a backdrop. Defaults to true.
-- timeout (optional): The timeout for the spinner. Defaults to 2000.
+- timeout (optional): The timeout for the loading. Defaults to 2000.
 
 
 ## List of Event Listeners
 
-- bs5:dialog:show
-- bs5:dialog:shown
-- bs5:dialog:hide
-- bs5:dialog:hidden
+- bs5:dialog:loading:created
+- bs5:dialog:loading:rendered
+- bs5:dialog:loading:hidden
+- bs5:dialog:loading:remove
 
-These events can be listened to using the addEventListener method. For example:
-
-```
-modalElement.addEventListener('bs5:dialog:ok', function(event) {
-  // Handle the event here
-});
-```

@@ -11,16 +11,15 @@ export function isUrlOrPath(text) {
 }
 
 /**
- * Returns the target element.
- * @param {Element|string} element - The element or selector string.
- * @returns {Element} - The target element.
+ * Returns the target element
+ * @param {Element|string} element - The element or the selector string
+ * @returns {Element|null} - The target element or null
  */
 export function getTargetElement(element) {
   if (element instanceof Element) {
     return element;
-  } else {
-    return document.querySelector(element);
   }
+  return typeof element === "string" ? document.querySelector(element) : null;
 }
 
 /**
@@ -159,25 +158,36 @@ export function setModalWrapper() {
   modal.classList.add("modal", "bs5dialog-modal", "fade");
   modal.setAttribute("data-bs-backdrop", "static");
   modal.setAttribute("tabindex", "-1");
-
   return modal;
 }
 
+
+
 /**
- * Locks the replay button for a specified amount of time.
- * @param {HTMLElement} element - The replay button element.
- * @param {number} [timeout=1000] - The amount of time to lock the button in milliseconds.
- * @returns {number} - The timer ID.
+ * Locks the target element and sets a timeout to unlock it
+ * @param {Element|string} element - The element or the selector string
+ * @param {number} [timeout=1000] - The timeout in milliseconds
+ * @returns {number} - The timeout ID
  */
 export function replayLock(element, timeout = 1000) {
   const targetElement = getTargetElement(element);
+  targetElement.disabled = true;
   targetElement.classList.add("disabled");
-  targetElement.setAttribute("disabled", "disabled");
-  var timer = setTimeout(() => {
-    targetElement.classList.remove("disabled");
-    targetElement.removeAttribute("disabled");
+  targetElement.timeoutId = setTimeout(() => {
+    cancelReplayLock(targetElement);
   }, timeout);
-  return timer;
+  return targetElement.timeoutId;
+}
+
+/**
+ * Cancels the replay lock and unlocks the target element
+ * @param {Element|string} element - The element or the selector string
+ */
+export function cancelReplayLock(element) {
+  const targetElement = getTargetElement(element);
+  targetElement.disabled = false;
+  targetElement.classList.remove("disabled");
+  clearTimeout(targetElement.timeoutId);
 }
 
 /**
@@ -185,13 +195,9 @@ export function replayLock(element, timeout = 1000) {
  * @returns {number} The maximum z-index value.
  */
 export function getMaxZIndex() {
-  let maxZIndex = 0;
-  document.querySelectorAll("*").forEach(element => {
-    const zIndex = parseFloat(getComputedStyle(element).zIndex);
-    if (!isNaN(zIndex) && zIndex > maxZIndex) {
-      maxZIndex = zIndex;
-    }
-  });
+  const maxZIndex = Math.max(
+    ...[...document.querySelectorAll("*")].map(element => parseFloat(getComputedStyle(element).zIndex)).filter(zIndex => !isNaN(zIndex))
+  );
   return maxZIndex;
 }
 /**
@@ -200,38 +206,26 @@ export function getMaxZIndex() {
  * @returns {string} - The class name of the appropriate text color.
  */
 export function getTextClass(bgColorClassName) {
-  if (bgColorClassName === "bg-link") {
-    return "text-black";
+  switch (bgColorClassName) {
+    case "bg-primary":
+      return "text-white";
+    case "bg-secondary":
+      return "text-white";
+    case "bg-success":
+      return "text-white";
+    case "bg-danger":
+      return "text-white";
+    case "bg-warning":
+      return "text-dark";
+    case "bg-info":
+      return "text-white";
+    case "bg-light":
+      return "text-dark";
+    case "bg-dark":
+      return "text-white";
+    default:
+      return "";
   }
-
-  let bgColor;
-  if (document.querySelector("." + bgColorClassName)) {
-    bgColor = getComputedStyle(document.querySelector("." + bgColorClassName)).backgroundColor;
-  } else {
-    // Create temporary element
-    let tempElement = document.createElement("div");
-    tempElement.classList.add(bgColorClassName);
-    // Add element to body
-    document.body.appendChild(tempElement);
-
-    // Get background color of element
-    bgColor = getComputedStyle(tempElement).backgroundColor;
-
-    // Remove element from body
-    tempElement.remove();
-  }
-
-  // Get RGB values of background color
-  const colorValues = bgColor.match(/\d+/g);
-  const red = colorValues[0];
-  const green = colorValues[1];
-  const blue = colorValues[2];
-
-  // Calculate perceived brightness of background color
-  const perceivedBrightness = Math.sqrt(red * red * 0.299 + green * green * 0.587 + blue * blue * 0.114);
-
-  // Return text color class based on perceived brightness
-  return perceivedBrightness > 150 ? "text-black" : "text-white";
 }
 
 /**
@@ -249,7 +243,6 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
   }
 
   if (typeof axios !== "undefined") {
-
     axios.defaults.crossDomain = true;
     axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
     // Use axios if it's available
@@ -296,15 +289,12 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
         content: error.response?.data || error.message
       };
     }
-    
-
-
   } else {
     // Use fetch if axios is not available
     const options = {
       method,
       headers: {
-        "Content-Type":"application/json",
+        "Content-Type": "application/json",
         ...headers
       },
       credentials: "include" // Allow cookies to be sent and received for cross-domain requests
@@ -345,53 +335,196 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
         content: error.message
       };
     }
-
-
-
-
   }
 }
-
 /**
- * Creates a custom event with the given name and detail
- * @param {string} eventName - The name of the event
- * @param {object} detail - The detail object to be attached to the event
- * @returns {CustomEvent|Event} - The created event
- */
-export function makeEvent(eventName, detail) {
-  const params = {
-    bubbles: true,
-    cancelable: true,
-    detail: detail
-  };
-  if (typeof window.CustomEvent === "function") {
-    return new CustomEvent(eventName, params);
-  } else {
-    // IE 11 support
-    // https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
-    const evt = document.createEvent("CustomEvent");
-    evt.initCustomEvent(eventName, params.bubbles, params.cancelable, params.detail);
-    return evt;
-  }
-}
-
-/**
- * Triggers a custom event with the given name and detail on the given element
+ * Creates and triggers a custom event with the given name and detail on the given element
  * @param {HTMLElement} element - The element on which to trigger the event
  * @param {string} eventName - The name of the event to trigger
  * @param {object} detail - The detail object to be attached to the event
  */
-export function triggerEvent(eventName = "", detail = {}) {
-  if (!eventName) {
+export function triggerEvent(element, eventName = "", detail = {}) {
+  if (!eventName || !element) {
     return;
   }
-  const mewEvent = makeEvent(eventName, detail);
-  // element.dispatchEvent(mewEvent);
-  if(event && event.target){
-    event.target.dispatchEvent(mewEvent);
+  const newEvent = new CustomEvent(eventName, {
+    bubbles: true,
+    cancelable: true,
+    detail: detail
+  });
+  if (event && event.target && event.target instanceof Element) {
+    event.target.dispatchEvent(newEvent);
   }
+  // console.log(eventName, element, detail);
+  element.dispatchEvent(newEvent);
 }
 
+/**
+ * Debounces a function call
+ * @param {Function} func - The function to debounce
+ * @param {number} delay - The delay in milliseconds
+ * @returns {Function} - The debounced function
+ */
+export function debounce(func, delay) {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+}
+
+/**
+ * Throttles a function call
+ * @param {Function} func - The function to throttle
+ * @param {number} limit - The limit in milliseconds
+ * @returns {Function} - The throttled function
+ */
+export function throttle(func, limit) {
+  let lastFunc;
+  let lastRan;
+  return (...args) => {
+    if (!lastRan) {
+      func(...args);
+      lastRan = Date.now();
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(() => {
+        if (Date.now() - lastRan >= limit) {
+          func(...args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
+    }
+  };
+}
+
+/**
+ * Observes changes to a target element and triggers callbacks accordingly.
+ * @param {HTMLElement} targetElement - The element to observe.
+ * @param {object} options - The options object.
+ * @param {Function} options.created - Callback to be executed when a new child node is added.
+ * @param {Function} options.remove - Callback to be executed when a child node is removed.
+ * @param {Function} options.rendered - Callback to be executed when the target element is first rendered.
+ * @param {Function} options.hidden - Callback to be executed when the target element is hidden.
+ * @param {Function} options.dragged - Callback to be executed when the target element is dragged.
+ * @param {Function} options.resize - Callback to be executed when the target element is resized.
+ * @returns {Promise} - A Promise that resolves when the observer is disconnected.
+ */
+export function observeElement(targetElement, options) {
+  let resizeObserver;
+  let hasRendered = false;
+  let hasHidden = false;
+  const position = { x: targetElement.offsetLeft, y: targetElement.offsetTop };
+  let size = { width: 0, height: 0 };
+  let targetElementStyle;
+  let resizeElement;
+  options.created?.(targetElement);
+  let waitForInsertionTimeId;
+  const waitForInsertion = () => {
+    if (!targetElement.parentNode) {
+      waitForInsertionTimeId = setTimeout(waitForInsertion, 100);
+    } else {
+      if (waitForInsertionTimeId) {
+        clearTimeout(waitForInsertionTimeId);
+      }
+      options.rendered?.();
+      hasRendered = true;
+      resizeElement = targetElement.querySelector("div[style*='resize: both']");
+      if (resizeElement) {
+        size.width = resizeElement.offsetWidth;
+        size.height = resizeElement.offsetHeight;
+      }
+
+      observer.observe(targetElement.parentNode, {
+        childList: true,
+        attributes: true,
+        attributeFilter: ["style", "class"],
+        subtree: true
+      });
+      positionObserver.observe(targetElement, {
+        attributes: true,
+        attributeFilter: ["style"],
+        subtree: true
+      });
+    }
+  };
+
+  const observer = new MutationObserver(
+    debounce(mutationsList => {
+      for (const mutation of mutationsList) {
+        const { type, target } = mutation;
+        switch (type) {
+          case "attributes":
+            if (target !== targetElement) continue;
+            targetElementStyle = window.getComputedStyle(target);
+            if (hasRendered) {
+              // Find the child element with 'resize' style
+              if (resizeElement) {
+                resizeObserver = new ResizeObserver(
+                  throttle(() => {
+                    if (resizeElement.offsetWidth != size.width || resizeElement.offsetHeight != size.height) {
+                      size.width =resizeElement.offsetWidth; size.height=resizeElement.offsetHeight;
+                      options.resize?.();
+                    }
+                  }, 200)
+                );
+                resizeObserver.observe(resizeElement);
+              }
+              if (
+                (hasHidden == false && targetElementStyle.display === "none") ||
+                targetElementStyle.opacity === 0 ||
+                targetElementStyle.visibility === "hidden"
+              ) {
+                hasHidden = true;
+                hasRendered = false;
+                options.hidden?.();
+              } else {
+                hasHidden = false;
+                if (!hasRendered) {
+                  options.rendered?.();
+                }
+              }
+            }
+            break;
+          case "childList":
+            mutation.removedNodes.forEach(function (removedNode) {
+              if (removedNode === targetElement) {
+                options.remove?.();
+                observer.disconnect();
+              }
+            });
+            break;
+          default:
+            break;
+        }
+      }
+    }, 0)
+  );
+
+  const positionObserver = new MutationObserver(
+    throttle(() => {
+      const newPos = {
+        x: targetElement.offsetLeft,
+        y: targetElement.offsetTop
+      };
+      if (newPos.x !== position.x || newPos.y !== position.y) {
+        options.dragged?.(newPos);
+        position.x = newPos.x;
+        position.y = newPos.y;
+      }
+    }, 200)
+  );
+
+  waitForInsertion();
+
+  return Promise.resolve().finally(() => {
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+    }
+  });
+}
 
 export default {
   getTargetElement,
@@ -403,8 +536,11 @@ export default {
   genDialogId,
   setModalWrapper,
   replayLock,
+  cancelReplayLock,
   getMaxZIndex,
   getTextClass,
-  makeEvent,
-  triggerEvent
+  triggerEvent,
+  debounce,
+  throttle,
+  observeElement
 };

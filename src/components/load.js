@@ -1,4 +1,14 @@
-import { makeRequest, isUrlOrPath, makeDraggable, makeResizable, genDialogId, setModalWrapper, replayLock, triggerEvent } from "../utils";
+import {
+  makeRequest,
+  isUrlOrPath,
+  makeDraggable,
+  makeResizable,
+  genDialogId,
+  setModalWrapper,
+  replayLock,
+  triggerEvent,
+  observeElement,
+} from "../utils";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
 import { makeIcon } from "../resource/icons";
@@ -51,7 +61,6 @@ export async function load(content, options = {}) {
     btnCancelText: "",
     onShow: null,
     onShown: null,
-    onHide: null,
     onHidden: null,
     isForm: true,
     onSubmit: null,
@@ -69,10 +78,120 @@ export async function load(content, options = {}) {
     modalElement.setAttribute("id", options.id);
   }
 
+  observeElement(modalElement, {
+    created: () => {
+      options.onShow?.(modalElement);
+      triggerEvent(modalElement, "bs5:dialog:load:created", { options: options, el: modalElement });
+    },
+    rendered: () => {
+
+      options.onShown?.(modalElement)
+      if (options.backdrop === false) {
+        if (document.querySelector(".modal-backdrop")) {
+          document.querySelector(".modal-backdrop").remove();
+        }
+        modalElement.style.pointerEvents = "none";
+      }
+
+      triggerEvent(modalElement, "bs5:dialog:load:rendered", { options: options, el: modalElement });
+      const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+
+      const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
+      if (cancelBtn) {
+        cancelBtn.addEventListener("click", () => {
+          replayLock(cancelBtn);
+          triggerEvent(modalElement, "bs5:dialog:load:cancel", { options: options });
+          options.onCancel?.();
+          modalInstance.hide();
+        });
+      }
+
+      const form = modalElement.querySelector("form");
+      if (options.isForm && form) {
+        const modalFooter = modalElement.querySelector(".modal-footer");
+        modalFooter.classList.remove("d-none");
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
+        submitBtn.style.display = "none";
+        okBtn.textContent = submitBtn.textContent;
+        okBtn.setAttribute("type", "submit");
+        form.addEventListener("submit", e => {
+          e.preventDefault();
+        });
+        okBtn.addEventListener("click", async function (event) {
+          event.preventDefault();
+          replayLock(okBtn);
+          triggerEvent(modalElement, "bs5:dialog:form:submit", {
+            options: options,
+            formEl: form,
+            formAction: form.action,
+            formMethod: form.method,
+            formData: new FormData(form)
+          });
+          if (typeof options.onSubmit === "function") {
+            options.onSubmit(modalElement);
+          }
+
+          const submitResult = await makeRequest(form.action, form.method, {}, new FormData(form));
+          triggerEvent(modalElement, "bs5:dialog:form:submit:complete", {
+            options: options,
+            formEl: form,
+            formAction: form.action,
+            formMethod: form.method,
+            formData: new FormData(form),
+            submitResult: submitResult
+          });
+          if (typeof options.onSubmitDone === "function") {
+            options.onSubmitDone(submitResult);
+          }
+          if (submitResult.isSuccess && typeof options.onSubmitSuccess === "function") {
+            triggerEvent(modalElement, "bs5:dialog:form:submit:success", {
+              options: options,
+              formEl: form,
+              formAction: form.action,
+              formMethod: form.method,
+              formData: new FormData(form),
+              submitResult: submitResult
+            });
+            if (typeof options.onSubmitSuccess === "function") {
+              options.onSubmitSuccess(submitResult);
+            }
+            modalInstance.hide();
+          } else if (!submitResult.isSuccess && typeof options.onSubmitError === "function") {
+            triggerEvent(modalElement, "bs5:dialog:form:submit:error", {
+              options: options,
+              formEl: form,
+              formAction: form.action,
+              formMethod: form.method,
+              formData: new FormData(form),
+              submitResult: submitResult
+            });
+            if (typeof options.onSubmitError === "function") {
+              options.onSubmitError(submitResult);
+            }
+            message(submitResult.content);
+          }
+        });
+      }
+    },
+    hidden: () => {
+      options.onHidden?.(modalElement)
+      triggerEvent(modalElement, "bs5:dialog:load:hidden", { options: options, el: modalElement });
+    },
+    remove: () => {
+      triggerEvent(modalElement, "bs5:dialog:load:remove", { options: options, el: modalElement });
+    },
+    resize: () => {
+      triggerEvent(modalElement, "bs5:dialog:load:resize", { options: options, el: modalElement });
+    },
+    dragged: newPos => {
+      triggerEvent(modalElement, "bs5:dialog:load:dragged", { options: options, el: modalElement });
+    }
+  });
+
   if (isUrlOrPath(content)) {
     let apiUrl = content;
     const res = await makeRequest(apiUrl, "GET");
-    console.log(res);
     content = res.content;
     if (content.includes("<!DOCTYPE html>") || content.includes("<html")) {
       //frame
@@ -101,52 +220,12 @@ export async function load(content, options = {}) {
     </div>
   </div>`;
 
-  document.body.appendChild(modalElement);
-
-  const modalInstance = bs5Modal.getOrCreateInstance(modalElement, {
-    keyboard: options.keyboard,
-    focus: options.focus,
-    backdrop: options.backdrop
-  });
-  modalInstance.show();
-
-  triggerEvent("bs5:dialog:show", { options: options });
-  if (typeof options.onShow === "function") {
-    options.onShow();
+  if (options.draggable) {
+    makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
   }
-  modalElement.addEventListener("shown.bs.modal", function () {
-    triggerEvent("bs5:dialog:shown", { options: options });
-
-    if (options.backdrop === false) {
-      if (document.querySelector(".modal-backdrop")) {
-        document.querySelector(".modal-backdrop").remove();
-      }
-      modalElement.style.pointerEvents = "none";
-    }
-
-    if (options.draggable) {
-      makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
-    }
-    if (options.resizable) {
-      makeResizable(modalElement.querySelector(".modal-content"));
-    }
-    if (typeof options.onShown === "function") {
-      options.onShown(modalElement);
-    }
-  });
-  modalElement.addEventListener("hide.bs.modal", function () {
-    triggerEvent("bs5:dialog:hide", { options: options });
-    if (typeof options.onHide === "function") {
-      options.onHide();
-    }
-  });
-
-  modalElement.addEventListener("hidden.bs.modal", function () {
-    triggerEvent("bs5:dialog:hidden", { options: options });
-    if (typeof options.onHidden === "function") {
-      options.onHidden();
-    }
-  });
+  if (options.resizable) {
+    makeResizable(modalElement.querySelector(".modal-content"));
+  }
 
   const iconMinimizeElement = makeIcon(
     "bs5-minimize",
@@ -161,12 +240,20 @@ export async function load(content, options = {}) {
   const maximizeToggle = modalElement.querySelector(".modal-maximize-toggle");
   maximizeToggle.appendChild(iconMinimizeElement);
   maximizeToggle.appendChild(iconMaximizeElement);
+  document.body.appendChild(modalElement);
+
+  const modalInstance = bs5Modal.getOrCreateInstance(modalElement, {
+    keyboard: options.keyboard,
+    focus: options.focus,
+    backdrop: options.backdrop
+  });
+  modalInstance.show();
+
   const modalDialog = modalElement.querySelector(".modal-dialog");
   modalElement.querySelectorAll(".btn-maximize-toggle").forEach(function (el) {
     el.addEventListener("click", function () {
       if (this.classList.contains("btn-maximize")) {
-        triggerEvent("bs5:dialog:maximize", { options: options });
-        //fix drag
+        triggerEvent(modalElement, "bs5:dialog:load:maximize", { options: options });
         modalDialog.parentElement.style.top = 0;
         modalDialog.parentElement.style.left = 0;
         //fix resize
@@ -178,7 +265,7 @@ export async function load(content, options = {}) {
         this.classList.add("d-none");
         modalElement.querySelector(".btn-minimize").classList.remove("d-none");
       } else if (this.classList.contains("btn-minimize")) {
-        triggerEvent("bs5:dialog:minimize", { options: options });
+        triggerEvent(modalElement, "bs5:dialog:load:minimize", { options: options });
         modalDialog.classList.remove("modal-fullscreen");
         modalDialog.classList.add("modal-" + options.size);
         this.classList.add("d-none");
@@ -186,76 +273,6 @@ export async function load(content, options = {}) {
       }
     });
   });
-
-  const form = modalElement.querySelector("form");
-  if (options.isForm && form) {
-    const modalFooter = modalElement.querySelector(".modal-footer");
-    modalFooter.classList.remove("d-none");
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
-    submitBtn.style.display = "none";
-    okBtn.textContent = submitBtn.textContent;
-    okBtn.setAttribute("type", "submit");
-    okBtn.addEventListener("click", async function (event) {
-      event.preventDefault();
-      replayLock(okBtn);
-      triggerEvent("bs5:dialog:form:submit", {
-        options: options,
-        formEl: form,
-        formAction: form.action,
-        formMethod: form.method,
-        formData: new FormData(form)
-      });
-      if (typeof options.onSubmit === "function") {
-        options.onSubmit(modalElement);
-      }
-
-      try {
-        const submitResult = await makeRequest(form.action, form.method, {}, new FormData(form));
-        triggerEvent("bs5:dialog:form:submit:complete", {
-          options: options,
-          formEl: form,
-          formAction: form.action,
-          formMethod: form.method,
-          formData: new FormData(form),
-          submitResult: submitResult
-        });
-        if (typeof options.onSubmitDone === "function") {
-          options.onSubmitDone(submitResult);
-        }
-        if (submitResult.isSuccess && typeof options.onSubmitSuccess === "function") {
-          triggerEvent("bs5:dialog:form:submit:success", {
-            options: options,
-            formEl: form,
-            formAction: form.action,
-            formMethod: form.method,
-            formData: new FormData(form),
-            submitResult: submitResult
-          });
-          if (typeof options.onSubmitSuccess === "function") {
-            options.onSubmitSuccess(submitResult);
-          }
-
-          modalInstance.hide();
-        } else if (!submitResult.isSuccess && typeof options.onSubmitError === "function") {
-          triggerEvent("bs5:dialog:form:submit:error", {
-            options: options,
-            formEl: form,
-            formAction: form.action,
-            formMethod: form.method,
-            formData: new FormData(form),
-            submitResult: submitResult
-          });
-          if (typeof options.onSubmitError === "function") {
-            options.onSubmitError(submitResult);
-          }
-          message(submitResult.content);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    });
-  }
 
   return {
     el: modalElement,
