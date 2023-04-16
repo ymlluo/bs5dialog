@@ -16,11 +16,10 @@ export const BS5_DIALOG_DEFAULT_SPINNERS = {
  * @param {string} spinnerStyle - The custom styles to add to the spinner element.
  * @returns {HTMLElement} - The spinner element.
  */
-export function makeSpinner(spinnerName='', spinnerClass='', spinnerStyle='') {
-
-  spinnerName = spinnerName.trim()
-  spinnerClass = spinnerClass.trim()
-  spinnerStyle = spinnerStyle.trim()
+export function makeSpinner(spinnerName = "", spinnerClass = "", spinnerStyle = "") {
+  spinnerName = spinnerName.trim();
+  spinnerClass = spinnerClass.trim();
+  spinnerStyle = spinnerStyle.trim();
 
   const htmlString = BS5_DIALOG_DEFAULT_SPINNERS[spinnerName] || spinnerName;
   const div = document.createElement("div");
@@ -29,11 +28,11 @@ export function makeSpinner(spinnerName='', spinnerClass='', spinnerStyle='') {
   }
   div.innerHTML = htmlString.trim();
   // Change this to div.childNodes to support multiple top-level nodes.
-  let spinnerElement
+  let spinnerElement;
   if (div.firstChild && div.firstChild instanceof Element) {
-     spinnerElement = div.firstChild;
+    spinnerElement = div.firstChild;
   } else {
-     spinnerElement = div;
+    spinnerElement = div;
   }
 
   // add spinnerClass to the spinner element
@@ -54,4 +53,3 @@ export function makeSpinner(spinnerName='', spinnerClass='', spinnerStyle='') {
 
   return spinnerElement;
 }
-

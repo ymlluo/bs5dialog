@@ -1,4 +1,4 @@
-import { setModalWrapper, replayLock, triggerEvent, genDialogId,observeElement } from "../utils";
+import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement } from "../utils";
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -44,34 +44,32 @@ export function confirm(content = "", options = {}) {
     modalElement.setAttribute("id", options.id);
   }
 
-  
   observeElement(modalElement, {
     created: () => {
       triggerEvent(modalElement, "bs5:dialog:confirm:created", { options: options, el: modalElement });
     },
     rendered: () => {
       triggerEvent(modalElement, "bs5:dialog:confirm:rendered", { options: options, el: modalElement });
-      const modalInstance =  bs5Modal.getOrCreateInstance(modalElement);
+      const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
       const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
-      if(okBtn){
+      if (okBtn) {
         okBtn.addEventListener("click", () => {
           replayLock(okBtn);
-          triggerEvent(modalElement,"bs5:dialog:confirm:ok", { options: options });
+          triggerEvent(modalElement, "bs5:dialog:confirm:ok", { options: options });
           options.onConfirm?.();
           modalInstance.hide();
         });
       }
-    
+
       const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
-      if(cancelBtn){
+      if (cancelBtn) {
         cancelBtn.addEventListener("click", () => {
           replayLock(cancelBtn);
-          triggerEvent(modalElement,"bs5:dialog:confirm:cancel", { options: options });
+          triggerEvent(modalElement, "bs5:dialog:confirm:cancel", { options: options });
           options.onCancel?.();
           modalInstance.hide();
         });
       }
-
     },
     hidden: () => {
       triggerEvent(modalElement, "bs5:dialog:confirm:hidden", { options: options, el: modalElement });
@@ -80,7 +78,6 @@ export function confirm(content = "", options = {}) {
       triggerEvent(modalElement, "bs5:dialog:confirm:remove", { options: options, el: modalElement });
     }
   });
-
 
   modalElement.classList.add("bs5dialog-modal-confirm");
   modalElement.innerHTML = `
@@ -119,13 +116,12 @@ export function confirm(content = "", options = {}) {
   modalElement.querySelector(".modal-icon").appendChild(iconElement);
 
   document.body.appendChild(modalElement);
-  const modalInstance =  bs5Modal.getOrCreateInstance(modalElement);
-
+  const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
 
   modalInstance.show();
-  modalElement.addEventListener('hidden.bs.modal', event => {
+  modalElement.addEventListener("hidden.bs.modal", event => {
     modalElement.remove();
-  })
+  });
 
   return {
     el: modalElement,

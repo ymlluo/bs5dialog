@@ -1,4 +1,3 @@
-
 .bs5-dialog-msg {
   position: fixed;
   animation-name: bs5MsgBoxShow;
@@ -33,7 +32,7 @@
     transform: translateY(0);
   }
   to {
-    display:none;
+    display: none;
     opacity: 0;
     transform: translateY(-20px);
   }
@@ -97,7 +96,7 @@
   transform: translate(-50%, -50%);
 }
 
-/* spinner动画样式 */
+/* spinner */
 
 .bs5-modal-spinner {
   position: absolute;
@@ -245,4 +244,3 @@
   padding-top: 0;
   padding-bottom: 0.75rem;
 }
-

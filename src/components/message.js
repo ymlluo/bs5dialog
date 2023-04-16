@@ -1,4 +1,4 @@
-import { getMaxZIndex,triggerEvent,observeElement } from "../utils";
+import { getMaxZIndex, triggerEvent, observeElement, getTextClass } from "../utils";
 import { makeIcon } from "../resource/icons";
 
 /**
@@ -25,7 +25,7 @@ export function message(message, options = {}) {
     type: "",
     closeBtn: false,
     background: "",
-    textColor: "white",
+    textColor: "",
     fontsize: "",
     icon: "",
     iconClass: "",
@@ -39,7 +39,6 @@ export function message(message, options = {}) {
   // Create alert element
   let messageElement = document.createElement("div");
 
-
   observeElement(messageElement, {
     created: () => {
       triggerEvent(messageElement, "bs5:dialog:message:created", { options: options, el: messageElement });
@@ -48,15 +47,13 @@ export function message(message, options = {}) {
       triggerEvent(messageElement, "bs5:dialog:message:rendered", { options: options, el: messageElement });
     },
     hidden: () => {
-      options.onClosed?.()
+      options.onClosed?.();
       triggerEvent(messageElement, "bs5:dialog:message:hidden", { options: options, el: messageElement });
     },
     remove: () => {
       triggerEvent(messageElement, "bs5:dialog:message:remove", { options: options, el: messageElement });
     }
   });
-
-
 
   messageElement.classList.add("bs5-dialog-msg");
   const positionClass = `bs5-dialog-msg-${options.position}`;
@@ -65,7 +62,9 @@ export function message(message, options = {}) {
   messageElement.setAttribute("role", "alert");
 
   let messageBodyElement = document.createElement("div");
-  messageBodyElement.classList.add(`bg-${options.type || 'dark'}`, "text-start", "rounded-1", "py-0", "ps-3", "pe-2", "fw-normal");
+  options.type = options.type ? options.type : "dark";
+  let textColor = getTextClass("bg-" + options.type);
+  messageBodyElement.classList.add(`bg-${options.type}`, "text-start", textColor, "rounded-1", "py-0", "ps-3", "pe-2", "fw-normal");
   messageBodyElement.style.setProperty("height", "3rem");
   messageBodyElement.style.setProperty("line-height", "3rem");
   messageBodyElement.style.setProperty("padding", "0.375rem 1px");
@@ -81,8 +80,6 @@ export function message(message, options = {}) {
     messageBodyElement.style.fontSize = options.fontsize;
   }
 
-
-
   if (options.icon) {
     const iconElment = makeIcon(options.icon, options.iconClass, options.iconStyle);
     iconElment.style.setProperty("margin-inline-end", "8px");
@@ -90,11 +87,15 @@ export function message(message, options = {}) {
     messageBodyElement.prepend(iconElment);
   }
   if (options.closeBtn) {
-    const closeBtn = makeIcon(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="margin-bottom:4px;cursor:pointer"  onMouseOver="this.style.color='#e0e0e0;'" onMouseOut="this.style.color='#eaeaea'"  class="btn-x"  stroke-width="1"  viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    const closeBtn = makeIcon(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="margin-bottom:4px;cursor:pointer"  onMouseOver="this.style.color='#e0e0e0;'" onMouseOut="this.style.color='#eaeaea'"  class="btn-x"  stroke-width="1"  viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <path d="M18 6l-12 12"></path>
     <path d="M6 6l12 12"></path>
- </svg>`,'btn-x','')
+ </svg>`,
+      "btn-x",
+      ""
+    );
     closeBtn.role = "button";
     closeBtn.style.setProperty("margin-inline-start", "8px");
     closeBtn.setAttribute("aria-label", "Close");
@@ -106,55 +107,47 @@ export function message(message, options = {}) {
   document.body.appendChild(messageElement);
   // Add alert element to body
 
-
-
   if (options.timeout) {
     setTimeout(() => {
-      hideMessage()
+      hideMessage();
     }, options.timeout);
   }
 
-
-  function hideMessage(){
-    messageElement.classList.add('bs5-dialog-msg-hide');
-    setTimeout(()=>{
-      messageElement.style.display= 'none';
-      setTimeout(()=>{messageElement.remove()},500)
-     
-    },300)
-  }
-  
-
-
-  const btnX = messageElement.querySelector('.btn-x');
-  if(btnX){
-    btnX.addEventListener('click',()=>{
-     hideMessage()
-
-    })
-  
+  function hideMessage() {
+    messageElement.classList.add("bs5-dialog-msg-hide");
+    setTimeout(() => {
+      messageElement.style.display = "none";
+      setTimeout(() => {
+        messageElement.remove();
+      }, 500);
+    }, 300);
   }
 
-  messageElement.hide= function(){
-    hideMessage()
+  const btnX = messageElement.querySelector(".btn-x");
+  if (btnX) {
+    btnX.addEventListener("click", () => {
+      hideMessage();
+    });
   }
 
-  if(event && event.target){
-    event.target.hide = function(){
-      hideMessage()
-    }
+  messageElement.hide = function () {
+    hideMessage();
+  };
+
+  if (event && event.target) {
+    event.target.hide = function () {
+      hideMessage();
+    };
   }
 
   return {
-    el:messageElement,
+    el: messageElement,
     message,
     options,
     hide: () => {
-      hideMessage()
+      hideMessage();
     }
-  }
-
+  };
 }
 
 export const msg = message;
-

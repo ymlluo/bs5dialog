@@ -1,5 +1,4 @@
-import { getMaxZIndex, getTextClass, triggerEvent,observeElement, debounce } from "../utils";
-import { Toast as bs5Toast } from "bootstrap";
+import { getMaxZIndex, getTextClass, triggerEvent, observeElement, debounce } from "../utils";
 import { makeIcon } from "../resource/icons";
 
 /**
@@ -61,7 +60,7 @@ export function toast(message, options) {
     }
   });
 
-  toastElement.classList.add("toast","show", "bs5-dialog-msg", "bs5-dialog-msg-" + options.position);
+  toastElement.classList.add("toast", "show", "bs5-dialog-msg", "bs5-dialog-msg-" + options.position);
   toastElement.setAttribute("role", "alert");
   toastElement.style.zIndex = getMaxZIndex() + 1;
   // Create toast body element
@@ -77,7 +76,9 @@ export function toast(message, options) {
     toastHeaderElement.classList.add("toast-header", `bg-${options.type}`, textColor);
     toastHeaderElement.innerHTML = `<strong class="me-auto">${
       options.title || ""
-    }</strong> <small class="text-truncate" style="max-width: 50%;">${options.subtitle}</small><button type="button" class="btn-x btn-close ${
+    }</strong> <small class="text-truncate" style="max-width: 50%;">${
+      options.subtitle
+    }</small><button type="button" class="btn-x btn-close ${
       textColor === "text-white" ? "btn-close-white" : ""
     }" data-bs-dismiss="toast" aria-label="Close"></button>`;
     toastElement.appendChild(toastHeaderElement);
@@ -95,16 +96,15 @@ export function toast(message, options) {
 
   // const toastInstance = new bs5Toast(toastElement, { delay: options.timeout, autohide: options.timeout ? true : false });
   // toastInstance.show();
-  
-  if(options.timeout){
+
+  if (options.timeout) {
     debounce(() => {
       hideToast();
     }, options.timeout);
   }
 
-
-  const hideToast=function() {
-    console.log('hidden')
+  const hideToast = function () {
+    console.log("hidden");
     toastElement.classList.add("bs5-dialog-msg-hide");
     debounce(() => {
       toastElement.style.display = "none";
@@ -112,18 +112,16 @@ export function toast(message, options) {
         toastElement.remove();
       }, 500);
     }, 300);
-  }
+  };
 
-  toastElement.hide= function(){
-    hideToast()
+  toastElement.hide = function () {
+    hideToast();
+  };
+  if (event && event.target) {
+    event.target.hide = function () {
+      hideToast();
+    };
   }
-  if(event && event.target){
-    event.target.hide = function(){
-      hideToast()
-    }
-  }
-
-
 
   const btnX = toastElement.querySelector(".btn-x");
   if (btnX) {

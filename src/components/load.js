@@ -7,7 +7,7 @@ import {
   setModalWrapper,
   replayLock,
   triggerEvent,
-  observeElement,
+  observeElement
 } from "../utils";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -84,8 +84,7 @@ export async function load(content, options = {}) {
       triggerEvent(modalElement, "bs5:dialog:load:created", { options: options, el: modalElement });
     },
     rendered: () => {
-
-      options.onShown?.(modalElement)
+      options.onShown?.(modalElement);
       if (options.backdrop === false) {
         if (document.querySelector(".modal-backdrop")) {
           document.querySelector(".modal-backdrop").remove();
@@ -175,7 +174,7 @@ export async function load(content, options = {}) {
       }
     },
     hidden: () => {
-      options.onHidden?.(modalElement)
+      options.onHidden?.(modalElement);
       triggerEvent(modalElement, "bs5:dialog:load:hidden", { options: options, el: modalElement });
     },
     remove: () => {

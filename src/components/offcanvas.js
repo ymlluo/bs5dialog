@@ -1,4 +1,4 @@
-import { getOverlapDimensions, genDialogId, triggerEvent,observeElement } from "../utils.js";
+import { getOverlapDimensions, genDialogId, triggerEvent, observeElement } from "../utils.js";
 import { Offcanvas as bs5Offcanvas } from "bootstrap";
 
 /**
@@ -70,7 +70,6 @@ export function offcanvas(content, options = {}) {
       options.onHidden?.(offcanvasElement);
     },
     remove: () => {
-
       triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:remove", { options: options, el: offcanvasElement });
     }
   });
@@ -108,7 +107,6 @@ export function offcanvas(content, options = {}) {
   document.body.appendChild(offcanvasElement);
   const offcanvasInstance = bs5Offcanvas.getOrCreateInstance(offcanvasElement);
   offcanvasInstance.toggle();
-
 
   return {
     el: offcanvasElement,

@@ -15,21 +15,21 @@
       <button id="my-button" class="btn btn-primary">Click me</button>
     </div>
     <script>
+      const targetElement = document.createElement("div");
+      targetElement.textContent = "Hello, world!";
 
-const targetElement = document.createElement('div');
-targetElement.textContent = 'Hello, world!';
+      // Add it to the document
+      document.body.appendChild(targetElement);
 
-// Add it to the document
-document.body.appendChild(targetElement);
-
-// Observe the element
-bs5dialog.utils.observeElement(targetElement, {
-  createCallback: () => console.log('Element created'),
-  renderedCallback: () => console.log('Element rendered'),
-  hiddenCallback: () => console.log('Element hidden'),
-  removeCallback: () => console.log('Element removed')
-}).then(result => console.log(`Element ${result}!`));
-
+      // Observe the element
+      bs5dialog.utils
+        .observeElement(targetElement, {
+          createCallback: () => console.log("Element created"),
+          renderedCallback: () => console.log("Element rendered"),
+          hiddenCallback: () => console.log("Element hidden"),
+          removeCallback: () => console.log("Element removed")
+        })
+        .then(result => console.log(`Element ${result}!`));
 
       const myButton = document.querySelector("#my-button");
       const targetElement = document.querySelector("#targetElement");
@@ -46,22 +46,27 @@ bs5dialog.utils.observeElement(targetElement, {
       let loading;
 
       myButton.addEventListener("click", () => {
+        loading = bs5dialog.spinner(targetElement, {});
 
-        loading= bs5dialog.spinner(targetElement, {});
+        myButton.addEventListener(
+          "bs5:spinner:shown",
+          e => {
+            console.log("shown", e);
+          },
+          { once: true }
+        );
 
-        myButton.addEventListener('bs5:spinner:shown', (e) => {
-          console.log("shown",e);
-        },{once: true});
-
-        
-        myButton.addEventListener('bs5:spinner:hidden', (e) => {
-          console.log("hidden",e.detail);
-        },{once: true})
+        myButton.addEventListener(
+          "bs5:spinner:hidden",
+          e => {
+            console.log("hidden", e.detail);
+          },
+          { once: true }
+        );
 
         setTimeout(() => {
           loading.hide();
-        },3000)
-
+        }, 3000);
       });
     </script>
   </body>

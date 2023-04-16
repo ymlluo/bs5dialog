@@ -161,8 +161,6 @@ export function setModalWrapper() {
   return modal;
 }
 
-
-
 /**
  * Locks the target element and sets a timeout to unlock it
  * @param {Element|string} element - The element or the selector string
@@ -208,23 +206,17 @@ export function getMaxZIndex() {
 export function getTextClass(bgColorClassName) {
   switch (bgColorClassName) {
     case "bg-primary":
-      return "text-white";
     case "bg-secondary":
-      return "text-white";
     case "bg-success":
-      return "text-white";
     case "bg-danger":
-      return "text-white";
     case "bg-warning":
-      return "text-dark";
     case "bg-info":
-      return "text-white";
-    case "bg-light":
-      return "text-dark";
     case "bg-dark":
       return "text-white";
+    case "bg-light":
+    case "bg-link":
     default:
-      return "";
+      return "text-dark";
   }
 }
 
@@ -465,7 +457,8 @@ export function observeElement(targetElement, options) {
                 resizeObserver = new ResizeObserver(
                   throttle(() => {
                     if (resizeElement.offsetWidth != size.width || resizeElement.offsetHeight != size.height) {
-                      size.width =resizeElement.offsetWidth; size.height=resizeElement.offsetHeight;
+                      size.width = resizeElement.offsetWidth;
+                      size.height = resizeElement.offsetHeight;
                       options.resize?.();
                     }
                   }, 200)

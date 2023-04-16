@@ -292,16 +292,21 @@
         bs5dialog.loading("#loading-form", { type: type, animation: animation, timeout: timeout, backdrop: backdrop });
       });
 
-
       document.querySelectorAll(".btn-show-toast").forEach(function (item) {
         item.onclick = function () {
           var position = item.getAttribute("data-position");
           var type = item.getAttribute("data-type");
           var color = item.getAttribute("data-text-color");
-          let toast = bs5dialog.toast("Your post has been archived!", { title: "New Message", subtitle: Date(), type: type, position: position, timeout: 30000 });
-          toast.el.addEventListener('click',function(){
-            toast.el.hide()
-          })
+          let toast = bs5dialog.toast("Your post has been archived!", {
+            title: "New Message",
+            subtitle: Date(),
+            type: type,
+            position: position,
+            timeout: 300000
+          });
+          toast.el.addEventListener("click", function () {
+            toast.el.hide();
+          });
         };
       });
 
@@ -314,32 +319,32 @@
       });
 
       var backdrop = backdrop;
-       document.querySelectorAll(".btn-open-content").forEach(function (item) {
+      document.querySelectorAll(".btn-open-content").forEach(function (item) {
         item.onclick = function (e) {
           e.preventDefault();
           var content = item.getAttribute("data-content");
           var title = item.getAttribute("data-title") || "";
           var backdrop = item.getAttribute("data-backdrop") || "";
           var fullscreen = item.getAttribute("data-fullscreen") || false;
-         var loadPage = bs5dialog.load(content, {
-            title: title,
-            backdrop: backdrop,
-            maximize: fullscreen,
-            onSubmitDone(submitResult) {
-              console.log(submitResult);
-            }
-          }).then((loadPage)=>{
-            // console.log(loadPage)
-                      loadPage.el.addEventListener('bs5:dialog:shown',function(e){
-            // console.log(e)
-          })
+          var loadPage = bs5dialog
+            .load(content, {
+              title: title,
+              backdrop: backdrop,
+              maximize: fullscreen,
+              onSubmitDone(submitResult) {
+                console.log(submitResult);
+              }
+            })
+            .then(loadPage => {
+              // console.log(loadPage)
+              loadPage.el.addEventListener("bs5:dialog:shown", function (e) {
+                // console.log(e)
+              });
 
-          loadPage.el.addEventListener('bs5:dialog:form:submit:complete',function(e){
-            // console.log(e)
-          })
-          });
-
-
+              loadPage.el.addEventListener("bs5:dialog:form:submit:complete", function (e) {
+                // console.log(e)
+              });
+            });
         };
       });
 

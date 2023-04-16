@@ -1,4 +1,4 @@
-import { setModalWrapper, replayLock, triggerEvent, genDialogId,observeElement } from "../utils";
+import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement } from "../utils";
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -44,48 +44,45 @@ export function prompt(content, options = {}) {
     modalElement.setAttribute("id", options.id);
   }
 
-  
   observeElement(modalElement, {
     created: () => {
       triggerEvent(modalElement, "bs5:dialog:prompt:created", { options: options, el: modalElement });
     },
     rendered: () => {
-
       triggerEvent(modalElement, "bs5:dialog:prompt:rendered", { options: options, el: modalElement });
-      const modalInstance =  bs5Modal.getOrCreateInstance(modalElement);
+      const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
 
       const inputEl = modalElement.querySelector(".modal-body input");
       inputEl.addEventListener("keyup", function (event) {
         event.preventDefault();
-        triggerEvent(modalElement,"bs5:dialog:prompt:typing", { options: options, value: inputEl.value });
+        triggerEvent(modalElement, "bs5:dialog:prompt:typing", { options: options, value: inputEl.value });
         inputEl.value.length > 0 ? okBtn.classList.remove("disabled") : okBtn.classList.add("disabled");
         if (event.keyCode === 13 && !okBtn.classList.contains("disabled")) {
           okBtn.click();
         }
       });
       const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
-      if(okBtn){
+      if (okBtn) {
         if (options.required) {
           okBtn.classList.add("disabled");
         }
         okBtn.addEventListener("click", () => {
           replayLock(okBtn);
-          triggerEvent(modalElement,"bs5:dialog:prompt:ok", { options: options });
+          triggerEvent(modalElement, "bs5:dialog:prompt:ok", { options: options });
           options.onConfirm?.(inputEl.value);
           modalInstance.hide();
         });
       }
-    
+
       const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
-      if(cancelBtn){
+      if (cancelBtn) {
         cancelBtn.addEventListener("click", () => {
           replayLock(cancelBtn);
-          triggerEvent(modalElement,"bs5:dialog:prompt:cancel", { options: options });
+          triggerEvent(modalElement, "bs5:dialog:prompt:cancel", { options: options });
           options.onCancel?.();
           modalInstance.hide();
         });
       }
-
     },
     hidden: () => {
       triggerEvent(modalElement, "bs5:dialog:prompt:hidden", { options: options, el: modalElement });
@@ -100,7 +97,6 @@ export function prompt(content, options = {}) {
       triggerEvent(modalElement, "bs5:dialog:prompt:dragged", { options: options, el: modalElement });
     }
   });
-
 
   modalElement.classList.add("bs5dialog-modal-prompt");
   modalElement.innerHTML = `
@@ -140,9 +136,9 @@ export function prompt(content, options = {}) {
   document.body.appendChild(modalElement);
   const modalInstance = new bs5Modal(modalElement);
   modalInstance.show();
-  modalElement.addEventListener('hidden.bs.modal', event => {
+  modalElement.addEventListener("hidden.bs.modal", event => {
     modalElement.remove();
-  })
+  });
 
   return {
     el: modalElement,

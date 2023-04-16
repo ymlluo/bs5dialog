@@ -1,61 +1,60 @@
 <form method="post" action="/test">
-    <div class="mb-3 row">
-      <label class="col-3 col-form-label required">Email address</label>
-      <div class="col">
-        <input type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
-        <small class="form-hint">We'll never share your email with anyone else.</small>
-      </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label required">Email address</label>
+    <div class="col">
+      <input type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" />
+      <small class="form-hint">We'll never share your email with anyone else.</small>
     </div>
-    <div class="mb-3 row">
-      <label class="col-3 col-form-label required">Password</label>
-      <div class="col">
-        <input type="password" class="form-control" placeholder="Password">
-        <small class="form-hint">
-          Your password must be 8-20 characters long, contain letters and numbers, and must not contain
-          spaces, special characters, or emoji.
-        </small>
-      </div>
+  </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label required">Password</label>
+    <div class="col">
+      <input type="password" class="form-control" placeholder="Password" />
+      <small class="form-hint">
+        Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+      </small>
     </div>
-    <div class="mb-3 row">
-      <label class="col-3 col-form-label">Select</label>
-      <div class="col">
-        <select class="form-select">
+  </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label">Select</label>
+    <div class="col">
+      <select class="form-select">
+        <option>Option 1</option>
+        <optgroup label="Optgroup 1">
           <option>Option 1</option>
-          <optgroup label="Optgroup 1">
-            <option>Option 1</option>
-            <option>Option 2</option>
-          </optgroup>
           <option>Option 2</option>
-          <optgroup label="Optgroup 2">
-            <option>Option 1</option>
-            <option>Option 2</option>
-          </optgroup>
-          <optgroup label="Optgroup 3">
-            <option>Option 1</option>
-            <option>Option 2</option>
-          </optgroup>
-          <option>Option 3</option>
-          <option>Option 4</option>
-        </select>
-      </div>
+        </optgroup>
+        <option>Option 2</option>
+        <optgroup label="Optgroup 2">
+          <option>Option 1</option>
+          <option>Option 2</option>
+        </optgroup>
+        <optgroup label="Optgroup 3">
+          <option>Option 1</option>
+          <option>Option 2</option>
+        </optgroup>
+        <option>Option 3</option>
+        <option>Option 4</option>
+      </select>
     </div>
-    <div class="row">
-      <label class="col-3 col-form-label pt-0">Checkboxes</label>
-      <div class="col">
-        <label class="form-check">
-          <input class="form-check-input" type="checkbox" checked="">
-          <span class="form-check-label">Option 1</span>
-        </label>
-        <label class="form-check">
-          <input class="form-check-input" type="checkbox">
-          <span class="form-check-label">Option 2</span>
-        </label>
-        <label class="form-check">
-          <input class="form-check-input" type="checkbox" disabled="">
-          <span class="form-check-label">Option 3</span>
-        </label>
-      </div>
+  </div>
+  <div class="row">
+    <label class="col-3 col-form-label pt-0">Checkboxes</label>
+    <div class="col">
+      <label class="form-check">
+        <input class="form-check-input" type="checkbox" checked="" />
+        <span class="form-check-label">Option 1</span>
+      </label>
+      <label class="form-check">
+        <input class="form-check-input" type="checkbox" />
+        <span class="form-check-label">Option 2</span>
+      </label>
+      <label class="form-check">
+        <input class="form-check-input" type="checkbox" disabled="" />
+        <span class="form-check-label">Option 3</span>
+      </label>
     </div>
+  </div>
   <div class="row text-end">
     <button type="submit" class="btn btn-primary">保存</button>
   </div>
