@@ -30,7 +30,7 @@ export function loading(element = document.body, options = {}) {
 
   let evt = event && event.target ? event.target : null;
 
-  const targetElement = getTargetElement(element);
+  let targetElement = getTargetElement(element);
   if (!targetElement) {
     console.error("target element not found");
     return;
@@ -45,9 +45,9 @@ export function loading(element = document.body, options = {}) {
   }
   targetElement.style.position = "relative";
 
-  const targetRect = targetElement.getBoundingClientRect();
+  let targetRect = targetElement.getBoundingClientRect();
 
-  const overlay = document.createElement("div");
+  let overlay = document.createElement("div");
   overlay.style.position = "absolute";
   overlay.style.top = 0;
   overlay.style.left = 0;
