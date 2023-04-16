@@ -14,7 +14,7 @@
     <script>
       const toastButton = document.getElementById("toastButton");
       toastButton.addEventListener("click", () => {
-      const toastInstance=  bs5dialog.toast("Hello world!", {
+        const toastInstance = bs5dialog.toast("Hello world!", {
           position: "right-top",
           type: "warning",
           title: "My Title",
@@ -30,10 +30,9 @@
         });
         console.log(toastInstance);
 
-        toastInstance.el.addEventListener('bs5:dialog:hidden', event => {
-  console.log('Toast hidden:', event.detail.options);
-});
-
+        toastInstance.el.addEventListener("bs5:dialog:hidden", event => {
+          console.log("Toast hidden:", event.detail.options);
+        });
       });
 
       bs5dialog.toast("Hello world!");

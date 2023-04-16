@@ -1,4 +1,4 @@
-import { setModalWrapper, replayLock, triggerEvent, genDialogId,observeElement,debounce } from "../utils";
+import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement, debounce } from "../utils";
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
@@ -48,21 +48,21 @@ export function alert(content, options = {}) {
     },
     rendered: () => {
       triggerEvent(modalElement, "bs5:dialog:alert:rendered", { options: options, el: modalElement });
-      const modalInstance =  bs5Modal.getOrCreateInstance(modalElement);
+      const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
       const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
-      if(okBtn){
+      if (okBtn) {
         okBtn.addEventListener("click", () => {
           replayLock(okBtn);
-          triggerEvent(modalElement,"bs5:dialog:alert:ok", { options: options });
+          triggerEvent(modalElement, "bs5:dialog:alert:ok", { options: options });
           options.onOk?.();
           modalInstance.hide();
         });
       }
       const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
-      if(cancelBtn){
+      if (cancelBtn) {
         cancelBtn.addEventListener("click", () => {
           replayLock(cancelBtn);
-          triggerEvent(modalElement,"bs5:dialog:alert:cancel", { options: options });
+          triggerEvent(modalElement, "bs5:dialog:alert:cancel", { options: options });
           options.onCancel?.();
           modalInstance.hide();
         });
@@ -73,7 +73,7 @@ export function alert(content, options = {}) {
     },
     remove: () => {
       triggerEvent(modalElement, "bs5:dialog:alert:remove", { options: options, el: modalElement });
-    },
+    }
   });
 
   modalElement.classList.add("bs5dialog-modal-alert");
@@ -113,14 +113,13 @@ export function alert(content, options = {}) {
   const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
   modalInstance.show();
 
-  modalElement.addEventListener('hidden.bs.modal', event => {
+  modalElement.addEventListener("hidden.bs.modal", event => {
     modalElement.remove();
-  })
+  });
 
   if (options.timeout) {
     setTimeout(() => {
       modalInstance.hide();
-    
     }, options.timeout);
   }
   return {

@@ -28,7 +28,7 @@ export function loading(element = document.body, options = {}) {
 
   options = { ...defaultOptions, ...options };
 
-  let evt = event && event.target?event.target:null;
+  let evt = event && event.target ? event.target : null;
 
   const targetElement = getTargetElement(element);
   if (!targetElement) {
@@ -60,7 +60,7 @@ export function loading(element = document.body, options = {}) {
   overlay.style.pointerEvents = "auto";
   overlay.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
   overlay.style.setProperty("z-index", getMaxZIndex() + 1);
-  overlay.classList.add('bs5-dailog-loading')
+  overlay.classList.add("bs5-dailog-loading");
 
   observeElement(overlay, {
     created: () => {
@@ -77,19 +77,16 @@ export function loading(element = document.body, options = {}) {
     }
   });
 
-
-
   if (options.backdrop === false || options.backdrop === "false") {
     overlay.style.backgroundColor = "transparent";
     overlay.style.pointerEvents = "none";
   }
 
-  if(options.type){
-    if (!options.type.startsWith("text-")){ 
-      options.type='text-'+options.type
+  if (options.type) {
+    if (!options.type.startsWith("text-")) {
+      options.type = "text-" + options.type;
     }
-      options.animationClass = options.animationClass+ ' '+options.type
-  
+    options.animationClass = options.animationClass + " " + options.type;
   }
 
   let animation = makeSpinner(options.animation, options.animationClass, options.animationStyle);
@@ -114,7 +111,6 @@ export function loading(element = document.body, options = {}) {
   targetElement.appendChild(overlay);
   targetElement.style.cursor = "wait";
 
-
   var hideloading = function () {
     overlay.remove();
     targetElement.style.cursor = preCursor;
@@ -126,15 +122,14 @@ export function loading(element = document.body, options = {}) {
       hideloading();
     }, options.timeout);
   }
-  
 
-  targetElement.hide= function(){
-    hideloading()
-  }
+  targetElement.hide = function () {
+    hideloading();
+  };
 
   return {
     el: targetElement,
-    options:options,
+    options: options
   };
 }
 

@@ -60,7 +60,6 @@ export const bs5LangConfigs = {
   }
 };
 
-
 // 获取当前语言
 export const getCurrentLang = () => bs5LangCurrentLang;
 
