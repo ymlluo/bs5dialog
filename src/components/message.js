@@ -68,7 +68,7 @@ export function message(message, options = {}) {
   messageBodyElement.style.setProperty("height", "3rem");
   messageBodyElement.style.setProperty("line-height", "3rem");
   messageBodyElement.style.setProperty("padding", "0.375rem 1px");
-  messageBodyElement.innerHTML = `<div>${message}</div>`;
+  messageBodyElement.innerHTML = `<span class="bs5-dialog-msg-content">${message}</span>`;
 
   if (options.background) {
     messageBodyElement.style.background = options.background;
