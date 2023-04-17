@@ -18,6 +18,7 @@
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     display: block;
     opacity: 1;
@@ -31,6 +32,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+
   to {
     display: none;
     opacity: 0;
@@ -121,6 +123,7 @@
   animation-duration: 0.5s;
   animation-fill-mode: forwards;
 }
+
 .bs5dialog-modal.hide {
   display: block;
   animation-name: bs5MsgBoxHide;
@@ -153,12 +156,15 @@
   min-height: 3.5rem;
   padding-right: 3.5rem;
 }
+
 .bs5dialog-modal .btn {
   border: 1px solid #e6e7e9;
 }
+
 .bs5dialog-modal .btn:hover {
   border-color: #b3b7bd;
 }
+
 .bs5dialog-modal .modal-dialog {
   margin-top: 0;
   margin-bottom: 0;
@@ -172,6 +178,7 @@
 .bs5dialog-offcanvas.offcanvas-end {
   animation: slideInEnd 0.3s ease-in-out;
 }
+
 .bs5dialog-offcanvas.offcanvas-top {
   animation: slideInTop 0.3s ease-in-out;
 }
@@ -184,14 +191,17 @@
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
 }
+
 @keyframes slideInEnd {
   from {
     transform: translateX(100%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -201,14 +211,17 @@
   from {
     transform: translateY(-100%);
   }
+
   to {
     transform: translateY(0);
   }
 }
+
 @keyframes slideInBottom {
   from {
     transform: translateY(100%);
   }
+
   to {
     transform: translateY(0);
   }
@@ -233,4 +246,10 @@
   border: none;
   padding-top: 0;
   padding-bottom: 0.75rem;
+}
+
+/* Fixed an issue that if the modal popup or hidden, the page would jitter and the message box would jump to the left if the message was used at that time. */
+.modal-open {
+  overflow-y: scroll !important;
+  padding-right: unset !important;
 }

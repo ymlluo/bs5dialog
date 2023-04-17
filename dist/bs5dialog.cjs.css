@@ -18,6 +18,7 @@
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     display: block;
     opacity: 1;
@@ -31,6 +32,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+
   to {
     display: none;
     opacity: 0;
@@ -191,6 +193,7 @@
   from {
     transform: translateX(-100%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -200,6 +203,7 @@
   from {
     transform: translateX(100%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -209,6 +213,7 @@
   from {
     transform: translateY(-100%);
   }
+
   to {
     transform: translateY(0);
   }
@@ -218,6 +223,7 @@
   from {
     transform: translateY(100%);
   }
+
   to {
     transform: translateY(0);
   }
@@ -243,4 +249,11 @@
   border: none;
   padding-top: 0;
   padding-bottom: 0.75rem;
+}
+
+/* Fixed an issue that if the modal popup or hidden, the page would jitter and the message box would jump to the left if the message was used at that time. */
+
+.modal-open {
+  overflow-y: scroll !important;
+  padding-right: unset !important;
 }
