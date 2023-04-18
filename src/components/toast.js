@@ -24,12 +24,12 @@ import { makeIcon } from "../resource/icons";
 export function toast(message, options) {
   // Set default options
   const defaultOptions = {
-    title: "",
+    title: "Notice",
     subtitle: "",
-    position: "bottom-right",
+    position: "center",
     type: "success",
     closeBtn: false,
-    icon: "bs5-point",
+    icon: "",
     iconClass: "",
     iconStyle: "",
     timeout: 3000,
