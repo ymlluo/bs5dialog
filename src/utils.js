@@ -258,6 +258,11 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
       }
 
       const response = await axios(axiosConfig);
+
+      if ([301, 302, 303, 307, 308].includes(response.status)) {
+        window.location.replace(response.headers.location);
+      }
+
       const contentType = response.headers["content-type"];
       if (contentType && contentType.indexOf("text/html") !== -1) {
         const data = await response.data;
@@ -304,6 +309,11 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
 
     try {
       const response = await fetch(url, options);
+
+      if ([301, 302, 303, 307, 308].includes(response.status)) {
+        window.location.replace(response.headers.get('Location'));
+      }
+      
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.indexOf("text/html") !== -1) {
         const data = await response.text();

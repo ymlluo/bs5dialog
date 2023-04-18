@@ -13,7 +13,7 @@
       crossorigin="anonymous" />
     <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script> -->
 
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
 
     <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.3.4/axios.js"></script>
 
@@ -241,11 +241,19 @@
             </div>
           </div>
         </div>
+
+        <div class="mb-3">
+
+          <button class="btn btn-danger" data-bs5-dialog="alert">show alert</button>
+        </div>
       </div>
     </div>
 
     <script>
       // console.log(bs5dialog.i18n.setCurrentLang("zh"));
+      // bs5dialog.addDialogClickListeners();
+
+      bs5dialog.startup();
 
       document.querySelectorAll(".btn-alert").forEach(function (item) {
         item.onclick = function () {
@@ -263,7 +271,7 @@
           bs5dialog.confirm("Do you really want to remove these files?<br> What you've done cannot be undone.?", {
             title: "Are you sure?",
             type: type,
-            btnOkText: "Delete 100 items",
+            // btnOkText: "Delete 100 items",
             onConfirm: () => {
               bs5dialog.alert("remove 100 files", { type: type, timeout: 2000 });
             }
