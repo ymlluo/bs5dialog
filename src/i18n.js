@@ -1,8 +1,7 @@
-// i18n.js
-
-// 默认语言为英语
+// Default language is English
 export let bs5LangCurrentLang = "en";
-
+// Language configurations
+// Language configurations sorted by number of speakers in descending order
 export const bs5LangConfigs = {
   en: {
     ok: "OK",
@@ -22,7 +21,34 @@ export const bs5LangConfigs = {
     prompt: "提示",
     sure: "确定吗？"
   },
-  jp: {
+  es: {
+    ok: "Aceptar",
+    confirm: "Confirmar",
+    cancel: "Cancelar",
+    save: "Guardar",
+    close: "Cerrar",
+    prompt: "Indicación",
+    sure: "¿Estás seguro?"
+  },
+  pt: {
+    ok: "OK",
+    confirm: "Confirmar",
+    cancel: "Cancelar",
+    save: "Salvar",
+    close: "Fechar",
+    prompt: "Prompt",
+    sure: "Tem certeza?"
+  },
+  ru: {
+    ok: "OK",
+    confirm: "Подтвердить",
+    cancel: "Отмена",
+    save: "Сохранить",
+    close: "Закрыть",
+    prompt: "Подсказка",
+    sure: "Вы уверены?"
+  },
+  ja: {
     ok: "もちろん",
     confirm: "確認",
     cancel: "キャンセル",
@@ -30,6 +56,15 @@ export const bs5LangConfigs = {
     close: "閉じる",
     prompt: "促す",
     sure: "もちろん"
+  },
+  de: {
+    ok: "OK",
+    confirm: "Bestätigen",
+    cancel: "Abbrechen",
+    save: "Speichern",
+    close: "Schließen",
+    prompt: "Aufforderung",
+    sure: "Bist du sicher?"
   },
   fr: {
     ok: "D'accord",
@@ -40,46 +75,51 @@ export const bs5LangConfigs = {
     prompt: "Invite",
     sure: "Êtes-vous sûr?"
   },
-  es: {
-    ok: "Aceptar",
-    confirm: "Confirmar",
-    cancel: "Cancelar",
-    save: "Guardar",
-    close: "Cerrar",
-    prompt: "Indicación",
-    sure: "¿Estás seguro?"
-  },
-  de: {
-    ok: "OK",
-    confirm: "Bestätigen",
-    cancel: "Abbrechen",
-    save: "Speichern",
-    close: "Schließen",
-    prompt: "Aufforderung",
-    sure: "Bist du sicher?"
+  ko: {
+    ok: "확인",
+    confirm: "확인",
+    cancel: "취소",
+    save: "저장",
+    close: "닫기",
+    prompt: "프롬프트",
+    sure: "확실합니까?"
   }
 };
 
-// 获取当前语言
+// Get current language
 export const getCurrentLang = () => bs5LangCurrentLang;
 
-// 设置当前语言
+// Set current language
 export const setCurrentLang = lang => {
-  if (bs5LangConfigs[lang]) {
+  if (bs5LangConfigs[lang] || bs5LangConfigs[lang.replace(/-.*$/, "")]) {
     bs5LangCurrentLang = lang;
   }
 };
 
-// 获取指定键名的语言字符串
+// Get language string for specified key
 export const getConfig = key => bs5LangConfigs[bs5LangCurrentLang][key] || "";
 
-// 获取所有语言配置
+// Get all language configurations
 export const getConfigs = () => bs5LangConfigs;
 
-// 导出默认模块
+// Add a function to set language based on system language
+export const setSystemLang = () => {
+  const systemLang = navigator.language || navigator.userLanguage;
+  const lang = systemLang.replace(/-.*$/, "");
+  if (bs5LangConfigs[systemLang]) {
+    bs5LangCurrentLang = systemLang;
+  } else if (bs5LangConfigs[lang]) {
+    bs5LangCurrentLang = lang;
+  }
+
+  console.log(bs5LangCurrentLang, navigator.language, navigator.userLanguage);
+};
+
+// Export default module
 export default {
   getCurrentLang,
   setCurrentLang,
   getConfig,
-  getConfigs
+  getConfigs,
+  setSystemLang
 };

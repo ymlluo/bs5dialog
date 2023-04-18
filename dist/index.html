@@ -241,11 +241,31 @@
             </div>
           </div>
         </div>
+
+        <div class="mb-3">
+          <div col-xs-12>
+            <div class="card">
+              <div class="card-header">use bs5dialog.startup()</div>
+              <div class="card-body">
+                <button class="btn btn-sm mb-2" data-bs5-dialog="alert" title="show alert">data-bs5-dialog="alert"</button>
+                <button class="btn btn-sm mb-2" data-bs5-dialog="confirm" title="show confirm">data-bs5-dialog="confirm"</button>
+                <button class="btn btn-sm mb-2" data-bs5-dialog="prompt" title="show prompt">data-bs5-dialog="prompt"</button>
+                <button class="btn btn-sm mb-2" data-bs5-dialog="message" title="show message">data-bs5-dialog="message"</button>
+                <button class="btn btn-sm mb-2" data-bs5-dialog="toast" title="show toast">data-bs5-dialog="toast"</button>
+                <button class="btn btn-sm mb-2" data-bs5-dialog="load" data-content="show load content">data-bs5-dialog="load"</button>
+                <button class="btn btn-sm mb-2" data-bs5-dialog="offcanvas" data-bs5-dialog-option-title="offcanvas" data-content="show load offcanvas">data-bs5-dialog="offcanvas"</button>
+              </div>
+              <div class="card-footer"></div>
+            </div>
+          </div>
+
+          
+        </div>
       </div>
     </div>
 
     <script>
-      // console.log(bs5dialog.i18n.setCurrentLang("zh"));
+      bs5dialog.startup();
 
       document.querySelectorAll(".btn-alert").forEach(function (item) {
         item.onclick = function () {
@@ -263,7 +283,7 @@
           bs5dialog.confirm("Do you really want to remove these files?<br> What you've done cannot be undone.?", {
             title: "Are you sure?",
             type: type,
-            btnOkText: "Delete 100 items",
+            // btnOkText: "Delete 100 items",
             onConfirm: () => {
               bs5dialog.alert("remove 100 files", { type: type, timeout: 2000 });
             }
