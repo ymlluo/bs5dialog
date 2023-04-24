@@ -220,125 +220,73 @@ export function getTextClass(bgColorClassName) {
   }
 }
 
+
 /**
- * Makes a request to the specified URL using either axios or fetch.
+ * Makes a request to the specified URL using the specified method and options.
  * @param {string} url - The URL to make the request to.
  * @param {string} [method="GET"] - The HTTP method to use for the request.
  * @param {Object} [headers={}] - The headers to include in the request.
- * @param {FormData|Object|null} [body=null] - The body of the request.
- * @returns {Promise<Object>} - A Promise that resolves to an object containing the success status, status code, and content of the response.
+ * @param {Object|FormData|null} [body=null] - The body of the request.
+ * @param {Object} [options={}] - Additional options to include in the request.
+ * @returns {Promise<Object>} - A Promise that resolves with an object containing the response data.
  */
-export async function makeRequest(url, method = "GET", headers = {}, body = null) {
+export async function makeRequest(url, method = "GET", headers = {}, body = null, options = {}) {
   const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
   if (csrfTokenMeta) {
     headers["X-CSRF-TOKEN"] = csrfTokenMeta.content;
   }
+  options = {
+    method,
+    headers: {
+      ...headers
+    },
+    ...options
+  };
 
-  if (typeof axios !== "undefined") {
-    axios.defaults.crossDomain = true;
-    axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-    // Use axios if it's available
-    try {
-      const axiosConfig = {
-        url,
-        method,
-        headers,
-        withCredentials: false // Allow cookies to be sent and received for cross-domain requests
-      };
-
-      if (body) {
-        if (body instanceof FormData) {
-          // If body is a FormData object, do not set Content-Type header and pass the FormData directly to axios
-          axiosConfig.data = body;
-        } else {
-          // If body is not a FormData object, assume it's JSON data
-          axiosConfig.data = JSON.stringify(body);
-          axiosConfig.headers["Content-Type"] = "application/json";
-        }
-      }
-
-      const response = await axios(axiosConfig);
-
-      if ([301, 302, 303, 307, 308].includes(response.status)) {
-        window.location.replace(response.headers.location);
-      }
-
-      const contentType = response.headers["content-type"];
-      if (contentType && contentType.indexOf("text/html") !== -1) {
-        const data = await response.data;
-        return {
-          isSuccess: response.status >= 200 && response.status < 300,
-          statusCode: response.status,
-          content: data
-        };
-      } else {
-        const data = await response.data;
-        return {
-          isSuccess: response.status >= 200 && response.status < 300,
-          statusCode: response.status,
-          content: data
-        };
-      }
-    } catch (error) {
-      return {
-        isSuccess: false,
-        statusCode: error.response?.status,
-        content: error.response?.data || error.message
-      };
-    }
-  } else {
-    // Use fetch if axios is not available
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      credentials: "include" // Allow cookies to be sent and received for cross-domain requests
-    };
-
-    if (body) {
-      if (body instanceof FormData) {
-        // If body is a FormData object, do not set Content-Type header and pass the FormData directly to fetch
-        options.body = body;
-      } else {
-        // If body is not a FormData object, assume it's JSON data
-        options.body = JSON.stringify(body);
-      }
-    }
-
-    try {
-      const response = await fetch(url, options);
-
-      if ([301, 302, 303, 307, 308].includes(response.status)) {
-        window.location.replace(response.headers.get('Location'));
-      }
-      
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.indexOf("text/html") !== -1) {
-        const data = await response.text();
-        return {
-          isSuccess: response.ok,
-          statusCode: response.status,
-          content: data
-        };
-      } else {
-        const data = await response.json();
-        return {
-          isSuccess: response.ok,
-          statusCode: response.status,
-          content: data
-        };
-      }
-    } catch (error) {
-      return {
-        isSuccess: false,
-        statusCode: error.status,
-        content: error.message
-      };
+  if (body) {
+    if (body instanceof FormData) {
+      // If body is a FormData object, do not set Content-Type header and pass the FormData directly to fetch
+      options.body = body;
+    } else {
+      // If body is not a FormData object, assume it's JSON data
+      options.body = JSON.stringify(body);
+      options.headers["Content-Type"] = "application/json";
     }
   }
+
+  try {
+    const response = await fetch(url, options);
+
+    const contentType = response.headers.get("content-type");
+    const isSuccess = response.ok;
+    const statusCode = response.status;
+    let content;
+    let contentTypeValue;
+    if (contentType && contentType.indexOf("text/html") !== -1) {
+      content = await response.text();
+      console.log(response.url)
+      contentTypeValue = 'html';
+    } else {
+      content = await response.json();
+      contentTypeValue = 'json';
+    }
+    return {
+      isSuccess,
+      statusCode,
+      content,
+      contentType: contentTypeValue
+    };
+  } catch (error) {
+    return {
+      isSuccess: false,
+      statusCode: error.status,
+      content: error.message
+    };
+  }
 }
+
+
+
 /**
  * Creates and triggers a custom event with the given name and detail on the given element
  * @param {HTMLElement} element - The element on which to trigger the event
