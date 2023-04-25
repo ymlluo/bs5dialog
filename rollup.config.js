@@ -15,26 +15,17 @@ export default {
       file: "dist/bs5dialog.js",
       format: "umd",
       name: "bs5dialog",
-      sourcemap: false,
-      globals: {
-        axios: "axios",
-      }
+      sourcemap: false
     },
     {
       file: "dist/bs5dialog.cjs.js",
       format: "cjs",
-      sourcemap: false,
-      globals: {
-        axios: "axios",
-      }
+      sourcemap: false
     },
     {
       file: "dist/bs5dialog.esm.js",
       format: "esm",
-      sourcemap: false,
-      globals: {
-        axios: "axios",
-      }
+      sourcemap: false
     }
   ],
   plugins: [
@@ -63,8 +54,5 @@ export default {
       ],
       hook: "buildStart"
     })
-  ],
-  external: [
-    "axios", 
   ]
 };
