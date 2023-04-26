@@ -109,7 +109,7 @@ export async function load(content, options = {}) {
       if (options.isForm && form) {
         const modalFooter = modalElement.querySelector(".modal-footer");
         modalFooter.classList.remove("d-none");
-        const submitBtn = form.querySelector('button[type="submit"]');
+        const submitBtn = form.querySelector('[type="submit"]');
         const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
         submitBtn.style.display = "none";
         okBtn.textContent = submitBtn.textContent;
@@ -209,7 +209,7 @@ export async function load(content, options = {}) {
           <div class='modal-maximize-toggle'></div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
        </div>
-       <div class="modal-body" ${options.scrollable ? "style='height:60vh'" : ""}>
+       <div class="modal-body" ${options.scrollable ? "style='height:auto'" : ""}>
           ${content}
        </div>
        <div class="modal-footer d-none">

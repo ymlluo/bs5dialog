@@ -264,7 +264,6 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
     let contentTypeValue;
     if (contentType && contentType.indexOf("text/html") !== -1) {
       content = await response.text();
-      console.log(response.url)
       contentTypeValue = 'html';
     } else {
       content = await response.json();
@@ -350,6 +349,39 @@ export function throttle(func, limit) {
   };
 }
 
+
+
+
+/**
+ * Waits for a target element to be inserted into the DOM, with a timeout of 5 seconds.
+ * @param {HTMLElement} targetElement - The element to wait for.
+ * @param {number} [timeout=5000] - The maximum time to wait in milliseconds.
+ * @returns {Promise<void>} A promise that resolves when the target element is inserted into the DOM.
+ */
+export async function waitForElement(targetElement, timeout = 60000) {
+  return new Promise((resolve, reject) => {
+    let waited = 0;
+    const intervalId = setInterval(() => {
+      if (waited >= timeout) {
+        clearInterval(intervalId);
+        reject(new Error('Max wait time exceeded'));
+      }
+      if (document.body.contains(targetElement)) {
+        clearInterval(intervalId);
+        resolve();
+      }
+      waited += 100
+    }, 10);
+  })
+    .then(async () => {
+      // Code to execute after targetElement is inserted into the DOM
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+
 /**
  * Observes changes to a target element and triggers callbacks accordingly.
  * @param {HTMLElement} targetElement - The element to observe.
@@ -371,35 +403,65 @@ export function observeElement(targetElement, options) {
   let targetElementStyle;
   let resizeElement;
   options.created?.(targetElement);
-  let waitForInsertionTimeId;
-  const waitForInsertion = () => {
-    if (!targetElement.parentNode) {
-      waitForInsertionTimeId = setTimeout(waitForInsertion, 100);
-    } else {
-      if (waitForInsertionTimeId) {
-        clearTimeout(waitForInsertionTimeId);
-      }
-      options.rendered?.();
-      hasRendered = true;
-      resizeElement = targetElement.querySelector("div[style*='resize: both']");
-      if (resizeElement) {
-        size.width = resizeElement.offsetWidth;
-        size.height = resizeElement.offsetHeight;
-      }
 
+
+  waitForElement(targetElement).then(()=>{
+    options.rendered?.();
+    hasRendered = true;
+
+    positionObserver.observe(targetElement, {
+      attributes: true,
+      attributeFilter: ["style"],
+      subtree: true
+    });
+    
+    resizeElement = targetElement.querySelector("div[style*='resize: both']");
+    if (resizeElement) {
+      size.width = resizeElement.offsetWidth;
+      size.height = resizeElement.offsetHeight;
+    }
+
+    waitForElement(targetElement.parentNode).then(()=>{
       observer.observe(targetElement.parentNode, {
         childList: true,
         attributes: true,
         attributeFilter: ["style", "class"],
         subtree: true
       });
-      positionObserver.observe(targetElement, {
-        attributes: true,
-        attributeFilter: ["style"],
-        subtree: true
-      });
-    }
-  };
+    })
+
+
+  })
+
+  // let waitForInsertionTimeId;
+  // const waitForInsertion = () => {
+  //   if (!targetElement.parentNode) {
+  //     waitForInsertionTimeId = setTimeout(waitForInsertion, 100);
+  //   } else {
+  //     if (waitForInsertionTimeId) {
+  //       clearTimeout(waitForInsertionTimeId);
+  //     }
+  //     options.rendered?.();
+  //     hasRendered = true;
+  //     resizeElement = targetElement.querySelector("div[style*='resize: both']");
+  //     if (resizeElement) {
+  //       size.width = resizeElement.offsetWidth;
+  //       size.height = resizeElement.offsetHeight;
+  //     }
+
+  //     observer.observe(targetElement.parentNode, {
+  //       childList: true,
+  //       attributes: true,
+  //       attributeFilter: ["style", "class"],
+  //       subtree: true
+  //     });
+  //     positionObserver.observe(targetElement, {
+  //       attributes: true,
+  //       attributeFilter: ["style"],
+  //       subtree: true
+  //     });
+  //   }
+  // };
 
   const observer = new MutationObserver(
     debounce(mutationsList => {
@@ -468,7 +530,7 @@ export function observeElement(targetElement, options) {
     }, 200)
   );
 
-  waitForInsertion();
+  // waitForInsertion();
 
   return Promise.resolve().finally(() => {
     if (resizeObserver) {

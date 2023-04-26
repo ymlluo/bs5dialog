@@ -104,7 +104,6 @@ export function toast(message, options) {
   }
 
   const hideToast = function () {
-    console.log("hidden");
     toastElement.classList.add("bs5-dialog-msg-hide");
     debounce(() => {
       toastElement.style.display = "none";

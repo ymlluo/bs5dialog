@@ -32,7 +32,7 @@ function showDialog(elem) {
   if (typeof func === "function") {
     func(content.trim(), { ...getDialogOptions(elem), ...elemOpts });
   } else {
-    console.log(`Function ${elem.dataset.bs5Dialog} does not exist`);
+
   }
 }
 
