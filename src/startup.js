@@ -6,6 +6,7 @@ import { prompt } from "./components/prompt";
 import { message, msg } from "./components/message";
 import { toast } from "./components/toast";
 import { setSystemLang } from "./i18n";
+import {makeRequest} from './utils'
 
 const components = { alert, confirm, prompt, message, toast, load, offcanvas };
 /**
@@ -25,8 +26,12 @@ function getDialogOptions(elem) {
  * Shows a dialog based on the data-bs5-dialog attribute of an element
  * @param {HTMLElement} elem - The element to show the dialog for
  */
-function showDialog(elem) {
-  const content = elem.title || elem.dataset.content || "";
+async function showDialog(elem) {
+  let content = elem.title || elem.dataset.content || "";
+  if(elem.dataset.remote==='true' && elem.tagName ==='A'){
+    const response = await makeRequest(elem.href)
+    content = response.content;
+  }
   const elemOpts = elem.dataset.bs5DialogOptions ? JSON.parse(elem.dataset.bs5DialogOptions) : {};
   const func = components[elem.dataset.bs5Dialog];
   if (typeof func === "function") {
@@ -42,7 +47,8 @@ function showDialog(elem) {
 export function addDialogClickListeners() {
   const dialogElems = document.querySelectorAll("[data-bs5-dialog]");
   for (const elem of dialogElems) {
-    elem.addEventListener("click", () => {
+    elem.addEventListener("click", (e) => {
+      e.preventDefault()
       showDialog(elem);
     });
   }

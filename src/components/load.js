@@ -168,7 +168,6 @@ export async function load(content, options = {}) {
             if (typeof options.onSubmitError === "function") {
               options.onSubmitError(submitResult);
             }
-            message(submitResult.content);
           }
         });
       }
