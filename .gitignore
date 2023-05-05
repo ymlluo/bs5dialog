@@ -105,3 +105,4 @@ typings/
 yarn.lock
 
 .vscode/
+.idea/
