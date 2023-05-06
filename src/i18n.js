@@ -112,7 +112,7 @@ export const setSystemLang = () => {
     bs5LangCurrentLang = lang;
   }
 
-  console.log(bs5LangCurrentLang, navigator.language, navigator.userLanguage);
+  // console.log(bs5LangCurrentLang, navigator.language, navigator.userLanguage);
 };
 
 // Export default module

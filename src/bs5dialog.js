@@ -7,7 +7,7 @@ import { offcanvas } from "./components/offcanvas";
 import { alert } from "./components/alert";
 import { confirm } from "./components/confirm";
 import { prompt } from "./components/prompt";
-import { message, msg } from "./components/message";
+import { message, msg, showSuccessMessage, showFailMessage } from "./components/message";
 import { toast } from "./components/toast";
 import { loading, showLoading, loadingClean, hideLoading } from "./components/loading";
 import { startup } from "./startup";
@@ -18,6 +18,8 @@ export {
   prompt,
   message,
   msg,
+  showSuccessMessage,
+  showFailMessage,
   toast,
   loading,
   showLoading,
@@ -30,4 +32,3 @@ export {
   setSystemLang,
   startup
 };
-

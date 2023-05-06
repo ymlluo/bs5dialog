@@ -134,17 +134,22 @@ export function loading(element = document.body, options = {}) {
 }
 
 /**
- * Removes all loading elements from the document.
+ * Removes all loading elements from the given wrapper element, or from the entire document if no element is provided.
+ * Optimized for performance with early return if no loading elements are found.
+ * @param {HTMLElement} wrapper - The element to search within for loading elements.
  */
-export function loadingClean() {
-  let loadings = document.querySelectorAll(".bs5-dailog-loading");
-  if (loadings) {
-    loadings.forEach(el => {
-      el.parentNode.style.cursor = "auto";
-      el.remove();
-    });
+export function loadingClean(wrapper = document) {
+  const loadings = wrapper.querySelectorAll(".bs5-dialog-loading");
+  if (!loadings.length) {
+    return;
   }
+  loadings.forEach((el) => {
+    const { parentNode } = el;
+    parentNode.style.cursor = "auto";
+    parentNode.removeChild(el);
+  });
 }
+
 
 export const showLoading = loading;
 export const hideLoading = loadingClean;

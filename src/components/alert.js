@@ -41,7 +41,6 @@ export function alert(content, options = {}) {
     options.id = options.id || genDialogId();
     modalElement.setAttribute("id", options.id);
   }
-
   observeElement(modalElement, {
     created: () => {
       triggerEvent(modalElement, "bs5:dialog:alert:created", { options: options, el: modalElement });
