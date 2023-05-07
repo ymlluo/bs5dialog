@@ -152,20 +152,18 @@ export function addDialogClickListeners() {
     const elem = e.target.closest("[data-bs5-dialog]");
     if (elem) {
       e.preventDefault();
-      if (elem.hasAttribute("data-bs5-request")) {
-        if (elem.dataset.bs5RequestConfirm) {
-          const confirmMessage = elem.dataset.bs5RequestConfirm || "";
-          confirm(confirmMessage, {
-            onConfirm: function () {
-              handleRequest(elem);
-            }
-          });
-        } else {
-          handleRequest(elem);
+      showDialog(elem);
+    }
+    const reqElem = e.target.closest("[data-bs5-request]");
+    if (reqElem.dataset.bs5RequestConfirm) {
+      const confirmMessage = reqElem.dataset.bs5RequestConfirm || "";
+      confirm(confirmMessage, {
+        onConfirm: function () {
+          handleRequest(reqElem);
         }
-      } else {
-        showDialog(elem);
-      }
+      });
+    } else {
+      handleRequest(reqElem);
     }
   });
 }
