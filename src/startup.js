@@ -156,6 +156,7 @@ export function addDialogClickListeners() {
     }
     const reqElem = e.target.closest("[data-bs5-request]");
     if(reqElem){
+      e.preventDefault();
       if (reqElem.dataset.bs5RequestConfirm) {
         const confirmMessage = reqElem.dataset.bs5RequestConfirm || "";
         confirm(confirmMessage, {
