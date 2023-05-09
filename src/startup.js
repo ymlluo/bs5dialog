@@ -16,10 +16,13 @@ const components = { alert, confirm, message, toast, load, offcanvas };
  * @return {Promise} - A promise that resolves when the dialog is closed
  */
 async function showDialog(elem) {
-  let content = elem.title || elem.dataset.content || "";
+  let title = elem.dataset.title || elem.title || "";
+  let content = elem.dataset.content || elem.title || "";
   if (elem.dataset.remote === "true" && elem.tagName === "A") {
+      showLoading()
     const response = await makeRequest(elem.href);
     content = response.content;
+      hideLoading()
   }
 
   const getDialogOptions = () => {
@@ -33,7 +36,7 @@ async function showDialog(elem) {
   const elemOpts = elem.dataset.bs5DialogOptions ? JSON.parse(elem.dataset.bs5DialogOptions) : {};
   const func = components[elem.dataset.bs5Dialog];
   if (typeof func === "function") {
-    func(content.trim(), { ...getDialogOptions(), ...elemOpts });
+    func(content.trim(), { ...{title:title},...getDialogOptions(), ...elemOpts });
   }
 }
 
@@ -47,11 +50,10 @@ export function handleRequest(elem) {
   if (!elem) {
     return;
   }
-  let url, method, requestData, contentType;
-  let enctype;
+  let url, method,headers, requestData, contentType,enctype;
   if (elem.tagName === "A") {
     method = elem.dataset.bs5Request || "POST";
-    if (!["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method)) {
+    if (!["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase())) {
       return;
     }
     requestData = Object.fromEntries(
@@ -59,7 +61,7 @@ export function handleRequest(elem) {
         .filter(attr => attr.name.startsWith("data-bs5-request-param-"))
         .map(attr => [attr.name.replace("data-bs5-request-param-", ""), attr.value])
     );
-    const headers = {
+    let headers = {
       Accept: "application/json",
       ...Object.fromEntries(
         [...elem.attributes]
@@ -143,6 +145,11 @@ export function handleRequest(elem) {
     });
 }
 
+function handleFormSubmit()
+{
+
+}
+
 /**
  * Adds click listeners to all elements with the data-bs5-dialog attribute
  * @return {void}
@@ -157,19 +164,23 @@ export function addDialogClickListeners() {
     const reqElem = e.target.closest("[data-bs5-request]");
     if(reqElem){
       e.preventDefault();
-      if (reqElem.dataset.bs5RequestConfirm) {
-        const confirmMessage = reqElem.dataset.bs5RequestConfirm || "";
-        confirm(confirmMessage, {
-          onConfirm: function () {
-            handleRequest(reqElem);
-          }
-        });
+      if (typeof reqElem.dataset.bs5RequestConfirm === undefined) {
+          handleRequest(reqElem);
       } else {
-        handleRequest(reqElem);
+          const confirmMessage = reqElem.dataset.bs5RequestConfirm || "";
+          confirm(confirmMessage, {
+              onConfirm: function () {
+                  handleRequest(reqElem);
+              }
+          });
       }
     }
 
   });
+
+  document.addEventListener('bs5:dialog:form:submit:success',e=>{
+      console.log(e);
+  })
 }
 
 /**

@@ -414,20 +414,22 @@ export function observeElement(targetElement, options) {
       attributeFilter: ["style"],
       subtree: true
     });
-    
+
     resizeElement = targetElement.querySelector("div[style*='resize: both']");
     if (resizeElement) {
       size.width = resizeElement.offsetWidth;
       size.height = resizeElement.offsetHeight;
     }
 
-    waitForElement(targetElement.parentNode).then(()=>{
-      observer.observe(targetElement.parentNode, {
-        childList: true,
-        attributes: true,
-        attributeFilter: ["style", "class"],
-        subtree: true
-      });
+    waitForElement(targetElement).then(()=>{
+        waitForElement(targetElement.parentNode).then(()=>{
+            observer.observe(targetElement.parentNode, {
+                childList: true,
+                attributes: true,
+                attributeFilter: ["style", "class"],
+                subtree: true
+            });
+        })
     })
 
 

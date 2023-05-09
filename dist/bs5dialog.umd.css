@@ -1,0 +1,259 @@
+.bs5-dialog-msg {
+  position: fixed;
+  animation-name: bs5MsgBoxShow;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  min-width: 8rem;
+}
+
+.bs5-dialog-msg-hide {
+  animation-name: bs5MsgBoxHide;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes bs5MsgBoxShow {
+  from {
+    display: none;
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bs5MsgBoxHide {
+  from {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    display: none;
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.bs5-dialog-msg-top-left,
+.bs5-dialog-msg-left-top {
+  top: 20px;
+  left: 20px;
+  transform: none;
+}
+
+.bs5-dialog-msg-top-right,
+.bs5-dialog-msg-right-top {
+  top: 20px;
+  right: 20px;
+  transform: none;
+}
+
+.bs5-dialog-msg-bottom-left,
+.bs5-dialog-msg-left-bottom {
+  bottom: 20px;
+  left: 20px;
+  transform: none;
+}
+
+.bs5-dialog-msg-bottom-right,
+.bs5-dialog-msg-right-bottom {
+  bottom: 20px;
+  right: 20px;
+  transform: none;
+}
+
+.bs5-dialog-msg-top {
+  top: 20px;
+  left: calc(50% + 20px);
+  transform: translateX(-50%);
+}
+
+.bs5-dialog-msg-bottom {
+  bottom: 20px;
+  left: calc(50% + 20px);
+  transform: translateX(-50%);
+}
+
+.bs5-dialog-msg-left {
+  top: calc(50% + 20px);
+  left: 20px;
+  transform: translateY(-50%);
+}
+
+.bs5-dialog-msg-right {
+  top: calc(50% + 20px);
+  right: 20px;
+  transform: translateY(-50%);
+}
+
+.bs5-dialog-msg-center {
+  top: calc(50% + 20px);
+  left: calc(50% + 20px);
+  transform: translate(-50%, -50%);
+}
+
+/* spinner */
+
+.bs5-modal-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bs5dialog-modal.show {
+  opacity: 1;
+  animation-name: bs5MsgBoxShow;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.bs5dialog-modal.hide {
+  display: block;
+  animation-name: bs5MsgBoxHide;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+.bs5dialog-modal .modal-dialog .modal-content .btn-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+}
+
+.bs5dialog-modal .modal-status {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #616876;
+  border-radius: 8px 8px 0 0;
+}
+
+.bs5dialog-modal .modal-header {
+  min-height: 3.5rem;
+  padding-right: 3.5rem;
+}
+
+.bs5dialog-modal .btn {
+  border: 1px solid #e6e7e9;
+}
+
+.bs5dialog-modal .btn:hover {
+  border-color: #b3b7bd;
+}
+
+.bs5dialog-modal .modal-dialog {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Add an animation to the Offcanvas element */
+
+.bs5dialog-offcanvas.offcanvas-start {
+  animation: slideInStart 0.3s ease-in-out;
+}
+
+.bs5dialog-offcanvas.offcanvas-end {
+  animation: slideInEnd 0.3s ease-in-out;
+}
+
+.bs5dialog-offcanvas.offcanvas-top {
+  animation: slideInTop 0.3s ease-in-out;
+}
+
+.bs5dialog-offcanvas.offcanvas-bottom {
+  animation: slideInBottom 0.3s ease-in-out;
+}
+
+@keyframes slideInStart {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInEnd {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(-100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInBottom {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.bs5dialog-offcanvas .offcanvas-header {
+  border-bottom: 1px solid rgba(97, 104, 118, 0.16);
+}
+
+/* As of v5.3.0, the .btn-close-white class is deprecated */
+
+.btn-close-white {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.bs5dialog-modal .modal-title {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+
+.bs5dialog-modal .modal-footer {
+  border: none;
+  padding-top: 0;
+  padding-bottom: 0.75rem;
+}
+
+/* Fixed an issue that if the modal popup or hidden, the page would jitter and the message box would jump to the left if the message was used at that time. */
+
+.modal-open {
+  overflow-y: scroll !important;
+  padding-right: unset !important;
+}

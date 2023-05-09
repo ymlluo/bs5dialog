@@ -60,7 +60,7 @@ export function loading(element = document.body, options = {}) {
   overlay.style.pointerEvents = "auto";
   overlay.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
   overlay.style.setProperty("z-index", getMaxZIndex() + 1);
-  overlay.classList.add("bs5-dailog-loading");
+  overlay.classList.add("bs5-dialog-loading");
 
   observeElement(overlay, {
     created: () => {
@@ -138,15 +138,14 @@ export function loading(element = document.body, options = {}) {
  * Optimized for performance with early return if no loading elements are found.
  * @param {HTMLElement} wrapper - The element to search within for loading elements.
  */
-export function loadingClean(wrapper = document) {
-  const loadings = wrapper.querySelectorAll(".bs5-dialog-loading");
+export function loadingClean(wrapper) {
+  let element = getTargetElement(wrapper ) || document;
+  const loadings = element.querySelectorAll(".bs5-dialog-loading");
   if (!loadings.length) {
     return;
   }
   loadings.forEach((el) => {
-    const { parentNode } = el;
-    parentNode.style.cursor = "auto";
-    parentNode.removeChild(el);
+      el.remove();
   });
 }
 

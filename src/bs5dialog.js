@@ -12,9 +12,7 @@ import { toast } from "./components/toast";
 import { loading, showLoading, loadingClean, hideLoading } from "./components/loading";
 import { startup } from "./startup";
 
-startup();
-
-export {
+export  {
   alert,
   confirm,
   prompt,
