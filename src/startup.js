@@ -173,9 +173,7 @@ export function addDialogClickListeners() {
     }
   });
 
-  document.addEventListener("bs5:dialog:form:submit:success", e => {
-    console.log(e);
-  });
+
 }
 
 /**
