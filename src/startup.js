@@ -5,7 +5,7 @@ import { confirm } from "./components/confirm";
 import { message, showSuccessMessage, showFailMessage } from "./components/message";
 import { toast } from "./components/toast";
 import { setSystemLang } from "./i18n";
-import { makeRequest } from "./utils";
+import { makeRequest, replayLock } from "./utils";
 import { loading, showLoading, hideLoading } from "./components/loading";
 
 const components = { alert, confirm, message, toast, load, offcanvas };
@@ -19,10 +19,11 @@ async function showDialog(elem) {
   let title = elem.dataset.title || elem.title || "";
   let content = elem.dataset.content || elem.title || "";
   if (elem.dataset.remote === "true" && elem.tagName === "A") {
-      showLoading()
+    replayLock(elem);
+    showLoading();
     const response = await makeRequest(elem.href);
     content = response.content;
-      hideLoading()
+    hideLoading();
   }
 
   const getDialogOptions = () => {
@@ -36,7 +37,7 @@ async function showDialog(elem) {
   const elemOpts = elem.dataset.bs5DialogOptions ? JSON.parse(elem.dataset.bs5DialogOptions) : {};
   const func = components[elem.dataset.bs5Dialog];
   if (typeof func === "function") {
-    func(content.trim(), { ...{title:title},...getDialogOptions(), ...elemOpts });
+    func(content.trim(), { ...{ title: title }, ...getDialogOptions(), ...elemOpts });
   }
 }
 
@@ -50,7 +51,7 @@ export function handleRequest(elem) {
   if (!elem) {
     return;
   }
-  let url, method,headers, requestData, contentType,enctype;
+  let url, method, headers, requestData, contentType, enctype;
   if (elem.tagName === "A") {
     method = elem.dataset.bs5Request || "POST";
     if (!["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase())) {
@@ -145,11 +146,6 @@ export function handleRequest(elem) {
     });
 }
 
-function handleFormSubmit()
-{
-
-}
-
 /**
  * Adds click listeners to all elements with the data-bs5-dialog attribute
  * @return {void}
@@ -162,25 +158,24 @@ export function addDialogClickListeners() {
       showDialog(elem);
     }
     const reqElem = e.target.closest("[data-bs5-request]");
-    if(reqElem){
+    if (reqElem) {
       e.preventDefault();
       if (typeof reqElem.dataset.bs5RequestConfirm === undefined) {
-          handleRequest(reqElem);
+        handleRequest(reqElem);
       } else {
-          const confirmMessage = reqElem.dataset.bs5RequestConfirm || "";
-          confirm(confirmMessage, {
-              onConfirm: function () {
-                  handleRequest(reqElem);
-              }
-          });
+        const confirmMessage = reqElem.dataset.bs5RequestConfirm || "";
+        confirm(confirmMessage, {
+          onConfirm: function () {
+            handleRequest(reqElem);
+          }
+        });
       }
     }
-
   });
 
-  document.addEventListener('bs5:dialog:form:submit:success',e=>{
-      console.log(e);
-  })
+  document.addEventListener("bs5:dialog:form:submit:success", e => {
+    console.log(e);
+  });
 }
 
 /**

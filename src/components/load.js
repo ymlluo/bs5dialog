@@ -12,7 +12,6 @@ import {
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
 import { makeIcon } from "../resource/icons";
-import { message } from "./message";
 
 /**
  * Loads content into a Bootstrap 5 modal dialog with customizable options.
@@ -132,6 +131,7 @@ export async function load(content, options = {}) {
           }
 
           const submitResult = await makeRequest(form.action, form.method, {}, new FormData(form));
+          console.log("submitResult", submitResult);
           triggerEvent(modalElement, "bs5:dialog:form:submit:complete", {
             options: options,
             formEl: form,

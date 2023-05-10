@@ -139,16 +139,16 @@ export function loading(element = document.body, options = {}) {
  * @param {HTMLElement} wrapper - The element to search within for loading elements.
  */
 export function loadingClean(wrapper) {
-  let element = getTargetElement(wrapper ) || document;
+  let element = getTargetElement(wrapper) || document;
   const loadings = element.querySelectorAll(".bs5-dialog-loading");
   if (!loadings.length) {
     return;
   }
-  loadings.forEach((el) => {
-      el.remove();
+  loadings.forEach(el => {
+    el.parentElement.style.cursor = "auto";
+    el.remove();
   });
 }
-
 
 export const showLoading = loading;
 export const hideLoading = loadingClean;

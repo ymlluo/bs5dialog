@@ -220,7 +220,6 @@ export function getTextClass(bgColorClassName) {
   }
 }
 
-
 /**
  * Makes a request to the specified URL using the specified method and options.
  * @param {string} url - The URL to make the request to.
@@ -238,7 +237,8 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
   options = {
     method,
     headers: {
-      ...headers
+      ...headers,
+      Accept: "application/json"
     },
     ...options
   };
@@ -264,10 +264,10 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
     let contentTypeValue;
     if (contentType && contentType.indexOf("text/html") !== -1) {
       content = await response.text();
-      contentTypeValue = 'html';
+      contentTypeValue = "html";
     } else {
       content = await response.json();
-      contentTypeValue = 'json';
+      contentTypeValue = "json";
     }
     return {
       isSuccess,
@@ -276,6 +276,7 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
       contentType: contentTypeValue
     };
   } catch (error) {
+    console.log("makeRequest err", error);
     return {
       isSuccess: false,
       statusCode: error.status,
@@ -283,8 +284,6 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
     };
   }
 }
-
-
 
 /**
  * Creates and triggers a custom event with the given name and detail on the given element
@@ -349,9 +348,6 @@ export function throttle(func, limit) {
   };
 }
 
-
-
-
 /**
  * Waits for a target element to be inserted into the DOM, with a timeout of 5 seconds.
  * @param {HTMLElement} targetElement - The element to wait for.
@@ -364,23 +360,28 @@ export async function waitForElement(targetElement, timeout = 60000) {
     const intervalId = setInterval(() => {
       if (waited >= timeout) {
         clearInterval(intervalId);
-        reject(new Error('Max wait time exceeded'));
+        reject(new Error("Timeout exceeded"));
       }
       if (document.body.contains(targetElement)) {
         clearInterval(intervalId);
         resolve();
       }
-      waited += 100
+      waited += 100;
     }, 10);
-  })
-    .then(async () => {
-      // Code to execute after targetElement is inserted into the DOM
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
+  });
+}
 
+function waitForElementDeleted(selector) {
+  return new Promise(resolve => {
+    const observer = new MutationObserver(mutations => {
+      if (!document.body.contains(selector)) {
+        observer.disconnect();
+        resolve();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  });
+}
 
 /**
  * Observes changes to a target element and triggers callbacks accordingly.
@@ -404,8 +405,7 @@ export function observeElement(targetElement, options) {
   let resizeElement;
   options.created?.(targetElement);
 
-
-  waitForElement(targetElement).then(()=>{
+  waitForElement(targetElement).then(() => {
     options.rendered?.();
     hasRendered = true;
 
@@ -421,49 +421,20 @@ export function observeElement(targetElement, options) {
       size.height = resizeElement.offsetHeight;
     }
 
-    waitForElement(targetElement).then(()=>{
-        waitForElement(targetElement.parentNode).then(()=>{
-            observer.observe(targetElement.parentNode, {
-                childList: true,
-                attributes: true,
-                attributeFilter: ["style", "class"],
-                subtree: true
-            });
-        })
-    })
-
-
-  })
-
-  // let waitForInsertionTimeId;
-  // const waitForInsertion = () => {
-  //   if (!targetElement.parentNode) {
-  //     waitForInsertionTimeId = setTimeout(waitForInsertion, 100);
-  //   } else {
-  //     if (waitForInsertionTimeId) {
-  //       clearTimeout(waitForInsertionTimeId);
-  //     }
-  //     options.rendered?.();
-  //     hasRendered = true;
-  //     resizeElement = targetElement.querySelector("div[style*='resize: both']");
-  //     if (resizeElement) {
-  //       size.width = resizeElement.offsetWidth;
-  //       size.height = resizeElement.offsetHeight;
-  //     }
-
-  //     observer.observe(targetElement.parentNode, {
-  //       childList: true,
-  //       attributes: true,
-  //       attributeFilter: ["style", "class"],
-  //       subtree: true
-  //     });
-  //     positionObserver.observe(targetElement, {
-  //       attributes: true,
-  //       attributeFilter: ["style"],
-  //       subtree: true
-  //     });
-  //   }
-  // };
+    waitForElement(targetElement.parentNode).then(() => {
+      if (typeof targetElement.parentNode === Node) {
+        observer.observe(targetElement.parentNode, {
+          childList: true,
+          attributes: true,
+          attributeFilter: ["style", "class"],
+          subtree: true
+        });
+      }
+    });
+    waitForElementDeleted(targetElement).then(() => {
+      observer.disconnect();
+    });
+  });
 
   const observer = new MutationObserver(
     debounce(mutationsList => {
@@ -478,7 +449,7 @@ export function observeElement(targetElement, options) {
               if (resizeElement) {
                 resizeObserver = new ResizeObserver(
                   throttle(() => {
-                    if (resizeElement.offsetWidth != size.width || resizeElement.offsetHeight != size.height) {
+                    if (resizeElement.offsetWidth !== size.width || resizeElement.offsetHeight !== size.height) {
                       size.width = resizeElement.offsetWidth;
                       size.height = resizeElement.offsetHeight;
                       options.resize?.();
@@ -488,7 +459,7 @@ export function observeElement(targetElement, options) {
                 resizeObserver.observe(resizeElement);
               }
               if (
-                (hasHidden == false && targetElementStyle.display === "none") ||
+                (hasHidden === false && targetElementStyle.display === "none") ||
                 targetElementStyle.opacity === 0 ||
                 targetElementStyle.visibility === "hidden"
               ) {
