@@ -10,6 +10,17 @@ import { loading, showLoading, hideLoading } from "./components/loading";
 
 const components = { alert, confirm, message, toast, load, offcanvas };
 
+function getDialogOptions(elem) {
+  const dialogOptions = {};
+  for (let i = 0; i < elem.attributes.length; i++) {
+    const attr = elem.attributes[i];
+    if (attr.name.startsWith("data-bs5-dialog-option-")) {
+      dialogOptions[attr.name.replace("data-bs5-dialog-option-", "")] = attr.value;
+    }
+  }
+  return dialogOptions;
+}
+
 /**
  * Shows a dialog box with content passed or fetched
  * @param {HTMLElement} elem - The element that triggered the dialog box
@@ -18,26 +29,30 @@ const components = { alert, confirm, message, toast, load, offcanvas };
 async function showDialog(elem) {
   let title = elem.dataset.title || elem.title || "";
   let content = elem.dataset.content || elem.title || "";
-  if (elem.dataset.remote === "true" && elem.tagName === "A") {
-    replayLock(elem);
-    showLoading();
-    const response = await makeRequest(elem.href);
-    content = response.content;
-    hideLoading();
+  switch (elem.dataset.bs5Dialog) {
+    case "toast":
+    case "load":
+    case "offcanvas":
+      if (elem.tagName === "A" && !elem.dataset.content) {
+        if (!title) {
+          title = elem.innerHTML;
+        }
+        replayLock(elem);
+        if (elem.dataset.bs5Loading !== "false") {
+          showLoading();
+        }
+        const response = await makeRequest(elem.href);
+        content = response.content;
+        hideLoading();
+      }
+      break;
+    default:
+      break;
   }
-
-  const getDialogOptions = () => {
-    return Object.fromEntries(
-      [...elem.attributes]
-        .filter(attr => attr.name.startsWith("data-bs5-dialog-option-"))
-        .map(attr => [attr.name.replace("data-bs5-dialog-option-", ""), attr.value])
-    );
-  };
-
   const elemOpts = elem.dataset.bs5DialogOptions ? JSON.parse(elem.dataset.bs5DialogOptions) : {};
   const func = components[elem.dataset.bs5Dialog];
   if (typeof func === "function") {
-    func(content.trim(), { ...{ title: title }, ...getDialogOptions(), ...elemOpts });
+    func(content.trim(), { ...{ title: title }, ...getDialogOptions(elem), ...elemOpts });
   }
 }
 
@@ -47,74 +62,35 @@ async function showDialog(elem) {
  * @param {HTMLElement} wrapper - The parent element that should display the loading indicator
  * @return {void}
  */
-export function handleRequest(elem) {
-  if (!elem) {
+export function handleAnchorRequest(elem) {
+  if (elem.tagName !== "A") {
     return;
   }
-  let url, method, headers, requestData, contentType, enctype;
-  if (elem.tagName === "A") {
-    method = elem.dataset.bs5Request || "POST";
-    if (!["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase())) {
-      return;
-    }
-    requestData = Object.fromEntries(
+  const url = elem.href;
+  if (!url) return;
+  const method = elem.dataset.bs5Request;
+  if (!["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase())) return;
+
+  let headers = {
+    Accept: "application/json",
+    ...Object.fromEntries(
       [...elem.attributes]
-        .filter(attr => attr.name.startsWith("data-bs5-request-param-"))
-        .map(attr => [attr.name.replace("data-bs5-request-param-", ""), attr.value])
-    );
-    let headers = {
-      Accept: "application/json",
-      ...Object.fromEntries(
-        [...elem.attributes]
-          .filter(attr => attr.name.startsWith("data-bs5-request-header-"))
-          .map(attr => [attr.name.replace("data-bs5-request-header-", ""), attr.value])
-      )
-    };
-    contentType = headers["Content-Type"] || "application/json";
-    url = elem.href;
-  } else if (elem.tagName === "BUTTON" && elem.type === "submit") {
-    const form = elem.closest("form");
-    if (!form) {
-      return;
-    }
-    method = form.method || "POST";
-    if (!["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method)) {
-      return;
-    }
-    requestData = new FormData(form);
-    enctype = form.enctype;
-    const headers = {
-      Accept: "application/json",
-      ...Object.fromEntries(
-        [...form.attributes]
-          .filter(attr => attr.name.startsWith("data-bs5-request-header-"))
-          .map(attr => [attr.name.replace("data-bs5-request-header-", ""), attr.value])
-      )
-    };
-    contentType = enctype || headers["Content-Type"] || "application/x-www-form-urlencoded";
-    url = form.action;
-    // Check if form contains files
-    let hasFile = false;
-    for (let i = 0; i < form.elements.length; i++) {
-      if (form.elements[i].type === "file") {
-        enctype = "multipart/form-data";
-        contentType = enctype;
-        hasFile = true;
-        break;
-      }
-    }
-    if (hasFile) {
-      form.enctype = enctype;
-    }
-  } else {
-    return;
-  }
-  const showLoadingFn = typeof showLoading === "function" ? showLoading : loading;
+        .filter(attr => attr.name.startsWith("data-bs5-request-header-"))
+        .map(attr => [attr.name.replace("data-bs5-request-header-", ""), attr.value])
+    )
+  };
+  headers["Content-Type"] = headers["Content-Type"] || "application/json";
+  const requestData = Object.fromEntries(
+    [...elem.attributes]
+      .filter(attr => attr.name.startsWith("data-bs5-request-param-"))
+      .map(attr => [attr.name.replace("data-bs5-request-param-", ""), attr.value])
+  );
+
   const wrapper = elem.dataset.bs5LoadingWrapper;
   if (elem.dataset.bs5Loading !== "false") {
-    showLoadingFn(wrapper || elem.closest(".row") || document.body);
+    showLoading(wrapper || elem.closest(".row") || document.body);
   }
-  makeRequest(url, method, { "Content-Type": contentType, ...headers }, requestData) //pass in the content type header
+  makeRequest(url, method, headers, requestData) //pass in the content type header
     .then(data => {
       hideLoading(wrapper || elem.closest(".row") || document.body);
       const { content, isSuccess } = data;
@@ -137,12 +113,6 @@ export function handleRequest(elem) {
       } else {
         showFailMessage(message);
       }
-    })
-    .catch(error => {
-      hideLoading(wrapper || elem.closest(".row"));
-      console.error(error);
-      showFailMessage("Failed to make request.");
-      return Promise.reject(error);
     });
 }
 
@@ -157,23 +127,21 @@ export function addDialogClickListeners() {
       e.preventDefault();
       showDialog(elem);
     }
-    const reqElem = e.target.closest("[data-bs5-request]");
-    if (reqElem) {
+    const anchor = e.target.closest("a[data-bs5-request]");
+    if (anchor) {
       e.preventDefault();
-      if (typeof reqElem.dataset.bs5RequestConfirm === undefined) {
-        handleRequest(reqElem);
+      if (typeof anchor.dataset.bs5RequestConfirm === "undefined") {
+        handleAnchorRequest(anchor);
       } else {
-        const confirmMessage = reqElem.dataset.bs5RequestConfirm || "";
+        const confirmMessage = anchor.dataset.bs5RequestConfirm || "";
         confirm(confirmMessage, {
           onConfirm: function () {
-            handleRequest(reqElem);
+            handleAnchorRequest(anchor);
           }
         });
       }
     }
   });
-
-
 }
 
 /**
@@ -186,3 +154,5 @@ export function startup() {
 }
 
 export default startup;
+
+

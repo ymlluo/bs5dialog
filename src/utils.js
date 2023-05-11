@@ -185,19 +185,30 @@ export function cancelReplayLock(element) {
   const targetElement = getTargetElement(element);
   targetElement.disabled = false;
   targetElement.classList.remove("disabled");
-  clearTimeout(targetElement.timeoutId);
+  if (targetElement.timeoutId) {
+    clearTimeout(targetElement.timeoutId);
+    delete targetElement.timeoutId;
+  }
 }
+
 
 /**
  * Returns the maximum z-index value of all elements in the document.
  * @returns {number} The maximum z-index value.
  */
 export function getMaxZIndex() {
-  const maxZIndex = Math.max(
-    ...[...document.querySelectorAll("*")].map(element => parseFloat(getComputedStyle(element).zIndex)).filter(zIndex => !isNaN(zIndex))
-  );
+  let maxZIndex = -Infinity;
+  const elements = document.querySelectorAll("*");
+  for (let i = 0; i < elements.length; i++) {
+    const zIndex = parseFloat(getComputedStyle(elements[i]).zIndex);
+    if (!isNaN(zIndex)) {
+      maxZIndex = Math.max(maxZIndex, zIndex);
+    }
+  }
   return maxZIndex;
 }
+
+
 /**
  * Returns the appropriate text color class based on the perceived brightness of a background color.
  * @param {string} bgColorClassName - The class name of the background color element.
@@ -530,3 +541,4 @@ export default {
   throttle,
   observeElement
 };
+
