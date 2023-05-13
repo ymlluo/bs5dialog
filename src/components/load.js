@@ -110,8 +110,10 @@ export async function load(content, options = {}) {
         modalFooter.classList.remove("d-none");
         const submitBtn = form.querySelector('[type="submit"]');
         const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
-        submitBtn.style.display = "none";
-        okBtn.textContent = submitBtn.textContent;
+        if (submitBtn){
+            submitBtn.style.display = "none";
+            okBtn.textContent = submitBtn.textContent;
+        }
         okBtn.setAttribute("type", "submit");
         form.addEventListener("submit", e => {
           e.preventDefault();
