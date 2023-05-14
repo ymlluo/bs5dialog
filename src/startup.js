@@ -102,9 +102,9 @@ export function handleAnchorRequest(elem) {
             window.location.reload();
           }, 500);
         }
-        if (elem.dataset.redirect) {
+        if (elem.dataset.redirect ||  data.content?.data?.redirect ) {
           setTimeout(() => {
-            window.location.href = elem.dataset.redirect;
+            window.location.href = elem.dataset.redirect || data.content?.data?.redirect;
           }, 500);
         }
         if (elem.dataset.removeParent) {
