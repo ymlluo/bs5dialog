@@ -1,5 +1,3 @@
-import axios from "axios";
-
 /**
  * Determines whether the given text is a URL or a path.
  * @param {string} text - The text to check.
@@ -296,6 +294,34 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
   }
 }
 
+export async function btnGetContent(elem) {
+    if (elem.tagName !== "A") {
+        return;
+    }
+    const url = elem.href;
+    if (!url) return;
+    try {
+        return await makeRequest(url, "GET");
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function btnSubmitForm(elem) {
+    if (elem.tagName !== "BUTTON" || elem.type !== "submit") {
+        return;
+    }
+    const form = elem.closest("form");
+    if (!form) {
+        return;
+    }
+  return  await makeRequest(form.action, form.method, {
+        Accept: "application/json",
+    },new FormData(form)).then((data) => {
+        return data;
+    });
+}
+
 /**
  * Creates and triggers a custom event with the given name and detail on the given element
  * @param {HTMLElement} element - The element on which to trigger the event
@@ -529,6 +555,8 @@ export default {
   makeDraggable,
   makeResizable,
   makeRequest,
+    btnGetContent,
+    btnSubmitForm,
   getOverlapDimensions,
   genDialogId,
   setModalWrapper,

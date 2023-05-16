@@ -4,11 +4,12 @@ import { alert } from "./components/alert";
 import { confirm } from "./components/confirm";
 import { message, showSuccessMessage, showFailMessage } from "./components/message";
 import { toast } from "./components/toast";
+import { table } from "./components/table.js";
 import { setSystemLang } from "./i18n";
 import { makeRequest, replayLock } from "./utils";
 import { loading, showLoading, hideLoading } from "./components/loading";
 
-const components = { alert, confirm, message, toast, load, offcanvas };
+const components = { alert, confirm, message, toast, load, offcanvas,table };
 
 function getDialogOptions(elem) {
   const dialogOptions = {};
