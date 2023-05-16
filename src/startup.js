@@ -116,6 +116,43 @@ export function handleAnchorRequest(elem) {
     });
 }
 
+
+function handleFormSubmit(elem) {
+  if (elem.tagName !== "BUTTON" || elem.type !== "submit") {
+    return;
+  }
+  const form = elem.closest("form");
+  if (!form) {
+    return;
+  }
+  makeRequest(form.action, form.method, {
+    Accept: "application/json",
+  },new FormData(form)).then((data) => {
+    const { content, isSuccess } = data;
+    const { message } = content;
+    if (isSuccess) {
+      showSuccessMessage(message);
+      if (elem.dataset.pageReload) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+      if (elem.dataset.redirect ||  data.content?.data?.redirect ) {
+        setTimeout(() => {
+          window.location.href = elem.dataset.redirect || data.content?.data?.redirect;
+        }, 500);
+      }
+      if (elem.dataset.removeParent) {
+        elem.closest(elem.dataset.removeParent).remove();
+      }
+    } else {
+      showFailMessage(message);
+    }
+  });
+}
+
+
+
 /**
  * Adds click listeners to all elements with the data-bs5-dialog attribute
  * @return {void}
@@ -127,16 +164,28 @@ export function addDialogClickListeners() {
       e.preventDefault();
       showDialog(elem);
     }
-    const anchor = e.target.closest("a[data-bs5-request]");
+    const anchor = e.target.closest("[data-bs5-request]");
     if (anchor) {
       e.preventDefault();
+      console.log(anchor.type,anchor.tagName)
       if (typeof anchor.dataset.bs5RequestConfirm === "undefined") {
-        handleAnchorRequest(anchor);
+        if (anchor.tagName==='A'){
+          handleAnchorRequest(anchor);
+        }
+        if (anchor.tagName==='BUTTON' && anchor.type === "submit"){
+          handleFormSubmit(anchor);
+        }
+
       } else {
         const confirmMessage = anchor.dataset.bs5RequestConfirm || "";
         confirm(confirmMessage, {
           onConfirm: function () {
-            handleAnchorRequest(anchor);
+            if (anchor.tagName==='A'){
+              handleAnchorRequest(anchor);
+            }
+            if (anchor.tagName==='Button' && anchor.type === "submit"){
+              handleFormSubmit(anchor);
+            }
           }
         });
       }
