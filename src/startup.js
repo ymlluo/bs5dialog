@@ -34,6 +34,7 @@ async function showDialog(elem) {
     case "toast":
     case "load":
     case "offcanvas":
+    case "table":
       if (elem.tagName === "A" && !elem.dataset.content) {
         if (!title) {
           title = elem.innerHTML;

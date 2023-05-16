@@ -43,62 +43,51 @@ export async function table(content, options = {}) {
       triggerEvent(modalElement, "bs5:dialog:load:rendered", { options: options, el: modalElement });
       const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
 
-      const rows = modalElement.querySelectorAll("tr");
-      rows.forEach(row => {
-        row.addEventListener("click", () => {
-          rows.forEach(r => r.classList.remove("selected"));
-          row.classList.add("selected");
-        });
-      });
+      let selectedData = {};
 
-      const pageLinks = modalElement.querySelectorAll("a.page-link");
-      if (pageLinks) {
-        pageLinks.forEach(pageLink => {
-          pageLink.addEventListener("click", e => {
-            btnGetContent(e.target).then(data => {
-              if (data.isSuccess) {
-                modalElement.querySelector(".modal-body").innerHTML(data.content);
-              }
-            });
+      modalElement.addEventListener('click',e=>{
+        if (e.target.tagName==='A' && e.target.classList.contains('page-link')){
+          e.preventDefault();
+          btnGetContent(e.target).then(data => {
+            if (data.isSuccess) {
+              modalElement.querySelector(".modal-body").innerHTML=data.content;
+            }
           });
-        });
-      }
+        }
+
+        if (e.target.tagName==='TD'){
+          let tr = e.target.closest('tr');
+          console.log(tr.nextElementSibling )
+          tr.parentElement.querySelectorAll('tr').forEach(r => r.classList.remove("selected","table-success"))
+          tr.classList.add('selected','table-success');
+          tr.querySelectorAll("td").forEach((cell, index) => {
+            selectedData[`column${index}`] = cell.innerText;
+          });
+        }
+        if (e.target.tagName==='BUTTON' && e.target.classList.contains('btn-ok')){
+          e.preventDefault();
+          console.log(selectedData);
+          options.onOk?.(selectedData);
+          triggerEvent(modalElement, "bs5:dialog:table:selected", { options: options, data: selectedData });
+          modalInstance.hide();
+        }
+
+      })
 
       const submitBtns = modalElement.querySelectorAll("[type=submit]");
       if (submitBtns) {
         submitBtns.forEach(submitBtn => {
           submitBtn.addEventListener("click", e => {
+            e.preventDefault();
             btnSubmitForm(e.target).then(data => {
               if (data.isSuccess) {
-                modalElement.querySelector(".modal-body").innerHTML(data.content);
+                modalElement.querySelector(".modal-body").innerHTML=data.content;
               }
             });
           });
         });
       }
 
-      const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
-      okBtn.addEventListener("click", async function (event) {
-        event.preventDefault();
-        replayLock(okBtn);
-        const table = modalElement.querySelector("table");
-        if (!table) {
-          console.error("Table not found");
-          return;
-        }
-        const selectedRow = table.querySelector("tr.selected");
-        if (selectedRow.length === 0) {
-          console.error("Please select a row");
-          return;
-        }
-        const selectedData = {};
-        selectedRow.querySelectorAll("td").forEach((cell, index) => {
-          selectedData[`column${index}`] = cell.innerText;
-        });
-        options.onOk?.(selectedData);
-        triggerEvent(modalElement, "bs5:dialog:table:selected", { options: options, data: selectedData });
-        modalInstance.hide();
-      });
     },
     hidden: () => {
       triggerEvent(modalElement, "bs5:dialog:load:hidden", { options: options, el: modalElement });
@@ -126,7 +115,7 @@ export async function table(content, options = {}) {
          </div>
          <div class="modal-footer">
             <button type="button" class="btn me-auto" data-bs-dismiss="modal">${options.btnCancelText || i18n.getConfig("cancel")}</button>
-            <button type="button" class="btn btn-ok btn-${options.type}" onclick="checkTable()">${
+            <button type="button" class="btn btn-ok btn-${options.type}">${
     options.btnOkText || i18n.getConfig("save")
   }</button>
          </div>
@@ -135,9 +124,9 @@ export async function table(content, options = {}) {
   makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
   makeResizable(modalElement.querySelector(".modal-content"));
   const modalInstance = bs5Modal.getOrCreateInstance(modalElement, {
-    keyboard: options.keyboard,
-    focus: options.focus,
-    backdrop: options.backdrop
+    keyboard: false,
+    focus: true,
+    backdrop: false
   });
   modalInstance.show();
 }
