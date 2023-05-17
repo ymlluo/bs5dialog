@@ -48,7 +48,7 @@ export function loading(element = document.body, options = {}) {
   let targetRect = targetElement.getBoundingClientRect();
 
   let overlay = document.createElement("div");
-  overlay.style.position = "absolute";
+  overlay.style.position = element === document.body ?"fixed":"absolute";
   overlay.style.top = 0;
   overlay.style.left = 0;
   overlay.style.width = "100%";
@@ -152,3 +152,4 @@ export function loadingClean(wrapper) {
 
 export const showLoading = loading;
 export const hideLoading = loadingClean;
+

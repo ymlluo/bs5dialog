@@ -252,14 +252,22 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
     ...options
   };
 
-  if (body) {
-    if (body instanceof FormData) {
-      // If body is a FormData object, do not set Content-Type header and pass the FormData directly to fetch
-      options.body = body;
-    } else {
-      // If body is not a FormData object, assume it's JSON data
-      options.body = JSON.stringify(body);
-      options.headers["Content-Type"] = "application/json";
+  if (method.toLowerCase() === "get") {
+    if (body) {
+      const formData = new FormData(body);
+      const searchParams = new URLSearchParams(formData);
+      url += "?" + searchParams.toString();
+    }
+  } else {
+    if (body) {
+      if (body instanceof FormData) {
+        // If body is a FormData object, do not set Content-Type header and pass the FormData directly to fetch
+        options.body = body;
+      } else {
+        // If body is not a FormData object, assume it's JSON data
+        options.body = JSON.stringify(body);
+        options.headers["Content-Type"] = "application/json";
+      }
     }
   }
 
@@ -294,6 +302,7 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
   }
 }
 
+
 export async function btnGetContent(elem) {
     if (elem.tagName !== "A") {
         return;
@@ -307,20 +316,29 @@ export async function btnGetContent(elem) {
     }
 }
 
-export async function btnSubmitForm(elem) {
-    if (elem.tagName !== "BUTTON" || elem.type !== "submit") {
-        return;
-    }
+export async function submitForm(elem) {
     const form = elem.closest("form");
     if (!form) {
         return;
     }
-  return  await makeRequest(form.action, form.method, {
+    let url = form.action;
+    let method = form.method;
+    let headers = {
         Accept: "application/json",
-    },new FormData(form)).then((data) => {
+    };
+    let body = null;
+    if (method === "get") {
+        const formData = new FormData(form);
+        const searchParams = new URLSearchParams(formData);
+        url += "?" + searchParams.toString();
+    } else {
+        body = new FormData(form);
+    }
+    return await makeRequest(url, method, headers, body).then((data) => {
         return data;
     });
 }
+
 
 /**
  * Creates and triggers a custom event with the given name and detail on the given element
@@ -556,7 +574,7 @@ export default {
   makeResizable,
   makeRequest,
     btnGetContent,
-    btnSubmitForm,
+    submitForm,
   getOverlapDimensions,
   genDialogId,
   setModalWrapper,

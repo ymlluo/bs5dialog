@@ -54,7 +54,7 @@ async function showDialog(elem) {
   const elemOpts = elem.dataset.bs5DialogOptions ? JSON.parse(elem.dataset.bs5DialogOptions) : {};
   const func = components[elem.dataset.bs5Dialog];
   if (typeof func === "function") {
-    func(content.trim(), { ...{ title: title }, ...getDialogOptions(elem), ...elemOpts });
+    func(content, { ...{ title: title }, ...getDialogOptions(elem), ...elemOpts });
   }
 }
 
