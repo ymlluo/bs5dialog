@@ -355,10 +355,6 @@ export function triggerEvent(element, eventName = "", detail = {}) {
     cancelable: true,
     detail: detail
   });
-  if (event && event.target && event.target instanceof Element) {
-    event.target.dispatchEvent(newEvent);
-  }
-  // console.log(eventName, element, detail);
   element.dispatchEvent(newEvent);
 }
 

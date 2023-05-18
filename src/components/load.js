@@ -101,6 +101,7 @@ export async function load(content, options = {}) {
           triggerEvent(modalElement, "bs5:dialog:load:cancel", { options: options });
           options.onCancel?.();
           modalInstance.hide();
+          console.log('cancel')
         });
       }
 
@@ -214,7 +215,7 @@ export async function load(content, options = {}) {
           ${content}
        </div>
        <div class="modal-footer d-none">
-          <button type="button" class="btn me-auto" data-bs-dismiss="modal">${options.btnCancelText || i18n.getConfig("cancel")}</button>
+          <button type="button" class="btn me-auto btn-cancel" data-bs-dismiss="modal">${options.btnCancelText || i18n.getConfig("cancel")}</button>
           <button type="button" class="btn btn-ok btn-${options.type}">${options.btnOkText || i18n.getConfig("save")}</button>
        </div>
     </div>

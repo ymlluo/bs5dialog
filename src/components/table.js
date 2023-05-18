@@ -47,51 +47,9 @@ export async function table(content, options = {}) {
         options: options,
         el: modalElement,
       });
+      modalElement.style.pointerEvents = "none";
       const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
 
-      let selectedData = {};
-
-      modalElement.addEventListener("click", (e) => {
-        if (
-          e.target.tagName === "A" &&
-          e.target.classList.contains("page-link")
-        ) {
-          e.preventDefault();
-          btnGetContent(e.target).then(async (data) => {
-            if (data.isSuccess) {
-              modalElement.querySelector(".modal-body").innerHTML = await dataTable(data.content);
-            }
-          });
-        }
-
-        if (e.target.tagName === "TD") {
-          let tr = e.target.closest("tr");
-          tr.parentElement.querySelectorAll("tr").forEach((r) => r.classList.remove("selected", "table-success"));
-          tr.classList.add("selected", "table-success");
-          tr.querySelectorAll("td").forEach((cell, index) => {
-            selectedData[`column${index}`] = cell.innerText.toString();
-          });
-        }
-        if (e.target.tagName === "BUTTON" && e.target.classList.contains("btn-ok")) {
-          e.preventDefault();
-          options.onOk?.(selectedData);
-          triggerEvent(modalElement, "bs5:dialog:table:selected", {options: options, data: selectedData,});
-            modalElement.querySelectorAll("tr").forEach((r) => r.classList.remove("selected", "table-success"));
-          modalInstance.hide();
-        }
-      });
-      modalElement.addEventListener("submit", (e) => {
-        e.preventDefault();
-          triggerEvent(modalElement, "bs5:dialog:form:submit", {
-              options: options,
-              el: modalElement,
-          });
-        submitForm(e.target).then(async (data) => {
-            if (data.isSuccess) {
-                modalElement.querySelector(".modal-body").innerHTML =await dataTable(data.content);
-            }
-        });
-      });
     },
     hidden: () => {
       triggerEvent(modalElement, "bs5:dialog:load:hidden", {
@@ -125,13 +83,59 @@ export async function table(content, options = {}) {
       </div>
     </div>`;
   makeDraggable(modalElement, modalElement.querySelector(".modal-header"));
-  // makeResizable(modalElement.querySelector(".modal-content"));
   const modalInstance = bs5Modal.getOrCreateInstance(modalElement, {
     keyboard: false,
     focus: true,
     backdrop: 'static',
   });
   modalInstance.show();
+  let selectedData = {};
+
+  modalElement.addEventListener("click", (e) => {
+    if (
+        e.target.tagName === "A" &&
+        e.target.classList.contains("page-link")
+    ) {
+      e.preventDefault();
+      triggerEvent(modalElement, "bs5:dialog:table:update", {options: options,el:e.target.querySelector('.modal-body')});
+
+      btnGetContent(e.target).then(async (data) => {
+        if (data.isSuccess) {
+          modalElement.querySelector(".modal-body").innerHTML = await dataTable(data.content);
+        }
+        triggerEvent(modalElement, "bs5:dialog:table:updated", {options: options,el:e.target.querySelector('.modal-body')});
+
+      });
+    }
+
+    if (e.target.tagName === "TD") {
+      let tr = e.target.closest("tr");
+      tr.parentElement.querySelectorAll("tr").forEach((r) => r.classList.remove("selected", "table-success"));
+      tr.classList.add("selected", "table-success");
+      tr.querySelectorAll("td").forEach((cell, index) => {
+        selectedData[`column${index}`] = cell.innerText.toString();
+      });
+    }
+    if (e.target.tagName === "BUTTON" && e.target.classList.contains("btn-ok")) {
+      e.preventDefault();
+      options.onOk?.(selectedData);
+      triggerEvent(modalElement, "bs5:dialog:table:selected", {options: options, data: selectedData,});
+      modalElement.querySelectorAll("tr").forEach((r) => r.classList.remove("selected", "table-success"));
+      modalInstance.hide();
+    }
+  });
+  modalElement.addEventListener("submit", (e) => {
+    e.preventDefault();
+    triggerEvent(modalElement, "bs5:dialog:table:update", {options: options,el:e.target.querySelector('.modal-body')});
+    submitForm(e.target).then(async (data) => {
+      if (data.isSuccess) {
+        modalElement.querySelector(".modal-body").innerHTML =await dataTable(data.content);
+      }
+      triggerEvent(modalElement, "bs5:dialog:table:updated", {options: options,el:e.target.querySelector('.modal-body')});
+
+    });
+  });
+
 }
 
 
