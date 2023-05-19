@@ -1,9 +1,7 @@
 import {
   makeRequest,
-  btnGetContent,
   submitForm,
   makeDraggable,
-  makeResizable,
   genDialogId,
   setModalWrapper,
   replayLock,
@@ -99,7 +97,7 @@ export async function table(content, options = {}) {
       e.preventDefault();
       triggerEvent(modalElement, "bs5:dialog:table:update", {options: options,el:e.target.querySelector('.modal-body')});
 
-      btnGetContent(e.target).then(async (data) => {
+      makeRequest(e.target.href).then(async (data) => {
         if (data.isSuccess) {
           modalElement.querySelector(".modal-body").innerHTML = await dataTable(data.content);
         }
@@ -132,7 +130,6 @@ export async function table(content, options = {}) {
         modalElement.querySelector(".modal-body").innerHTML =await dataTable(data.content);
       }
       triggerEvent(modalElement, "bs5:dialog:table:updated", {options: options,el:e.target.querySelector('.modal-body')});
-
     });
   });
 

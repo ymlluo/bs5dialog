@@ -303,19 +303,6 @@ export async function makeRequest(url, method = "GET", headers = {}, body = null
 }
 
 
-export async function btnGetContent(elem) {
-    if (elem.tagName !== "A") {
-        return;
-    }
-    const url = elem.href;
-    if (!url) return;
-    try {
-        return await makeRequest(url, "GET");
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 export async function submitForm(elem) {
     const form = elem.closest("form");
     if (!form) {
@@ -569,8 +556,7 @@ export default {
   makeDraggable,
   makeResizable,
   makeRequest,
-    btnGetContent,
-    submitForm,
+  submitForm,
   getOverlapDimensions,
   genDialogId,
   setModalWrapper,
