@@ -167,7 +167,7 @@ export function showSuccessMessage(content, timeout = 1500, position = "center")
   });
 }
 
-export function showFailMessage(content, timeout = 3000, position = "center") {
+export function showFailMessage(content, timeout = 2000, position = "center") {
   message(content, {
     type: "danger",
     icon:

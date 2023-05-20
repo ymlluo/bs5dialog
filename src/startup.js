@@ -99,7 +99,7 @@ export function handleAnchorRequest(elem) {
       const { message } = content;
       if (isSuccess) {
         showSuccessMessage(message);
-        if (elem.dataset.pageReload) {
+        if (elem.dataset.pageReload && !elem.dataset.removeParent) {
           setTimeout(() => {
             window.location.reload();
           }, 500);
