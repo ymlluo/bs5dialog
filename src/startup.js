@@ -110,6 +110,7 @@ export function handleAnchorRequest(elem) {
           }, 500);
         }
         if (elem.dataset.removeParent) {
+          console.log(elem.dataset.removeParent,elem.closest(elem.dataset.removeParent))
           elem.closest(elem.dataset.removeParent).remove();
         }
       } else {
