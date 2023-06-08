@@ -1,28 +1,236 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Alert Example</title>
     <!-- Include Bootstrap 5 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" integrity="sha512-t4GWSVZO1eC8BM339Xd7Uphw5s17a86tIZIj8qRxhnKub6WoyhnrxeCIMeAqBPgdZGlCcG2PrZjMc+Wr78+5Xg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js" integrity="sha512-VK2zcvntEufaimc+efOYi622VN5ZacdnufnmX7zIhCPmjhKnOi9ZDMtg1/ug5l183f19gG1/cBstPO4D8N/Img==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/monokai.min.css" integrity="sha512-RLF8eOxhuwsRINc7r56dpl9a3VStqrXD+udWahutJrYdyh++2Ghnf+s4jFsOyryKZt/GNjPwbXVPH3MJpKrn2g==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js" integrity="sha512-rdhY3cbXURo13l/WU9VlaRyaIYeJ/KBakckXIvJNAQde8DgpOmE+eZf7ha4vdqVjTtwQt69bD2wH2LXob/LB7Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css"/>
+    <link rel="stylesheet" href="demo.css">
     <link rel="stylesheet" href="../bs5dialog.css">
-    <script src="../bs5dialog.js"></script>  </head>
-  </head>
-  <body>
-    <h1>bs5dialog Alert Example</h1>
-    <button id="alert-btn">Show Alert</button>
+    <script src="../bs5dialog.js"></script>
     <script>
-      const alertBtn = document.getElementById('alert-btn');
-      alertBtn.addEventListener('click', () => {
-        bs5dialog.alert('This is an alert message!', {
+       hljs.addPlugin(
+        new CopyButtonPlugin({
+             callback: (text, el) => bs5dialog.message("Copied to clipboard"),
+            })
+);
+        hljs.highlightAll();
+    </script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <div class="offcanvas-lg offcanvas-start show" tabindex="-1" id="bdSidebar" aria-labelledby="bdSidebarOffcanvasLabel">
+                <div class="offcanvas-header border-bottom">
+                    <h5 class="offcanvas-title" id="bdSidebarOffcanvasLabel">Browse docs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" data-bs-target="#bdSidebar"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <nav class="bd-links w-100" id="bd-docs-nav" aria-label="Docs navigation">
+                        <ul class="bd-links-nav list-unstyled mb-0 pb-3 pb-md-2 pe-lg-2">
+                            <li class="bd-links-group py-2">
+                                <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">Getting
+                                    started</strong>
+                                <ul class="list-unstyled fw-normal pb-2 small">
+                                    <li>
+                                        <a href="/docs/5.3/getting-started/introduction/" class="bd-links-link d-inline-block rounded active" aria-current="page">Introduction</a>
+                                    </li>
+                                    <li>
+                                        <a href="/docs/5.3/getting-started/download/" class="bd-links-link d-inline-block rounded">Download</a>
+                                    </li>
+                                    <li>
+                                        <a href="/docs/5.3/getting-started/contents/" class="bd-links-link d-inline-block rounded">Contents</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="bd-links-group py-2">
+                                <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">Components</strong>
+                                <ul class="list-unstyled fw-normal pb-2 small">
+                                    <li><a href="alert.html" class="bd-links-link d-inline-block rounded">Alert</a></li>
+                                    <li><a href="confirm.html" class="bd-links-link d-inline-block rounded">Confirm</a>
+                                    </li>
+                                    <li><a href="prompt.html" class="bd-links-link d-inline-block rounded">Prompt</a>
+                                    </li>
+                                    <li><a href="message.html" class="bd-links-link d-inline-block rounded">Message</a>
+                                    </li>
+                                    <li><a href="loading.html" class="bd-links-link d-inline-block rounded">Loading</a>
+                                    </li>
+                                    <li><a href="toast.html" class="bd-links-link d-inline-block rounded">Toast</a></li>
+                                    <li>
+                                        <a href="offcanvas.html" class="bd-links-link d-inline-block rounded">Offcanvas</a>
+                                    </li>
+                                    <li><a href="load.html" class="bd-links-link d-inline-block rounded">Load</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div class="col-10 ms-auto">
+            <h2>Introduction</h2>
+            <p>The alert function displays an alert modal with the given content and options. It returns an object containing the alert modal element, content, and options.</p>
+            <h2>Usage Example</h2>
+            <h3>ESM</h3>
+            <pre><code>import { alert } from '@ymlluo/bs5dialog';
+
+alert('This is an alert message.', {
+  title: 'Alert',
+  type: 'warning',
+  size: 'md',
+  btnOkText: 'OK',
+  onOk: () =&gt; {
+    console.log('OK button clicked.');
+  },
+  timeout: 5000
+});
+</code></pre>
+            <h3>CJS</h3>
+            <pre><code>const { alert } = require('@ymlluo/bs5dialog');
+
+alert('This is an alert message.', {
+  title: 'Alert',
+  type: 'warning',
+  size: 'md',
+  btnOkText: 'OK',
+  onOk: () =&gt; {
+    console.log('OK button clicked.');
+  },
+  timeout: 5000
+});
+
+</code></pre>
+            <h3>UMD</h3>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;UMD Example&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css&quot;&gt;
+    &lt;script src=&quot;../bs5dialog.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;button id=&quot;alertBtn&quot;&gt;Show Alert&lt;/button&gt;
+    &lt;script&gt;
+      const alertBtn = document.getElementById('alertBtn');
+      alertBtn.addEventListener('click', () =&gt; {
+        bs5dialog.alert('This is an alert message.', {
           title: 'Alert',
-          type: 'success',
+          type: 'warning',
           size: 'md',
           btnOkText: 'OK',
-          onOk: () => {
-            console.log('OK button clicked!');
+          onOk: () =&gt; {
+            console.log('OK button clicked.');
           },
+          timeout: 5000
         });
       });
-    </script>
-  </body>
+    &lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+            <h1>Parameters</h1>
+            <ul>
+                <li>content (string): The content to display in the alert modal.</li>
+                <li>options (Object): The options for the alert modal.</li>
+                <li>title (string): The title of the alert modal.</li>
+                <li>type (string): The type of the alert modal (e.g. &quot;success&quot;, &quot;warning&quot;, &quot;danger&quot;).</li>
+                <li>size (string): The size of the alert modal (e.g. &quot;sm&quot;, &quot;md&quot;, &quot;lg&quot;).</li>
+                <li>id (string): The ID of the alert modal.</li>
+                <li>btnOkText (string): The text to display on the OK button.</li>
+                <li>icon (string): The name of the icon to display in the alert modal.</li>
+                <li>iconClass (string): The CSS class for the icon.</li>
+                <li>iconStyle (string): The CSS style for the icon.</li>
+                <li>onOk (function): The function to call when the OK button is clicked.</li>
+                <li>timeout (number): The time in milliseconds before the alert modal automatically closes.</li>
+            </ul>
+            <h2>List of Event Listeners</h2>
+            <ul>
+                <li>bs5:dialog:alert:created</li>
+                <li>bs5:dialog:alert:rendered</li>
+                <li>bs5:dialog:alert:hidden</li>
+                <li>bs5:dialog:alert:remove</li>
+                <li>bs5:dialog:alert:ok</li>
+                <li>bs5:dialog:alert:cancel</li>
+            </ul>
+            <h2>Usage of addEventListener</h2>
+            <pre><code> const alertBtn = document.getElementById('alertBtn');
+      alertBtn.addEventListener('click', () =&gt; {
+        bs5dialog.alert('This is an alert message.');
+      });
+alertBtn.addEventListener('bs5:dialog:alert:ok', (event) =&gt; {
+  console.log('ok.');
+});
+
+</code></pre>
+
+            <h3>Alert Example</h3>
+            <hr>
+            <h5>use data-bs5-dialog="alert" and ata-bs5-dialog-option-* attribute </h5>
+            <button class="btn btn-danger mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-size="sm" data-content="This is an alert,use data-bs5-dalog">sm</button>
+            <button class="btn btn-danger mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-size="md" data-content="This is an alert,use data-bs5-dalog">md</button>
+            <button class="btn btn-danger mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-size="lg" data-content="This is an alert,use data-bs5-dalog">lg</button>
+            <button class="btn btn-danger mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-size="xl" data-content="This is an alert,use data-bs5-dalog">xl</button>
+            <button class="btn btn-primary mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-type="primary" data-content="This is an alert,use data-bs5-dalog">primary</button>
+            <button class="btn btn-warning mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-type="warning" data-content="This is an alert,use data-bs5-dalog">warning</button>
+            <button class="btn btn-danger mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-type="danger" data-content="This is an alert,use data-bs5-dalog">danger</button>
+            <button class="btn btn-success mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-type="success" data-content="This is an alert,use data-bs5-dalog">success</button>
+            <button class="btn btn-info mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-type="info" data-content="This is an alert,use data-bs5-dalog">info</button>
+            <button class="btn btn-dark mb-3" data-bs5-dialog="alert" data-bs5-dialog-option-type="dark" data-content="This is an alert,use data-bs5-dalog">dark</button>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#data-attribute-pane" type="button" role="tab" aria-controls="html-tab-pane" aria-selected="true">HTML</button>
+                </li>
+
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="data-attribute-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                    <pre><code class="language-html"><button class="btn btn-danger" data-bs5-dialog="alert" data-bs5-dialog-option-type="danger" data-bs5-dialog-option-size="sm" data-content="This is an alert,use data-bs5-dalog">Click Me</button>
+</code></pre>
+                </div>
+            </div>
+            <hr>
+            <h5>Base Usage</h5>
+            <button class="btn btn-primary" id="alert-btn">Show Alert</button>
+            <div class="my-3">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="html-tab" data-bs-toggle="tab" data-bs-target="#html-tab-pane" type="button" role="tab" aria-controls="html-tab-pane" aria-selected="true">HTML</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="js-tab" data-bs-toggle="tab" data-bs-target="#js-tab-pane" type="button" role="tab" aria-controls="js-tab-pane" aria-selected="false">JS</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="html-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                        <pre><code class="language-html"><button class="btn btn-primary" id="alert-btn">Show Alert</button></code></pre>
+                    </div>
+                    <div class="tab-pane fade" id="js-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                <pre><code class="language-js">
+    const alertBtn = document.getElementById('alert-btn');
+    alertBtn.addEventListener('click', () => {
+        bs5dialog.alert('This is an alert message!');
+    });
+                    </code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.querySelectorAll("code.language-html").forEach(function (element) {
+        element.innerHTML = element.innerHTML.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    });
+    const alertBtn = document.getElementById('alert-btn');
+    alertBtn.addEventListener('click', () => {
+        bs5dialog.alert('This is an alert message!');
+    });
+</script>
+</body>
 </html>
