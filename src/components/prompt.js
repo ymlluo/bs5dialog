@@ -2,6 +2,7 @@ import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement 
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
+import { initializeBootstrapComponents } from "../utils/bootstrapInit";
 
 /**
  * Displays a prompt dialog with customizable options.
@@ -34,68 +35,67 @@ export function prompt(content, options = {}) {
     onConfirm: null,
     onCancel: null
   };
+
   options = { ...defaultOptions, ...options };
-  let modalElement;
-  if (options.id && document.getElementById(options.id)) {
-    modalElement = document.getElementById(options.id);
-  } else {
-    modalElement = setModalWrapper();
-    options.id = options.id || genDialogId();
-    modalElement.setAttribute("id", options.id);
-  }
+
+  // Get or create modal element
+  const modalElement = options.id && document.getElementById(options.id)
+    ? document.getElementById(options.id)
+    : (() => {
+      const el = setModalWrapper();
+      el.setAttribute("id", options.id || genDialogId());
+      return el;
+    })();
+
+  const handleOkClick = (inputEl, modalInstance, okBtn) => {
+    replayLock(okBtn);
+    triggerEvent(modalElement, "bs5:dialog:prompt:ok", { options });
+    options.onConfirm?.(inputEl.value);
+    modalInstance.hide();
+  };
+
+  const handleCancelClick = (cancelBtn, modalInstance) => {
+    replayLock(cancelBtn);
+    triggerEvent(modalElement, "bs5:dialog:prompt:cancel", { options });
+    options.onCancel?.();
+    modalInstance.hide();
+  };
+
+  const handleInputKeyup = (event, inputEl, okBtn) => {
+    event.preventDefault();
+    triggerEvent(modalElement, "bs5:dialog:prompt:typing", { options, value: inputEl.value });
+    inputEl.value.length > 0 ? okBtn.classList.remove("disabled") : okBtn.classList.add("disabled");
+    if (event.keyCode === 13 && !okBtn.classList.contains("disabled")) {
+      okBtn.click();
+    }
+  };
 
   observeElement(modalElement, {
-    created: () => {
-      triggerEvent(modalElement, "bs5:dialog:prompt:created", { options: options, el: modalElement });
-    },
+    created: () => triggerEvent(modalElement, "bs5:dialog:prompt:created", { options, el: modalElement }),
     rendered: () => {
-      triggerEvent(modalElement, "bs5:dialog:prompt:rendered", { options: options, el: modalElement });
+      triggerEvent(modalElement, "bs5:dialog:prompt:rendered", { options, el: modalElement });
       const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+      initializeBootstrapComponents(modalElement);
 
       const inputEl = modalElement.querySelector(".modal-body input");
-      inputEl.addEventListener("keyup", function (event) {
-        event.preventDefault();
-        triggerEvent(modalElement, "bs5:dialog:prompt:typing", { options: options, value: inputEl.value });
-        inputEl.value.length > 0 ? okBtn.classList.remove("disabled") : okBtn.classList.add("disabled");
-        if (event.keyCode === 13 && !okBtn.classList.contains("disabled")) {
-          okBtn.click();
-        }
-      });
       const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
+      const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
+
+      inputEl.addEventListener("keyup", (e) => handleInputKeyup(e, inputEl, okBtn));
+
       if (okBtn) {
-        if (options.required) {
-          okBtn.classList.add("disabled");
-        }
-        okBtn.addEventListener("click", () => {
-          replayLock(okBtn);
-          triggerEvent(modalElement, "bs5:dialog:prompt:ok", { options: options });
-          options.onConfirm?.(inputEl.value);
-          modalInstance.hide();
-        });
+        if (options.required) okBtn.classList.add("disabled");
+        okBtn.addEventListener("click", () => handleOkClick(inputEl, modalInstance, okBtn));
       }
 
-      const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
       if (cancelBtn) {
-        cancelBtn.addEventListener("click", () => {
-          replayLock(cancelBtn);
-          triggerEvent(modalElement, "bs5:dialog:prompt:cancel", { options: options });
-          options.onCancel?.();
-          modalInstance.hide();
-        });
+        cancelBtn.addEventListener("click", () => handleCancelClick(cancelBtn, modalInstance));
       }
     },
-    hidden: () => {
-      triggerEvent(modalElement, "bs5:dialog:prompt:hidden", { options: options, el: modalElement });
-    },
-    remove: () => {
-      triggerEvent(modalElement, "bs5:dialog:prompt:remove", { options: options, el: modalElement });
-    },
-    resize: () => {
-      triggerEvent(modalElement, "bs5:dialog:prompt:resize", { options: options, el: modalElement });
-    },
-    dragged: newPos => {
-      triggerEvent(modalElement, "bs5:dialog:prompt:dragged", { options: options, el: modalElement });
-    }
+    hidden: () => triggerEvent(modalElement, "bs5:dialog:prompt:hidden", { options, el: modalElement }),
+    remove: () => triggerEvent(modalElement, "bs5:dialog:prompt:remove", { options, el: modalElement }),
+    resize: () => triggerEvent(modalElement, "bs5:dialog:prompt:resize", { options, el: modalElement }),
+    dragged: () => triggerEvent(modalElement, "bs5:dialog:prompt:dragged", { options, el: modalElement })
   });
 
   modalElement.classList.add("bs5dialog-modal-prompt");
@@ -107,15 +107,13 @@ export function prompt(content, options = {}) {
       <div class='modal-icon'></div>
         <h5 class="modal-title mb-2">${options.title}</h5>
         <div class="text-muted mb-2">${content}</div>
-        <input class="form-control" type="${options.secret === true ? "password" : "text"}" placeholder="">
+        <input class="form-control" type="${options.secret ? "password" : "text"}" placeholder="">
       </div>
       <div class="modal-footer">
         <div class="w-100">
           <div class="row">
             <div class="col">
-              <button type="button" class="w-100 btn btn-default btn-cancel text-truncate" data-bs-dismiss="modal">${i18n.getConfig(
-                "cancel"
-              )}</button>
+              <button type="button" class="w-100 btn btn-default btn-cancel text-truncate" data-bs-dismiss="modal">${i18n.getConfig("cancel")}</button>
             </div>
             <div class="col">
               <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok text-truncate">${i18n.getConfig("ok")}</button>
@@ -131,18 +129,15 @@ export function prompt(content, options = {}) {
     options.icon = "bs5-code";
     options.iconClass = "text-" + options.type;
   }
+
   const iconElement = makeIcon(options.icon, options.iconClass, options.iconStyle);
   modalElement.querySelector(".modal-icon").appendChild(iconElement);
   document.body.appendChild(modalElement);
+
   const modalInstance = new bs5Modal(modalElement);
   modalInstance.show();
-  modalElement.addEventListener("hidden.bs.modal", event => {
-    modalElement.remove();
-  });
 
-  return {
-    el: modalElement,
-    content,
-    options
-  };
+  modalElement.addEventListener("hidden.bs.modal", () => modalElement.remove());
+
+  return { el: modalElement, content, options };
 }

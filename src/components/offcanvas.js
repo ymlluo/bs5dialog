@@ -1,5 +1,6 @@
 import { getOverlapDimensions, genDialogId, triggerEvent, observeElement } from "../utils.js";
 import { Offcanvas as bs5Offcanvas } from "bootstrap";
+import { initializeBootstrapComponents } from "../utils/bootstrapInit";
 
 /**
  * Creates an offcanvas element with the given content and options.
@@ -29,68 +30,96 @@ export function offcanvas(content, options = {}) {
     dark: false,
     accordion: true,
     container: "",
-    onShown: function () {},
-    onHidden: function () {}
+    onShown: () => { },
+    onHidden: () => { }
   };
   options = { ...defaultOptions, ...options };
 
-  let offcanvasElement;
-  if (options.id && document.getElementById(options.id)) {
-    offcanvasElement = document.getElementById(options.id);
-  } else {
-    offcanvasElement = document.createElement("div");
-    options.id = options.id || genDialogId();
-    offcanvasElement.setAttribute("id", options.id);
-  }
-  let prevContainerPanding;
   const container = document.querySelector(options.container || "body");
-  const accordionDirection = options.direction === "start" ? "left" : options.direction === "end" ? "right" : options.direction || "";
-  observeElement(offcanvasElement, {
+  const accordionDirection = getAccordionDirection(options.direction);
+  let prevContainerPadding;
+
+  const offcanvasElement = options.id && document.getElementById(options.id)
+    ? document.getElementById(options.id)
+    : createOffcanvasElement(options);
+
+  setupOffcanvasObserver(offcanvasElement, options, container, accordionDirection, prevContainerPadding);
+  setupOffcanvasAttributes(offcanvasElement, options);
+  setupOffcanvasContent(offcanvasElement, content, options);
+
+  document.body.appendChild(offcanvasElement);
+  const offcanvasInstance = bs5Offcanvas.getOrCreateInstance(offcanvasElement);
+  offcanvasInstance.toggle();
+
+  return {
+    el: offcanvasElement,
+    content,
+    options
+  };
+}
+
+function getAccordionDirection(direction) {
+  return direction === "start" ? "left"
+    : direction === "end" ? "right"
+      : direction;
+}
+
+function createOffcanvasElement(options) {
+  const element = document.createElement("div");
+  element.setAttribute("id", options.id || genDialogId());
+  return element;
+}
+
+function setupOffcanvasObserver(element, options, container, accordionDirection, prevContainerPadding) {
+  observeElement(element, {
     created: () => {
-      triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:created", { options: options, el: offcanvasElement });
+      triggerEvent(element, "bs5:dialog:offcanvas:created", { options, el: element });
     },
     rendered: () => {
-      prevContainerPanding = document.body.style.getPropertyValue("padding-" + accordionDirection);
+      prevContainerPadding = document.body.style.getPropertyValue(`padding-${accordionDirection}`);
       if (options.accordion) {
-        let OverlapDimensions = getOverlapDimensions(offcanvasElement, container);
+        const overlapDimensions = getOverlapDimensions(element, container);
         const paddingSize = ["left", "right"].includes(accordionDirection)
-          ? OverlapDimensions.overlapWidth + "px"
-          : OverlapDimensions.overlapHeight + "px";
-        container.style.setProperty("padding-" + accordionDirection, paddingSize);
+          ? `${overlapDimensions.overlapWidth}px`
+          : `${overlapDimensions.overlapHeight}px`;
+        container.style.setProperty(`padding-${accordionDirection}`, paddingSize);
       }
-
-      triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:rendered", { options: options, el: offcanvasElement });
-      options.onShown?.(offcanvasElement);
+      triggerEvent(element, "bs5:dialog:offcanvas:rendered", { options, el: element });
+      initializeBootstrapComponents(element);
+      options.onShown?.(element);
     },
     hidden: () => {
       if (options.accordion) {
-        container.style.setProperty("padding-" + accordionDirection, prevContainerPanding);
+        container.style.setProperty(`padding-${accordionDirection}`, prevContainerPadding);
       }
-      triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:hidden", { options: options, el: offcanvasElement });
-      options.onHidden?.(offcanvasElement);
+      triggerEvent(element, "bs5:dialog:offcanvas:hidden", { options, el: element });
+      options.onHidden?.(element);
     },
     remove: () => {
-      triggerEvent(offcanvasElement, "bs5:dialog:offcanvas:remove", { options: options, el: offcanvasElement });
+      triggerEvent(element, "bs5:dialog:offcanvas:remove", { options, el: element });
     }
   });
+}
 
-  offcanvasElement.classList.add("offcanvas", "bs5dialog-offcanvas", "offcanvas-" + options.direction);
+function setupOffcanvasAttributes(element, options) {
+  element.classList.add("offcanvas", "bs5dialog-offcanvas", `offcanvas-${options.direction}`);
+  element.setAttribute("tabindex", "-1");
+  element.setAttribute("role", "dialog");
 
-  offcanvasElement.setAttribute("tabindex", "-1");
-  offcanvasElement.setAttribute("role", "dialog");
   if (options.scroll === true || options.scroll === "true") {
-    offcanvasElement.setAttribute("data-bs-scroll", "true");
+    element.setAttribute("data-bs-scroll", "true");
   }
+  element.setAttribute("data-bs-backdrop", options.backdrop);
 
-  offcanvasElement.setAttribute("data-bs-backdrop", options.backdrop);
   if (options.direction === "start" || options.direction === "end") {
-    offcanvasElement.style.width = options.size;
+    element.style.width = options.size;
+  } else if (options.direction === "top" || options.direction === "bottom") {
+    element.style.height = options.size;
   }
-  if (options.direction === "top" || options.direction === "bottom") {
-    offcanvasElement.style.height = options.size;
-  }
+}
 
-  offcanvasElement.innerHTML = `
+function setupOffcanvasContent(element, content, options) {
+  element.innerHTML = `
     <div class="offcanvas-header">
       <h5 class="offcanvas-title">${options.title || ""}</h5>
       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#${options.id}" aria-label="Close"></button>
@@ -100,17 +129,7 @@ export function offcanvas(content, options = {}) {
     </div>`;
 
   if (options.dark === true || options.dark === "true") {
-    offcanvasElement.classList.add("text-bg-dark");
-    offcanvasElement.querySelector(".btn-close").classList.add("btn-close-white");
+    element.classList.add("text-bg-dark");
+    element.querySelector(".btn-close").classList.add("btn-close-white");
   }
-
-  document.body.appendChild(offcanvasElement);
-  const offcanvasInstance = bs5Offcanvas.getOrCreateInstance(offcanvasElement);
-  offcanvasInstance.toggle();
-
-  return {
-    el: offcanvasElement,
-    content: content,
-    options: options
-  };
 }

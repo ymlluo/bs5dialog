@@ -3,7 +3,7 @@ import { offcanvas } from "./components/offcanvas";
 import { alert } from "./components/alert";
 import { confirm } from "./components/confirm";
 import { prompt } from "./components/prompt";
-import { message, msg } from "./components/message";
+import { message } from "./components/message";
 import { toast } from "./components/toast";
 import { setSystemLang } from "./i18n";
 

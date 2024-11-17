@@ -1,400 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>bs5dialog demo</title>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
-      crossorigin="anonymous" />
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script> -->
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bs5dialog demo</title>
 
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css"> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.3.4/axios.js"></script>
+  <link rel="stylesheet" href="./bs5dialog.css" />
+  <script src="./bs5dialog.js"></script>
+  <style>
+    .demo .btn {
+      border: 1px solid #999;
+    }
+  </style>
+</head>
 
-    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.3.4/axios.js"></script>
-
-    <link rel="stylesheet" href="./bs5dialog.css" />
-    <script src="./bs5dialog.js"></script>
-    <style>
-      .demo .btn {
-        border: 1px solid #999;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container demo">
-      <div class="row">
-        <div class="mb-3">
-          <div class="col-xs-12">
-            <div class="card">
-              <div class="card-header">Alert</div>
-              <div class="card-body">
-                <button class="btn btn-primary btn-alert btn-sm" data-type="primary">primary</button>
-                <button class="btn btn-secondary btn-alert btn-sm" data-type="secondary">secondary</button>
-                <button class="btn btn-success btn-alert btn-sm" data-type="success">success</button>
-                <button class="btn btn-danger btn-alert btn-sm" data-type="danger">danger</button>
-                <button class="btn btn-warning btn-alert btn-sm" data-type="warning">warning</button>
-                <button class="btn btn-info btn-alert btn-sm" data-type="info">info</button>
-                <button class="btn btn-light btn-alert btn-sm" data-type="light">light</button>
-                <button class="btn btn-dark btn-alert btn-sm" data-type="dark">dark</button>
-                <button class="btn btn-link btn-alert btn-sm" data-type="link" data-timeout="30000">link</button>
-              </div>
-              <div class="card-footer"></div>
-            </div>
-          </div>
-        </div>
-        <div class="mb-3">
-          <div col-xs-12>
-            <div class="card">
-              <div class="card-header">Confirm</div>
-              <div class="card-body">
-                <button class="btn btn-primary btn-confirm btn-sm" data-type="primary">primary</button>
-                <button class="btn btn-secondary btn-confirm btn-sm" data-type="secondary">secondary</button>
-                <button class="btn btn-success btn-confirm btn-sm" data-type="success">success</button>
-                <button class="btn btn-danger btn-confirm btn-sm" data-type="danger">danger</button>
-                <button class="btn btn-warning btn-confirm btn-sm" data-type="warning">warning</button>
-                <button class="btn btn-info btn-confirm btn-sm" data-type="info">info</button>
-                <button class="btn btn-light btn-confirm btn-sm" data-type="light">light</button>
-                <button class="btn btn-dark btn-confirm btn-sm" data-type="dark">dark</button>
-                <button class="btn btn-link btn-confirm btn-sm" data-type="link">link</button>
-              </div>
-              <div class="card-footer"></div>
-            </div>
-          </div>
-        </div>
-        <div class="mb-3">
-          <div col-xs-12>
-            <div class="card">
-              <div class="card-header">Prompt</div>
-              <div class="card-body">
-                <button class="btn btn-primary btn-prompt btn-sm" data-type="primary">primary</button>
-                <button class="btn btn-secondary btn-prompt btn-sm" data-type="secondary">secondary</button>
-                <button class="btn btn-success btn-prompt btn-sm" data-type="success">success</button>
-                <button class="btn btn-danger btn-prompt btn-sm" data-type="danger">danger</button>
-                <button class="btn btn-warning btn-prompt btn-sm" data-type="warning">warning</button>
-                <button class="btn btn-info btn-prompt btn-sm" data-type="info">info</button>
-                <button class="btn btn-light btn-prompt btn-sm" data-type="light">light</button>
-                <button class="btn btn-dark btn-prompt btn-sm" data-type="dark">dark</button>
-                <button class="btn btn-link btn-prompt btn-sm" data-type="link">link</button>
-              </div>
-              <div class="card-footer"></div>
-            </div>
-          </div>
-        </div>
-        <div class="mb-3">
+<body>
+  <div class="container demo">
+    <div class="row">
+      <div class="mb-3">
+        <div class="col-xs-12">
           <div class="card">
-            <div class="card-header">Spinner</div>
+            <div class="card-header">Alert</div>
             <div class="card-body">
-              <div class="row">
-                <div class="col-sm-6">
-                  <form class="" id="loading-form">
-                    <div class="mb-3 row">
-                      <label class="col-3 col-form-label required">loading type</label>
-                      <div class="col">
-                        <select class="form-control" name="type" id="loading-type">
-                          <option value="primary">primary</option>
-                          <option value="secondary">secondary</option>
-                          <option value="success">success</option>
-                          <option value="danger">danger</option>
-                          <option value="warning">warning</option>
-                          <option value="info">info</option>
-                          <option value="light">light</option>
-                          <option value="dark">dark</option>
-                          <option value="link">link</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="mb-3 row">
-                      <label class="col-3 col-form-label">animation</label>
-                      <div class="col">
-                        <select class="form-control" name="animation" id="loading-animation">
-                          <option value="border">border</option>
-                          <option value="grow">grow</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                      <label class="col-3 col-form-label">timeout</label>
-                      <div class="col">
-                        <input type="number" class="form-control" value="2000" id="loading-timeout" />
-                        <small class="form-hint"></small>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <label class="col-3 col-form-label pt-0">backdrop</label>
-                      <div class="col">
-                        <label class="form-check">
-                          <input class="form-check-input" type="checkbox" checked="" id="loading-backdrop" />
-                          <span class="form-check-label">backdrop</span>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-3 my-2 ms-auto">
-                        <button type="button" class="btn btn-sm btn-primary btn-show-loading">Show Spinner</button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
+              <button class="btn btn-primary btn-alert btn-sm" data-type="primary">primary</button>
+              <button class="btn btn-secondary btn-alert btn-sm" data-type="secondary">secondary</button>
+              <button class="btn btn-success btn-alert btn-sm" data-type="success">success</button>
+              <button class="btn btn-danger btn-alert btn-sm" data-type="danger">danger</button>
+              <button class="btn btn-warning btn-alert btn-sm" data-type="warning">warning</button>
+              <button class="btn btn-info btn-alert btn-sm" data-type="info">info</button>
+              <button class="btn btn-light btn-alert btn-sm" data-type="light">light</button>
+              <button class="btn btn-dark btn-alert btn-sm" data-type="dark">dark</button>
+              <button class="btn btn-link btn-alert btn-sm" data-type="link" data-timeout="30000">link</button>
             </div>
+            <div class="card-footer"></div>
           </div>
-        </div>
-        <div class="mb-3">
-          <div col-xs-12>
-            <div class="card">
-              <div class="card-header">Toast</div>
-              <div class="card-body">
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="primary" data-position="center">center</button>
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="secondary" data-position="top">top</button>
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="success" data-position="bottom">bottom</button>
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="danger" data-position="left">left</button>
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="warning" data-position="right">right</button>
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="info" data-position="top-left">top-left</button>
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="light" data-position="top-right">top-right</button>
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="dark" data-position="bottom-left">bottom-left</button>
-                <button class="btn btn-show-toast btn-sm mb-1" data-type="link" data-position="bottom-right">bottom-right</button>
-              </div>
-              <div class="card-footer"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <div col-xs-12>
-            <div class="card">
-              <div class="card-header">Message</div>
-              <div class="card-body">
-                <button class="btn btn-show-message btn-sm mb-1">default</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="primary" data-position="center">center</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="secondary" data-position="top">top</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="success" data-position="bottom">bottom</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="danger" data-position="left">left</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="warning" data-position="right">right</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="info" data-position="top-left">top-left</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="light" data-position="top-right">top-right</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="dark" data-position="bottom-left">bottom-left</button>
-                <button class="btn btn-show-message btn-sm mb-1" data-type="link" data-position="bottom-right">bottom-right</button>
-              </div>
-              <div class="card-footer"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <div col-xs-12>
-            <div class="card">
-              <div class="card-header">Offcanvas</div>
-
-              <div class="card-body">
-                <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-scroll="true">start offcanvas</button>
-                <button class="btn btn-offcanvas btn-sm mb-1" data-direction="end" data-scroll="true">end offcanvas</button>
-                <button class="btn btn-offcanvas btn-sm mb-1" data-direction="top" data-scroll="true">top offcanvas</button>
-                <button class="btn btn-offcanvas btn-sm mb-1" data-direction="bottom" data-scroll="true">bottom offcanvas</button>
-                <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-backdrop="false" data-scroll="true">
-                  offcanvas without backdrop
-                </button>
-                <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-scroll="false">offcanvas without scroll</button>
-                <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-dark="true">offcanvas dark</button>
-                <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-id="example-offcanvas">
-                  offcanvas static id
-                </button>
-                <button
-                  class="btn btn-offcanvas btn-sm mb-1"
-                  data-direction="start"
-                  data-size="300px"
-                  data-content="<button class='btn btn-sm btn-lg btn-success'>Click Me</button>">
-                  offcanvas size 300px
-                </button>
-              </div>
-
-              <div class="card-footer"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <div col-xs-12>
-            <div class="card">
-              <div class="card-header">Load page or content</div>
-              <div class="card-body">
-                <button class="btn btn-sm btn-open-content" data-content="./form.html">load form</button>
-                <button class="btn btn-sm btn-open-content" data-content="./form1.html">load when 404</button>
-                <button class="btn btn-sm btn-open-content" data-fullscreen="true" data-content="https://ymlluo.github.io/bs5dialog/">
-                  open fullscreen page
-                </button>
-                <button
-                  class="btn btn-sm btn-open-content"
-                  data-backdrop="false"
-                  data-title="lily's story"
-                  data-content="<p>Once upon a time, in a small village nestled among the hills and forests, there lived a young girl named Lily. She was a curious and adventurous child, always eager to explore the world around her. One day, while wandering through the woods, she stumbled upon a mysterious old cottage hidden among the trees.</p><p></p><p>Without a second thought, Lily approached the cottage and peered inside. To her surprise, she found that the cottage was occupied by a wise old woman, who welcomed her with a warm smile. The woman's name was Abigail, and she was known throughout the village as a skilled healer and herbalist.</p><p></p><p>Lily was fascinated by Abigail's knowledge of plants and herbs, and she soon became a regular visitor to the cottage. Abigail taught her how to identify different plants and their medicinal properties, and Lily eagerly absorbed every bit of knowledge she could.</p><p></p><p>As time went by, Lily grew into a young woman, and her visits to Abigail's cottage became less frequent. She became busy with her own life and responsibilities, but she never forgot the lessons she had learned from Abigail.</p><p></p><p>One day, as she was walking through the woods, Lily came across a group of travelers who had set up camp by a nearby river. They were a friendly and boisterous bunch, and they welcomed Lily to join them for a meal and some lively conversation.</p><p></p><p>As they sat around the fire, Lily noticed that one of the travelers, a young man named Jack, had a deep gash on his leg. He had been injured while hunting, and the wound had become infected.</p><p></p><p>Lily remembered the lessons she had learned from Abigail, and she offered to help Jack with his wound. She gathered some herbs and prepared a poultice, and applied it to the wound. To everyone's surprise, the poultice had an almost immediate effect, and Jack's wound began to heal.</p><p></p><p>The travelers were amazed by Lily's knowledge of herbs and healing, and they urged her to come with them on their journey. They were traveling to a distant kingdom, where a great plague had struck, and they hoped that Lily's skills could help to save the people.</p><p></p><p>Lily was hesitant at first, but the travelers were persistent. They promised to keep her safe and provide her with all the resources she needed to help the sick. In the end, Lily agreed to go with them, and they set off on their journey.</p><p></p><p>The journey was long and perilous, and they encountered many obstacles along the way. But Lily's knowledge and skills proved invaluable, and she was able to heal many of the sick and suffering.</p><p></p><p>As they finally arrived at the kingdom, they were greeted by the grateful and relieved people. They hailed Lily as a hero, and she was honored by the king and queen for her bravery and compassion.</p><p></p><p>And so, Lily's journey had led her to a place where her knowledge and skills were needed most, and where she could truly make a difference in the lives of others. She had become a healer, a hero, and a legend in her own time, and her story lived on for generations to come.</p>">
-                  load long content
-                </button>
-              </div>
-              <div class="card-footer"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <div col-xs-12>
-            <div class="card">
-              <div class="card-header">use bs5dialog.startup()</div>
-              <div class="card-body">
-                <button class="btn btn-sm mb-2" data-bs5-dialog="alert" title="show alert">data-bs5-dialog="alert"</button>
-                <button class="btn btn-sm mb-2" data-bs5-dialog="confirm" title="show confirm">data-bs5-dialog="confirm"</button>
-                <button class="btn btn-sm mb-2" data-bs5-dialog="prompt" title="show prompt">data-bs5-dialog="prompt"</button>
-                <button class="btn btn-sm mb-2" data-bs5-dialog="message" title="show message">data-bs5-dialog="message"</button>
-                <button class="btn btn-sm mb-2" data-bs5-dialog="toast" title="show toast">data-bs5-dialog="toast"</button>
-                <button class="btn btn-sm mb-2" data-bs5-dialog="load" data-content="show load content">data-bs5-dialog="load"</button>
-                <button class="btn btn-sm mb-2" data-bs5-dialog="offcanvas" data-bs5-dialog-option-title="offcanvas" data-content="show load offcanvas">data-bs5-dialog="offcanvas"</button>
-              </div>
-              <div class="card-footer"></div>
-            </div>
-          </div>
-
-          
         </div>
       </div>
+      <div class="mb-3">
+        <div col-xs-12>
+          <div class="card">
+            <div class="card-header">Confirm</div>
+            <div class="card-body">
+              <button class="btn btn-primary btn-confirm btn-sm" data-type="primary">primary</button>
+              <button class="btn btn-secondary btn-confirm btn-sm" data-type="secondary">secondary</button>
+              <button class="btn btn-success btn-confirm btn-sm" data-type="success">success</button>
+              <button class="btn btn-danger btn-confirm btn-sm" data-type="danger">danger</button>
+              <button class="btn btn-warning btn-confirm btn-sm" data-type="warning">warning</button>
+              <button class="btn btn-info btn-confirm btn-sm" data-type="info">info</button>
+              <button class="btn btn-light btn-confirm btn-sm" data-type="light">light</button>
+              <button class="btn btn-dark btn-confirm btn-sm" data-type="dark">dark</button>
+              <button class="btn btn-link btn-confirm btn-sm" data-type="link">link</button>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div col-xs-12>
+          <div class="card">
+            <div class="card-header">Prompt</div>
+            <div class="card-body">
+              <button class="btn btn-primary btn-prompt btn-sm" data-type="primary">primary</button>
+              <button class="btn btn-secondary btn-prompt btn-sm" data-type="secondary">secondary</button>
+              <button class="btn btn-success btn-prompt btn-sm" data-type="success">success</button>
+              <button class="btn btn-danger btn-prompt btn-sm" data-type="danger">danger</button>
+              <button class="btn btn-warning btn-prompt btn-sm" data-type="warning">warning</button>
+              <button class="btn btn-info btn-prompt btn-sm" data-type="info">info</button>
+              <button class="btn btn-light btn-prompt btn-sm" data-type="light">light</button>
+              <button class="btn btn-dark btn-prompt btn-sm" data-type="dark">dark</button>
+              <button class="btn btn-link btn-prompt btn-sm" data-type="link">link</button>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div class="card">
+          <div class="card-header">Spinner</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-6">
+                <form class="" id="loading-form">
+                  <div class="mb-3 row">
+                    <label class="col-3 col-form-label required">loading type</label>
+                    <div class="col">
+                      <select class="form-control" name="type" id="loading-type">
+                        <option value="primary">primary</option>
+                        <option value="secondary">secondary</option>
+                        <option value="success">success</option>
+                        <option value="danger">danger</option>
+                        <option value="warning">warning</option>
+                        <option value="info">info</option>
+                        <option value="light">light</option>
+                        <option value="dark">dark</option>
+                        <option value="link">link</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="mb-3 row">
+                    <label class="col-3 col-form-label">animation</label>
+                    <div class="col">
+                      <select class="form-control" name="animation" id="loading-animation">
+                        <option value="border">border</option>
+                        <option value="grow">grow</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-3 col-form-label">timeout</label>
+                    <div class="col">
+                      <input type="number" class="form-control" value="2000" id="loading-timeout" />
+                      <small class="form-hint"></small>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <label class="col-3 col-form-label pt-0">backdrop</label>
+                    <div class="col">
+                      <label class="form-check">
+                        <input class="form-check-input" type="checkbox" checked="" id="loading-backdrop" />
+                        <span class="form-check-label">backdrop</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-3 my-2 ms-auto">
+                      <button type="button" class="btn btn-sm btn-primary btn-show-loading">Show Spinner</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <div col-xs-12>
+          <div class="card">
+            <div class="card-header">Toast</div>
+            <div class="card-body">
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="primary" data-position="center">center</button>
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="secondary" data-position="top">top</button>
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="success" data-position="bottom">bottom</button>
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="danger" data-position="left">left</button>
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="warning" data-position="right">right</button>
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="info" data-position="top-left">top-left</button>
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="light"
+                data-position="top-right">top-right</button>
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="dark"
+                data-position="bottom-left">bottom-left</button>
+              <button class="btn btn-show-toast btn-sm mb-1" data-type="link"
+                data-position="bottom-right">bottom-right</button>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div col-xs-12>
+          <div class="card">
+            <div class="card-header">Message</div>
+            <div class="card-body">
+              <button class="btn btn-show-message btn-sm mb-1">default</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="primary"
+                data-position="center">center</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="secondary" data-position="top">top</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="success"
+                data-position="bottom">bottom</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="danger" data-position="left">left</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="warning" data-position="right">right</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="info"
+                data-position="top-left">top-left</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="light"
+                data-position="top-right">top-right</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="dark"
+                data-position="bottom-left">bottom-left</button>
+              <button class="btn btn-show-message btn-sm mb-1" data-type="link"
+                data-position="bottom-right">bottom-right</button>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div col-xs-12>
+          <div class="card">
+            <div class="card-header">Offcanvas</div>
+
+            <div class="card-body">
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-scroll="true">start
+                offcanvas</button>
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="end" data-scroll="true">end
+                offcanvas</button>
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="top" data-scroll="true">top
+                offcanvas</button>
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="bottom" data-scroll="true">bottom
+                offcanvas</button>
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-backdrop="false"
+                data-scroll="true">
+                offcanvas without backdrop
+              </button>
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-scroll="false">offcanvas without
+                scroll</button>
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-dark="true">offcanvas
+                dark</button>
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-id="example-offcanvas">
+                offcanvas static id
+              </button>
+              <button class="btn btn-offcanvas btn-sm mb-1" data-direction="start" data-size="300px"
+                data-content="<button class='btn btn-sm btn-lg btn-success'>Click Me</button>">
+                offcanvas size 300px
+              </button>
+            </div>
+
+            <div class="card-footer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div col-xs-12>
+          <div class="card">
+            <div class="card-header">Load page or content</div>
+            <div class="card-body">
+              <button class="btn btn-sm btn-open-content" data-content="./form.html">load form</button>
+              <button class="btn btn-sm btn-open-content" data-content="./form1.html">load when 404</button>
+              <button class="btn btn-sm btn-open-content" data-fullscreen="true"
+                data-content="https://ymlluo.github.io/bs5dialog/">
+                open fullscreen page
+              </button>
+              <button class="btn btn-offcanvas-load-form btn-sm mb-1" data-title="load form in offcanvas"
+                data-direction="start" data-scroll="true" data-url="/form.html">start
+                load form in offcanvas</button>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div col-xs-12>
+          <div class="card">
+            <div class="card-header">use bs5dialog.startup()</div>
+            <div class="card-body">
+              <button class="btn btn-sm mb-2" data-bs5-dialog="alert"
+                title="show alert">data-bs5-dialog="alert"</button>
+              <button class="btn btn-sm mb-2" data-bs5-dialog="confirm"
+                title="show confirm">data-bs5-dialog="confirm"</button>
+              <button class="btn btn-sm mb-2" data-bs5-dialog="prompt"
+                title="show prompt">data-bs5-dialog="prompt"</button>
+              <button class="btn btn-sm mb-2" data-bs5-dialog="message"
+                title="show message">data-bs5-dialog="message"</button>
+              <button class="btn btn-sm mb-2" data-bs5-dialog="toast"
+                title="show toast">data-bs5-dialog="toast"</button>
+              <button class="btn btn-sm mb-2" data-bs5-dialog="load"
+                data-content="show load content">data-bs5-dialog="load"</button>
+              <button class="btn btn-sm mb-2" data-bs5-dialog="offcanvas" data-bs5-dialog-option-title="offcanvas"
+                data-content="show load offcanvas">data-bs5-dialog="offcanvas"</button>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+
+
+      </div>
     </div>
+  </div>
 
-    <script>
-      bs5dialog.startup();
+  <script>
+    bs5dialog.startup();
 
-      document.querySelectorAll(".btn-alert").forEach(function (item) {
-        item.onclick = function () {
-          var type = item.getAttribute("data-type");
-          bs5dialog.alert("Your payment of $100 has been successfully submitted.", {
-            type: type,
-            title: "Payment succedeed",
-            backdrop: false
-          });
-        };
-      });
-      document.querySelectorAll(".btn-confirm").forEach(function (item) {
-        item.onclick = function () {
-          var type = item.getAttribute("data-type");
-          bs5dialog.confirm("Do you really want to remove these files?<br> What you've done cannot be undone.?", {
-            title: "Are you sure?",
-            type: type,
-            // btnOkText: "Delete 100 items",
-            onConfirm: () => {
-              bs5dialog.alert("remove 100 files", { type: type, timeout: 2000 });
+    document.querySelectorAll(".btn-alert").forEach(function (item) {
+      item.onclick = function () {
+        var type = item.getAttribute("data-type");
+        bs5dialog.alert("Your payment of $100 has been successfully submitted.", {
+          type: type,
+          title: "Payment succedeed",
+          backdrop: false
+        });
+      };
+    });
+    document.querySelectorAll(".btn-confirm").forEach(function (item) {
+      item.onclick = function () {
+        var type = item.getAttribute("data-type");
+        bs5dialog.confirm("Do you really want to remove these files?<br> What you've done cannot be undone.?", {
+          title: "Are you sure?",
+          type: type,
+          // btnOkText: "Delete 100 items",
+          onConfirm: () => {
+            bs5dialog.alert("remove 100 files", { type: type, timeout: 2000 });
+          }
+        });
+      };
+    });
+    document.querySelectorAll(".btn-prompt").forEach(function (item) {
+      item.onclick = function () {
+        var type = item.getAttribute("data-type");
+        bs5dialog.prompt("Please enter your PIN:", {
+          type: type,
+          onConfirm: val => {
+            bs5dialog.alert("Your PIN:" + val, { type: type });
+          }
+        });
+      };
+    });
+
+    document.querySelector(".btn-show-loading").addEventListener("click", function () {
+      var form = document.getElementById("loading-form");
+      var type = document.getElementById("loading-type").value;
+      var animation = document.getElementById("loading-animation").value;
+      var timeout = document.getElementById("loading-timeout").value;
+      var backdrop = document.getElementById("loading-backdrop").checked;
+      console.log(backdrop);
+      bs5dialog.loading("#loading-form", { type: type, animation: animation, timeout: timeout, backdrop: backdrop });
+    });
+
+    document.querySelectorAll(".btn-show-toast").forEach(function (item) {
+      item.onclick = function () {
+        var position = item.getAttribute("data-position");
+        var type = item.getAttribute("data-type");
+        var color = item.getAttribute("data-text-color");
+        let toast = bs5dialog.toast("Your post has been archived!", {
+          title: "New Message",
+          subtitle: Date(),
+          type: type,
+          position: position,
+          timeout: 300000
+        });
+        toast.el.addEventListener("click", function () {
+          toast.el.hide();
+        });
+      };
+    });
+
+    document.querySelectorAll(".btn-show-message").forEach(function (item) {
+      item.onclick = function () {
+        var position = item.getAttribute("data-position");
+        var type = item.getAttribute("data-type");
+        bs5dialog.message("Your post has been archived!", position ? { type: type, position: position, timeout: 1000 } : {});
+      };
+    });
+
+    var backdrop = backdrop;
+    document.querySelectorAll(".btn-open-content").forEach(function (item) {
+      item.onclick = function (e) {
+        e.preventDefault();
+        var content = item.getAttribute("data-content");
+        var title = item.getAttribute("data-title") || "";
+        var backdrop = item.getAttribute("data-backdrop") || "";
+        var fullscreen = item.getAttribute("data-fullscreen") || false;
+        var loadPage = bs5dialog
+          .load(content, {
+            title: title,
+            backdrop: backdrop,
+            maximize: fullscreen,
+            onSubmitDone(submitResult) {
+              console.log(submitResult);
             }
-          });
-        };
-      });
-      document.querySelectorAll(".btn-prompt").forEach(function (item) {
-        item.onclick = function () {
-          var type = item.getAttribute("data-type");
-          bs5dialog.prompt("Please enter your PIN:", {
-            type: type,
-            onConfirm: val => {
-              bs5dialog.alert("Your PIN:" + val, { type: type });
-            }
-          });
-        };
-      });
-
-      document.querySelector(".btn-show-loading").addEventListener("click", function () {
-        var form = document.getElementById("loading-form");
-        var type = document.getElementById("loading-type").value;
-        var animation = document.getElementById("loading-animation").value;
-        var timeout = document.getElementById("loading-timeout").value;
-        var backdrop = document.getElementById("loading-backdrop").checked;
-        console.log(backdrop);
-        bs5dialog.loading("#loading-form", { type: type, animation: animation, timeout: timeout, backdrop: backdrop });
-      });
-
-      document.querySelectorAll(".btn-show-toast").forEach(function (item) {
-        item.onclick = function () {
-          var position = item.getAttribute("data-position");
-          var type = item.getAttribute("data-type");
-          var color = item.getAttribute("data-text-color");
-          let toast = bs5dialog.toast("Your post has been archived!", {
-            title: "New Message",
-            subtitle: Date(),
-            type: type,
-            position: position,
-            timeout: 300000
-          });
-          toast.el.addEventListener("click", function () {
-            toast.el.hide();
-          });
-        };
-      });
-
-      document.querySelectorAll(".btn-show-message").forEach(function (item) {
-        item.onclick = function () {
-          var position = item.getAttribute("data-position");
-          var type = item.getAttribute("data-type");
-          bs5dialog.message("Your post has been archived!", position ? { type: type, position: position, timeout: 1000 } : {});
-        };
-      });
-
-      var backdrop = backdrop;
-      document.querySelectorAll(".btn-open-content").forEach(function (item) {
-        item.onclick = function (e) {
-          e.preventDefault();
-          var content = item.getAttribute("data-content");
-          var title = item.getAttribute("data-title") || "";
-          var backdrop = item.getAttribute("data-backdrop") || "";
-          var fullscreen = item.getAttribute("data-fullscreen") || false;
-          var loadPage = bs5dialog
-            .load(content, {
-              title: title,
-              backdrop: backdrop,
-              maximize: fullscreen,
-              onSubmitDone(submitResult) {
-                console.log(submitResult);
-              }
-            })
-            .then(loadPage => {
-              // console.log(loadPage)
-              loadPage.el.addEventListener("bs5:dialog:shown", function (e) {
-                // console.log(e)
-              });
-
-              loadPage.el.addEventListener("bs5:dialog:form:submit:complete", function (e) {
-                // console.log(e)
-              });
+          })
+          .then(loadPage => {
+            // console.log(loadPage)
+            loadPage.el.addEventListener("bs5:dialog:shown", function (e) {
+              // console.log(e)
             });
-        };
-      });
 
-      document.querySelectorAll(".btn-offcanvas").forEach(function (item) {
-        item.onclick = function (e) {
-          e.preventDefault();
-          var content = item.getAttribute("data-content");
-          var direction = item.getAttribute("data-direction") || "";
-          var dark = item.getAttribute("data-dark") || "";
-          var id = item.getAttribute("data-id") || "";
-          var backdrop = item.getAttribute("data-backdrop") || "true";
+            loadPage.el.addEventListener("bs5:dialog:form:submit:complete", function (e) {
+              // console.log(e)
+            });
+          });
+      };
+    });
 
-          var scroll = item.getAttribute("data-scroll") || "";
-          var size = item.getAttribute("data-size") || "";
+    document.querySelectorAll(".btn-offcanvas").forEach(function (item) {
+      item.onclick = function (e) {
+        e.preventDefault();
+        var content = item.getAttribute("data-content");
+        var direction = item.getAttribute("data-direction") || "";
+        var dark = item.getAttribute("data-dark") || "";
+        var id = item.getAttribute("data-id") || "";
+        var backdrop = item.getAttribute("data-backdrop") || "true";
 
+        var scroll = item.getAttribute("data-scroll") || "";
+        var size = item.getAttribute("data-size") || "";
+
+        bs5dialog.offcanvas(
+          content || "Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.",
+          {
+            title: "shopping cart",
+            size: size,
+            id: id,
+            direction: direction,
+            backdrop: backdrop,
+            scroll: scroll,
+            dark: dark,
+            container: ".container"
+          }
+        );
+      };
+    });
+
+    // Event listener for loading a remote form into an offcanvas
+    document.querySelector('.btn-offcanvas-load-form').addEventListener('click', function () {
+      const contentUrl = this.getAttribute('data-url');
+      const title = this.getAttribute('data-title') || "";
+      // Fetch the form content and display it in the offcanvas
+      fetch(contentUrl)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(formContent => {
           bs5dialog.offcanvas(
-            content || "Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.",
+            formContent || "Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.",
             {
-              title: "shopping cart",
-              size: size,
-              id: id,
-              direction: direction,
-              backdrop: backdrop,
-              scroll: scroll,
-              dark: dark,
-              container: ".container"
+              title: title,
             }
           );
-        };
-      });
-    </script>
-  </body>
+        })
+        .catch(error => {
+          console.error('There was a problem with the fetch operation:', error);
+        });
+    });
+  </script>
+</body>
+
 </html>

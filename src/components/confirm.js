@@ -2,6 +2,7 @@ import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement 
 import { makeIcon } from "../resource/icons";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
+import { initializeBootstrapComponents } from "../utils/bootstrapInit";
 
 /**
  * Displays a confirmation modal with the given content and options.
@@ -18,6 +19,7 @@ import { Modal as bs5Modal } from "bootstrap";
  * @param {string} options.iconStyle - The style of the icon to display in the modal.
  * @param {function} options.onConfirm - The function to call when the OK button is clicked.
  * @param {function} options.onCancel - The function to call when the Cancel button is clicked.
+ * @returns {Object} - An object containing the modal element, content, and options.
  */
 export function confirm(content = "", options = {}) {
   const defaultOptions = {
@@ -33,53 +35,61 @@ export function confirm(content = "", options = {}) {
     onConfirm: null,
     onCancel: null
   };
+
   options = { ...defaultOptions, ...options };
 
-  let modalElement;
-  if (options.id && document.getElementById(options.id)) {
-    modalElement = document.getElementById(options.id);
-  } else {
-    modalElement = setModalWrapper();
-    options.id = options.id || genDialogId();
-    modalElement.setAttribute("id", options.id);
-  }
+  // Get or create modal element
+  const modalElement = options.id && document.getElementById(options.id)
+    ? document.getElementById(options.id)
+    : (() => {
+      const el = setModalWrapper();
+      el.setAttribute("id", options.id || genDialogId());
+      return el;
+    })();
 
+  modalElement.classList.add("bs5dialog-modal-confirm");
+
+  // Set up event observers
   observeElement(modalElement, {
     created: () => {
-      triggerEvent(modalElement, "bs5:dialog:confirm:created", { options: options, el: modalElement });
+      triggerEvent(modalElement, "bs5:dialog:confirm:created", { options, el: modalElement });
     },
     rendered: () => {
-      triggerEvent(modalElement, "bs5:dialog:confirm:rendered", { options: options, el: modalElement });
+      triggerEvent(modalElement, "bs5:dialog:confirm:rendered", { options, el: modalElement });
       const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+      initializeBootstrapComponents(modalElement);
+
+      // Handle button clicks
       const okBtn = modalElement.querySelector(".modal-footer .btn-ok");
+      const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
+
       if (okBtn) {
         okBtn.addEventListener("click", () => {
           replayLock(okBtn);
-          triggerEvent(modalElement, "bs5:dialog:confirm:ok", { options: options });
+          triggerEvent(modalElement, "bs5:dialog:confirm:ok", { options });
           options.onConfirm?.();
           modalInstance.hide();
         });
       }
 
-      const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
       if (cancelBtn) {
         cancelBtn.addEventListener("click", () => {
           replayLock(cancelBtn);
-          triggerEvent(modalElement, "bs5:dialog:confirm:cancel", { options: options });
+          triggerEvent(modalElement, "bs5:dialog:confirm:cancel", { options });
           options.onCancel?.();
           modalInstance.hide();
         });
       }
     },
     hidden: () => {
-      triggerEvent(modalElement, "bs5:dialog:confirm:hidden", { options: options, el: modalElement });
+      triggerEvent(modalElement, "bs5:dialog:confirm:hidden", { options, el: modalElement });
     },
     remove: () => {
-      triggerEvent(modalElement, "bs5:dialog:confirm:remove", { options: options, el: modalElement });
+      triggerEvent(modalElement, "bs5:dialog:confirm:remove", { options, el: modalElement });
     }
   });
 
-  modalElement.classList.add("bs5dialog-modal-confirm");
+  // Build modal HTML
   modalElement.innerHTML = `
     <div class="modal-dialog modal-${options.size} modal-dialog-centered">
       <div class="modal-content">
@@ -93,14 +103,14 @@ export function confirm(content = "", options = {}) {
           <div class="w-100">
             <div class="row">
               <div class="col">
-                <button type="button" class="w-100 btn btn-default btn-cancel text-truncate mb-2" data-bs-dismiss="modal">${
-                  options.btnCancelText || i18n.getConfig("cancel")
-                }</button>
+                <button type="button" class="w-100 btn btn-default btn-cancel text-truncate mb-2" data-bs-dismiss="modal">
+                  ${options.btnCancelText || i18n.getConfig("cancel")}
+                </button>
               </div>
               <div class="col">
-                <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok text-truncate mb-2">${
-    options.btnOkText || i18n.getConfig("confirm")
-  }</button>
+                <button type="button" class="w-100 btn btn-default btn-${options.type} btn-ok text-truncate mb-2">
+                  ${options.btnOkText || i18n.getConfig("confirm")}
+                </button>
               </div>
             </div>
           </div>
@@ -109,17 +119,20 @@ export function confirm(content = "", options = {}) {
     </div>
   `;
 
+  // Set up icon
   if (options.type && options.icon == null) {
-    options.icon = "bs5-alert-" + options.type;
+    options.icon = `bs5-alert-${options.type}`;
   }
   const iconElement = makeIcon(options.icon, options.iconClass, options.iconStyle);
   modalElement.querySelector(".modal-icon").appendChild(iconElement);
 
+  // Show modal
   document.body.appendChild(modalElement);
   const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
-
   modalInstance.show();
-  modalElement.addEventListener("hidden.bs.modal", event => {
+
+  // Clean up on hide
+  modalElement.addEventListener("hidden.bs.modal", () => {
     modalElement.remove();
   });
 

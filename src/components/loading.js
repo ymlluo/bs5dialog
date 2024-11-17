@@ -1,9 +1,10 @@
 import { getMaxZIndex, getTargetElement, observeElement, triggerEvent } from "../utils";
 import { makeSpinner } from "../resource/loading";
+import { initializeBootstrapComponents } from "../utils/bootstrapInit";
 
 /**
  * Creates a loading element and appends it to the target element.
- * @param {HTMLElement} element - The target element to append the loading to.
+ * @param {HTMLElement|string} element - The target element or selector to append the loading to.
  * @param {Object} options - The options for the loading.
  * @param {string} options.animation - The animation for the loading.
  * @param {string} options.animationClass - The class of animation for the loading.
@@ -11,10 +12,9 @@ import { makeSpinner } from "../resource/loading";
  * @param {string} options.text - The text of loading.
  * @param {string} options.type - The type of loading.
  * @param {boolean} options.backdrop - Whether or not to include a backdrop.
- * @param {number} options.timeout - The timeout for the loading.
- * @returns {Object} An object with the target element, loading element, and hide and clean functions.
+ * @param {number} options.timeout - The timeout for the loading in milliseconds.
+ * @returns {Object} An object with the target element and options.
  */
-
 export function loading(element = document.body, options = {}) {
   const defaultOptions = {
     animation: "border",
@@ -28,108 +28,110 @@ export function loading(element = document.body, options = {}) {
 
   options = { ...defaultOptions, ...options };
 
-  let evt = event && event.target ? event.target : null;
-
-  let targetElement = getTargetElement(element);
+  const targetElement = getTargetElement(element);
   if (!targetElement) {
-    console.error("target element not found");
+    console.error("Target element not found");
     return;
   }
 
-  const existingSpinner = targetElement.querySelector(".bs5-dialog-loading");
-  if (existingSpinner) {
-    existingSpinner.remove();
-  }
-  if (["fixed", "absolute"].includes(window.getComputedStyle(targetElement).getPropertyValue("position")) && targetElement.firstChild) {
-    targetElement = targetElement.firstChild;
-  }
-  targetElement.style.position = "relative";
+  // Remove any existing spinner
+  targetElement.querySelector(".bs5-dialog-loading")?.remove();
 
-  let targetRect = targetElement.getBoundingClientRect();
+  // Handle positioning
+  const computedStyle = window.getComputedStyle(targetElement);
+  const isPositioned = ["fixed", "absolute"].includes(computedStyle.position);
+  const elementToUse = isPositioned && targetElement.firstChild ? targetElement.firstChild : targetElement;
+  elementToUse.style.position = "relative";
 
-  let overlay = document.createElement("div");
-  overlay.style.position = "absolute";
-  overlay.style.top = 0;
-  overlay.style.left = 0;
-  overlay.style.width = "100%";
-  overlay.style.height = "100%";
-  overlay.style.display = "flex";
-  overlay.style.flexDirection = "column";
-  overlay.style.justifyContent = "center";
-  overlay.style.alignItems = "center";
-  overlay.style.pointerEvents = "auto";
-  overlay.style.backgroundColor = "rgba(255, 255, 255, 0.7)";
-  overlay.style.setProperty("z-index", getMaxZIndex() + 1);
-  overlay.classList.add("bs5-dailog-loading");
+  const targetRect = elementToUse.getBoundingClientRect();
 
+  // Create overlay
+  const overlay = document.createElement("div");
+  Object.assign(overlay.style, {
+    position: "absolute",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    pointerEvents: "auto",
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    zIndex: String(getMaxZIndex() + 1)
+  });
+  overlay.classList.add("bs5-dialog-loading");
+
+  // Set up observers
   observeElement(overlay, {
-    created: () => {
-      triggerEvent(overlay, "bs5:dialog:loading:created", { options: options, el: overlay });
-    },
+    created: () => triggerEvent(overlay, "bs5:dialog:loading:created", { options, el: overlay }),
     rendered: () => {
-      triggerEvent(overlay, "bs5:dialog:loading:rendered", { options: options, el: overlay });
+      triggerEvent(overlay, "bs5:dialog:loading:rendered", { options, el: overlay });
+      initializeBootstrapComponents(overlay);
     },
-    hidden: () => {
-      triggerEvent(overlay, "bs5:dialog:loading:hidden", { options: options, el: overlay });
-    },
-    remove: () => {
-      triggerEvent(overlay, "bs5:dialog:loading:remove", { options: options, el: overlay });
-    }
+    hidden: () => triggerEvent(overlay, "bs5:dialog:loading:hidden", { options, el: overlay }),
+    remove: () => triggerEvent(overlay, "bs5:dialog:loading:remove", { options, el: overlay })
   });
 
+  // Handle backdrop option
   if (options.backdrop === false || options.backdrop === "false") {
     overlay.style.backgroundColor = "transparent";
     overlay.style.pointerEvents = "none";
   }
 
+  // Handle type option
   if (options.type) {
-    if (!options.type.startsWith("text-")) {
-      options.type = "text-" + options.type;
-    }
-    options.animationClass = options.animationClass + " " + options.type;
+    options.type = options.type.startsWith("text-") ? options.type : `text-${options.type}`;
+    options.animationClass = `${options.animationClass} ${options.type}`.trim();
   }
 
-  let animation = makeSpinner(options.animation, options.animationClass, options.animationStyle);
+  // Create and add spinner
+  const animation = makeSpinner(options.animation, options.animationClass, options.animationStyle);
   const animationRect = animation.getBoundingClientRect();
-
   overlay.appendChild(animation);
 
+  // Add text if specified
   if (options.text) {
-    let overlayText = document.createElement("div");
-    overlayText.style.position = "relative";
-    overlayText.style.textAlign = "center";
-    overlayText.style.color = "#333";
-    overlayText.style.bottom = "-" + animationRect.height + "px";
+    const overlayText = document.createElement("div");
+    Object.assign(overlayText.style, {
+      position: "relative",
+      textAlign: "center",
+      color: "#333",
+      bottom: `-${animationRect.height}px`
+    });
     overlayText.innerText = options.text;
     overlay.appendChild(overlayText);
+
     if (targetRect.height <= 40) {
       animation.remove();
     }
   }
-  let timer;
-  let preCursor = targetElement.style.getPropertyValue("cursor");
-  targetElement.appendChild(overlay);
-  targetElement.style.cursor = "wait";
 
-  var hideloading = function () {
+  // Store original cursor and update
+  const preCursor = elementToUse.style.cursor;
+  elementToUse.appendChild(overlay);
+  elementToUse.style.cursor = "wait";
+
+  // Create hide function
+  const hideLoading = () => {
     overlay.remove();
-    targetElement.style.cursor = preCursor;
-    clearTimeout(timer);
+    elementToUse.style.cursor = preCursor;
+    if (timer) clearTimeout(timer);
   };
 
+  // Handle timeout
+  let timer;
   if (options.timeout > 0) {
-    timer = setTimeout(() => {
-      hideloading();
-    }, options.timeout);
+    timer = setTimeout(hideLoading, options.timeout);
   }
 
-  targetElement.hide = function () {
-    hideloading();
-  };
+  // Add hide method to element
+  elementToUse.hide = hideLoading;
 
   return {
-    el: targetElement,
-    options: options
+    el: elementToUse,
+    options
   };
 }
 
@@ -137,13 +139,10 @@ export function loading(element = document.body, options = {}) {
  * Removes all loading elements from the document.
  */
 export function loadingClean() {
-  let loadings = document.querySelectorAll(".bs5-dailog-loading");
-  if (loadings) {
-    loadings.forEach(el => {
-      el.parentNode.style.cursor = "auto";
-      el.remove();
-    });
-  }
+  document.querySelectorAll(".bs5-dialog-loading").forEach(el => {
+    el.parentNode.style.cursor = "auto";
+    el.remove();
+  });
 }
 
 export const showLoading = loading;

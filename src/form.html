@@ -1,61 +1,109 @@
 <form method="post" action="/test">
   <div class="mb-3 row">
-    <label class="col-3 col-form-label required">Email address</label>
+    <label class="col-3 col-form-label required" for="email">Email address</label>
     <div class="col">
-      <input type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" />
-      <small class="form-hint">We'll never share your email with anyone else.</small>
+      <input type="email" id="email" name="email" class="form-control" aria-describedby="emailHelp"
+        placeholder="Enter email" required />
+      <small id="emailHelp" class="form-hint">We'll never share your email with anyone else.</small>
     </div>
   </div>
   <div class="mb-3 row">
-    <label class="col-3 col-form-label required">Password</label>
+    <label class="col-3 col-form-label required" for="password">Password</label>
     <div class="col">
-      <input type="password" class="form-control" placeholder="Password" />
+      <input type="password" id="password" name="password" class="form-control" placeholder="Password" required
+        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$"
+        title="Password must be 8-20 characters long and contain letters and numbers" />
       <small class="form-hint">
-        Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+        Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special
+        characters, or emoji.
       </small>
     </div>
   </div>
   <div class="mb-3 row">
-    <label class="col-3 col-form-label">Select</label>
+    <label class="col-3 col-form-label" for="select">Select</label>
     <div class="col">
-      <select class="form-select">
-        <option>Option 1</option>
-        <optgroup label="Optgroup 1">
-          <option>Option 1</option>
-          <option>Option 2</option>
-        </optgroup>
-        <option>Option 2</option>
-        <optgroup label="Optgroup 2">
-          <option>Option 1</option>
-          <option>Option 2</option>
-        </optgroup>
-        <optgroup label="Optgroup 3">
-          <option>Option 1</option>
-          <option>Option 2</option>
-        </optgroup>
-        <option>Option 3</option>
-        <option>Option 4</option>
+      <select class="form-select" id="select" name="select">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
       </select>
     </div>
   </div>
-  <div class="row">
-    <label class="col-3 col-form-label pt-0">Checkboxes</label>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label">Dropdown</label>
     <div class="col">
-      <label class="form-check">
-        <input class="form-check-input" type="checkbox" checked="" />
-        <span class="form-check-label">Option 1</span>
-      </label>
-      <label class="form-check">
-        <input class="form-check-input" type="checkbox" />
-        <span class="form-check-label">Option 2</span>
-      </label>
-      <label class="form-check">
-        <input class="form-check-input" type="checkbox" disabled="" />
-        <span class="form-check-label">Option 3</span>
-      </label>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          Dropdown button
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="#">Action</a></li>
+          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label">Radio Buttons</label>
+    <div class="col">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="options" id="option1" value="option1" checked>
+        <label class="form-check-label" for="option1">Option 1</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="options" id="option2" value="option2">
+        <label class="form-check-label" for="option2">Option 2</label>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label">Checkboxes</label>
+    <div class="col">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="checkbox1" name="checkbox1" checked>
+        <label class="form-check-label" for="checkbox1">Checkbox 1</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="checkbox2" name="checkbox2">
+        <label class="form-check-label" for="checkbox2">Checkbox 2</label>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label" for="message">Text Area</label>
+    <div class="col">
+      <textarea class="form-control" id="message" name="message" rows="3"
+        placeholder="Enter your message here..."></textarea>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label" for="fileUpload">File Upload</label>
+    <div class="col">
+      <input class="form-control" type="file" id="fileUpload" name="fileUpload">
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label">Tooltip</label>
+    <div class="col">
+      <button type="button" class="btn btn-info" data-bs-toggle="tooltip" data-bs-placement="top"
+        title="Tooltip on top">
+        Hover me to see tooltip
+      </button>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label class="col-3 col-form-label">Popover</label>
+    <div class="col">
+      <button type="button" class="btn btn-warning" data-bs-toggle="popover" title="Popover title"
+        data-bs-content="Some content inside the popover">
+        Click to toggle popover
+      </button>
     </div>
   </div>
   <div class="row text-end">
-    <button type="submit" class="btn btn-primary">保存</button>
+    <div class="col">
+      <button type="submit" class="btn btn-primary">保存</button>
+    </div>
   </div>
 </form>

@@ -1,5 +1,3 @@
-import axios from "axios";
-
 /**
  * Determines whether the given text is a URL or a path.
  * @param {string} text - The text to check.
@@ -99,7 +97,7 @@ export function makeDraggable(elmnt, handler) {
    * Function called when the mouse button is released, stopping the dragging of the element
    * @param {MouseEvent} e - The mouse event
    */
-  function closeDragElement(e) {
+  function closeDragElement() {
     // Stop moving when mouse button is released and release events
     document.onmouseup = null;
     document.onmousemove = null;
