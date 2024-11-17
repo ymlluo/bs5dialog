@@ -1,6 +1,6 @@
 {
   "name": "@ymlluo/bs5dialog",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of components for creating alerts, prompts, confirms, messages, toasts, tabs, spinners, and offcanvas dialogs.",
   "main": "dist/bs5dialog.js",
   "scripts": {
