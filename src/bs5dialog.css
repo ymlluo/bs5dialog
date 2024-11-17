@@ -4,6 +4,7 @@
   animation-duration: 0.5s;
   animation-fill-mode: forwards;
   min-width: 8rem;
+  will-change: transform, opacity;
 }
 
 .bs5-dialog-msg-hide {
@@ -14,13 +15,11 @@
 
 @keyframes bs5MsgBoxShow {
   from {
-    display: none;
     opacity: 0;
     transform: translateY(-20px);
   }
 
   to {
-    display: block;
     opacity: 1;
     transform: translateY(0);
   }
@@ -28,13 +27,11 @@
 
 @keyframes bs5MsgBoxHide {
   from {
-    display: block;
     opacity: 1;
     transform: translateY(0);
   }
 
   to {
-    display: none;
     opacity: 0;
     transform: translateY(-20px);
   }
@@ -122,6 +119,7 @@
   animation-name: bs5MsgBoxShow;
   animation-duration: 0.5s;
   animation-fill-mode: forwards;
+  will-change: transform, opacity;
 }
 
 .bs5dialog-modal.hide {
@@ -173,18 +171,22 @@
 /* Add an animation to the Offcanvas element */
 .bs5dialog-offcanvas.offcanvas-start {
   animation: slideInStart 0.3s ease-in-out;
+  will-change: transform;
 }
 
 .bs5dialog-offcanvas.offcanvas-end {
   animation: slideInEnd 0.3s ease-in-out;
+  will-change: transform;
 }
 
 .bs5dialog-offcanvas.offcanvas-top {
   animation: slideInTop 0.3s ease-in-out;
+  will-change: transform;
 }
 
 .bs5dialog-offcanvas.offcanvas-bottom {
   animation: slideInBottom 0.3s ease-in-out;
+  will-change: transform;
 }
 
 @keyframes slideInStart {

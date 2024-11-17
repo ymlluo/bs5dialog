@@ -153,7 +153,7 @@ export function genDialogId() {
  */
 export function setModalWrapper() {
   let modal = document.createElement("div");
-  modal.classList.add("modal", "bs5dialog-modal", "fade");
+  modal.classList.add("modal", "bs5dialog-modal");
   modal.setAttribute("data-bs-backdrop", "static");
   modal.setAttribute("tabindex", "-1");
   return modal;

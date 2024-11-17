@@ -38,6 +38,7 @@
     "postcss-modules-values": "^4.0.0",
     "rollup": "3.20.0",
     "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-delete": "^2.1.0",
     "rollup-plugin-import-css": "^3.5.6",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-watch": "^1.0.4"

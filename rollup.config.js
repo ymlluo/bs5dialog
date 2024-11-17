@@ -7,6 +7,7 @@ import postcss from "rollup-plugin-postcss";
 import postcssImport from "postcss-import";
 import watch from 'rollup-plugin-watch';
 import copy from "rollup-plugin-copy";
+import del from 'rollup-plugin-delete';
 
 export default {
   input: "src/bs5dialog.js",
@@ -29,6 +30,7 @@ export default {
     }
   ],
   plugins: [
+    del({ targets: 'dist/*' }),
     nodeResolve(),
     commonjs(),
     json(),

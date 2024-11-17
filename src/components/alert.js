@@ -88,7 +88,7 @@ export function alert(content = "", options = {}) {
   // Build modal HTML
   modalElement.classList.add("bs5dialog-modal-alert");
   modalElement.innerHTML = `
-    <div class="modal-dialog modal-${options.size || "sm"} modal-dialog-centered">
+    <div class="modal-dialog modal-${options.size || "sm"} modal-dialog-centered" style="transform: none;">
       <div class="modal-content">
         <div class="modal-status bg-${options.type}"></div>
         <div class="modal-body text-center py-4">
