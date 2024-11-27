@@ -12,6 +12,7 @@ import { toast } from "./components/toast";
 import { loading, showLoading, loadingClean, hideLoading } from "./components/loading";
 import { startup } from "./startup";
 
+
 export {
   alert,
   confirm,
@@ -31,7 +32,7 @@ export {
   startup
 };
 
-export default {
+export default bs5dialog = {
   alert,
   confirm,
   prompt,
