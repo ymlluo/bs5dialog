@@ -31,3 +31,21 @@ export {
   startup
 };
 
+export default {
+  alert,
+  confirm,
+  prompt,
+  message,
+  msg,
+  toast,
+  loading,
+  showLoading,
+  loadingClean,
+  hideLoading,
+  load,
+  offcanvas,
+  utils,
+  i18n,
+  setSystemLang,
+  startup
+}
