@@ -1,5 +1,5 @@
 import { getMaxZIndex, getTargetElement, observeElement, triggerEvent } from "../utils.js";
-import { makeSpinner } from "../resource/loading.js;
+import { makeSpinner } from "../resource/loading.js";
 import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
 
 /**
