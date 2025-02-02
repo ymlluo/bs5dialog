@@ -1,6 +1,6 @@
-import { getMaxZIndex, getTargetElement, observeElement, triggerEvent } from "../utils";
-import { makeSpinner } from "../resource/loading";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit";
+import { getMaxZIndex, getTargetElement, observeElement, triggerEvent } from "../utils.js";
+import { makeSpinner } from "../resource/loading.js;
+import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
 
 /**
  * Creates a loading element and appends it to the target element.

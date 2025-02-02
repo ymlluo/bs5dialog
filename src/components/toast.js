@@ -1,6 +1,6 @@
-import { getMaxZIndex, getTextClass, triggerEvent, observeElement, debounce } from "../utils";
-import { makeIcon } from "../resource/icons";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit";
+import { getMaxZIndex, getTextClass, triggerEvent, observeElement, debounce } from "../utils.js";
+import { makeIcon } from "../resource/icons.js";
+import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
 
 /**
  * Displays a toast message with customizable options.

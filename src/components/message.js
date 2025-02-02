@@ -1,6 +1,6 @@
-import { getMaxZIndex, triggerEvent, observeElement, getTextClass } from "../utils";
-import { makeIcon } from "../resource/icons";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit";
+import { getMaxZIndex, triggerEvent, observeElement, getTextClass } from "../utils.js";
+import { makeIcon } from "../resource/icons.js";
+import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
 
 /**
  * Displays a message with customizable options

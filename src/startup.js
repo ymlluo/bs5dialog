@@ -1,11 +1,11 @@
-import { load } from "./components/load";
-import { offcanvas } from "./components/offcanvas";
-import { alert } from "./components/alert";
-import { confirm } from "./components/confirm";
-import { prompt } from "./components/prompt";
-import { message } from "./components/message";
-import { toast } from "./components/toast";
-import { setSystemLang } from "./i18n";
+import { load } from "./components/load.js";
+import { offcanvas } from "./components/offcanvas.js";
+import { alert } from "./components/alert.js";
+import { confirm } from "./components/confirm.js";
+import { prompt } from "./components/prompt.js";
+import { message } from "./components/message.js";
+import { toast } from "./components/toast.js";
+import { setSystemLang } from "./i18n.js";
 
 const components = { alert, confirm, prompt, message, toast, load, offcanvas };
 export function addDialogClickListeners() {
