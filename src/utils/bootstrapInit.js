@@ -6,12 +6,9 @@ import { Dropdown, Tooltip, Popover, Collapse, Alert, Toast, Carousel, Offcanvas
  */
 export function initializeBootstrapComponents(element) {
     // Initialize Dropdowns
-    const dropdowns = element.querySelectorAll('[data-bs-toggle="dropdown"]');
-    dropdowns.forEach(dropdown => {
-        if (!Dropdown.getInstance(dropdown)) {
-            new Dropdown(dropdown);
-        }
-    });
+        // const dropdowns = element.querySelectorAll('[data-bs-toggle="dropdown"]');
+        const dropdownElementList = document.querySelectorAll('.dropdown-toggle,[data-bs-toggle="dropdown"]')
+        const dropdownList = [...dropdownElementList].map(dropdownToggleEl => new Dropdown(dropdownToggleEl))
 
     // Initialize Tooltips
     const tooltips = element.querySelectorAll('[data-bs-toggle="tooltip"]');
