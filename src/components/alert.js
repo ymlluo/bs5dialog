@@ -1,8 +1,8 @@
-import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement } from "../utils";
-import { makeIcon } from "../resource/icons";
+import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement } from "../utils.js";
+import { makeIcon } from "../resource/icons.js";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit";
+import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
 
 /**
  * Displays an alert modal with the given content and options.

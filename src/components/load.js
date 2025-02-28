@@ -8,12 +8,12 @@ import {
   replayLock,
   triggerEvent,
   observeElement
-} from "../utils";
+} from "../utils.js";
 import * as i18n from "../i18n.js";
 import { Modal as bs5Modal } from "bootstrap";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit";
-import { makeIcon } from "../resource/icons";
-import { message } from "./message";
+import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
+import { makeIcon } from "../resource/icons.js";
+import { message } from "./message.js";
 
 /**
  * Loads content into a Bootstrap 5 modal dialog with customizable options.

@@ -1,16 +1,16 @@
 import "./bs5dialog.css";
-import * as utils from "./utils";
+import * as utils from "./utils.js";
 import * as i18n from "./i18n.js";
 import { setSystemLang } from "./i18n.js";
-import { load } from "./components/load";
-import { offcanvas } from "./components/offcanvas";
-import { alert } from "./components/alert";
-import { confirm } from "./components/confirm";
-import { prompt } from "./components/prompt";
-import { message, msg } from "./components/message";
-import { toast } from "./components/toast";
-import { loading, showLoading, loadingClean, hideLoading } from "./components/loading";
-import { startup } from "./startup";
+import { load } from "./components/load.js";
+import { offcanvas } from "./components/offcanvas.js";
+import { alert } from "./components/alert.js";
+import { confirm } from "./components/confirm.js";
+import { prompt } from "./components/prompt.js";
+import { message, msg } from "./components/message.js";
+import { toast } from "./components/toast.js";
+import { loading, showLoading, loadingClean, hideLoading } from "./components/loading.js";
+import { startup } from "./startup.js";
 
 
 export {
@@ -32,7 +32,7 @@ export {
   startup
 };
 
-export default bs5dialog = {
+const bs5dialog = {
   alert,
   confirm,
   prompt,
@@ -50,3 +50,5 @@ export default bs5dialog = {
   setSystemLang,
   startup
 }
+
+export default bs5dialog;
