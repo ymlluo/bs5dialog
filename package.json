@@ -1,6 +1,6 @@
 {
   "name": "@ymlluo/bs5dialog",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "bs5dialog is a library for creating Bootstrap 5 dialogs. It provides a set of components for creating alerts, prompts, confirms, messages, toasts, tabs, spinners, and offcanvas dialogs.",
   "main": "dist/bs5dialog.js",
   "scripts": {
@@ -24,27 +24,30 @@
   "author": "ymlluo",
   "license": "MIT",
   "devDependencies": {
-    "@eslint/js": "^9.15.0",
-    "@rollup/plugin-commonjs": "^24.1.0",
+    "@eslint/compat": "^1.2.8",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.24.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^15.3.0",
-    "@rollup/plugin-replace": "^5.0.7",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
-    "eslint": "^9.15.0",
-    "globals": "^15.12.0",
-    "postcss": "^8.4.49",
-    "postcss-import": "^15.1.0",
+    "eslint": "^9.24.0",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^16.0.0",
+    "postcss": "^8.5.3",
+    "postcss-import": "^16.1.0",
     "postcss-modules": "^6.0.1",
     "postcss-modules-values": "^4.0.0",
-    "rollup": "^3.29.5",
+    "rollup": "^4.39.0",
     "rollup-plugin-copy": "^3.5.0",
-    "rollup-plugin-delete": "^2.1.0",
-    "rollup-plugin-import-css": "^3.5.6",
+    "rollup-plugin-delete": "^3.0.1",
+    "rollup-plugin-import-css": "^3.5.8",
     "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-watch": "^1.0.4"
+    "rollup-plugin-watch": "^1.0.5"
   },
   "dependencies": {
-    "axios": "^1.7.7",
-    "bootstrap": "^5.3"
+    "axios": "^1.8.4",
+    "bootstrap": "^5.3.5"
   }
 }

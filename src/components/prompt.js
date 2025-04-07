@@ -1,8 +1,7 @@
 import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement } from "../utils.js";
 import { makeIcon } from "../resource/icons.js";
 import * as i18n from "../i18n.js";
-import { Modal as bs5Modal } from "bootstrap";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
+import { initializeBootstrapComponents, checkBootstrapAvailability } from "../utils/bootstrapInit.js";
 
 /**
  * Displays a prompt dialog with customizable options.
@@ -22,6 +21,11 @@ import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
  * @returns {Object} - An object containing the dialog element, content, and options.
  */
 export function prompt(content, options = {}) {
+  // Check if bootstrap is available
+  if (!checkBootstrapAvailability()) {
+    return { el: null, content, options };
+  }
+
   const defaultOptions = {
     title: "",
     type: "secondary",
@@ -74,7 +78,7 @@ export function prompt(content, options = {}) {
     created: () => triggerEvent(modalElement, "bs5:dialog:prompt:created", { options, el: modalElement }),
     rendered: () => {
       triggerEvent(modalElement, "bs5:dialog:prompt:rendered", { options, el: modalElement });
-      const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+      const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
       initializeBootstrapComponents(modalElement);
 
       const inputEl = modalElement.querySelector(".modal-body input");
@@ -134,7 +138,7 @@ export function prompt(content, options = {}) {
   modalElement.querySelector(".modal-icon").appendChild(iconElement);
   document.body.appendChild(modalElement);
 
-  const modalInstance = new bs5Modal(modalElement);
+  const modalInstance = new bootstrap.Modal(modalElement);
   modalInstance.show();
 
   modalElement.addEventListener("hidden.bs.modal", () => modalElement.remove());

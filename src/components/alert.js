@@ -1,8 +1,7 @@
 import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement } from "../utils.js";
 import { makeIcon } from "../resource/icons.js";
 import * as i18n from "../i18n.js";
-import { Modal as bs5Modal } from "bootstrap";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
+import { initializeBootstrapComponents, checkBootstrapAvailability } from "../utils/bootstrapInit.js";
 
 /**
  * Displays an alert modal with the given content and options.
@@ -21,6 +20,11 @@ import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
  * @returns {Object} - An object containing the alert modal element, content, and options.
  */
 export function alert(content = "", options = {}) {
+  // Check if bootstrap is available
+  if (!checkBootstrapAvailability()) {
+    return { el: null, content, options };
+  }
+
   const defaultOptions = {
     title: "",
     type: "success",
@@ -52,7 +56,7 @@ export function alert(content = "", options = {}) {
     },
     rendered: () => {
       triggerEvent(modalElement, "bs5:dialog:alert:rendered", { options, el: modalElement });
-      const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+      const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
       initializeBootstrapComponents(modalElement);
 
       // Handle OK button click
@@ -122,7 +126,7 @@ export function alert(content = "", options = {}) {
 
   // Show modal
   document.body.appendChild(modalElement);
-  const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+  const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
   modalInstance.show();
 
   // Clean up on hide

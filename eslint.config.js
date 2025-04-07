@@ -1,11 +1,53 @@
+import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
 import globals from "globals";
-import pluginJs from "@eslint/js";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import js from "@eslint/js";
+import { FlatCompat } from "@eslint/eslintrc";
+import importsPlugin from "eslint-plugin-import";
 
-/** @type {import('eslint').Linter.Config[]} */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
+});
+
 export default [
-  { languageOptions: { globals: globals.browser } },
-  pluginJs.configs.recommended,
+  ...fixupConfigRules(
+    compat.extends(
+      "eslint:recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings"
+    )
+  ),
   {
-    ignorePatterns: ["dist/", "build/"],
+    plugins: {
+      import: fixupPluginRules(importsPlugin),
+    },
+
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.webextensions,
+        ...globals.node,
+      },
+      ecmaVersion: 2022,
+      sourceType: "module",
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+
+    settings: {
+      "import/resolver": {
+        node: {
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+        },
+      },
+    },
   },
 ];

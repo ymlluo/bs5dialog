@@ -11,7 +11,10 @@ import { message, msg } from "./components/message.js";
 import { toast } from "./components/toast.js";
 import { loading, showLoading, loadingClean, hideLoading } from "./components/loading.js";
 import { startup } from "./startup.js";
+import { checkBootstrapAvailability } from "./utils/bootstrapInit.js";
 
+// Check if Bootstrap is available on initialization
+const isBootstrapAvailable = checkBootstrapAvailability();
 
 export {
   alert,
@@ -29,7 +32,9 @@ export {
   utils,
   i18n,
   setSystemLang,
-  startup
+  startup,
+  checkBootstrapAvailability,
+  isBootstrapAvailable
 };
 
 const bs5dialog = {
@@ -48,7 +53,9 @@ const bs5dialog = {
   utils,
   i18n,
   setSystemLang,
-  startup
+  startup,
+  checkBootstrapAvailability,
+  isBootstrapAvailable
 }
 
 export default bs5dialog;

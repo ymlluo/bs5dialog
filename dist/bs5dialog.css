@@ -172,26 +172,26 @@
 /* Add an animation to the Offcanvas element */
 
 .bs5dialog-offcanvas.offcanvas-start {
-  animation: slideInStart 0.3s ease-in-out;
+  animation: bs5SlideInStart 0.3s ease-in-out;
   will-change: transform;
 }
 
 .bs5dialog-offcanvas.offcanvas-end {
-  animation: slideInEnd 0.3s ease-in-out;
+  animation: bs5SlideInEnd 0.3s ease-in-out;
   will-change: transform;
 }
 
 .bs5dialog-offcanvas.offcanvas-top {
-  animation: slideInTop 0.3s ease-in-out;
+  animation: bs5SlideInTop 0.3s ease-in-out;
   will-change: transform;
 }
 
 .bs5dialog-offcanvas.offcanvas-bottom {
-  animation: slideInBottom 0.3s ease-in-out;
+  animation: bs5SlideInBottom 0.3s ease-in-out;
   will-change: transform;
 }
 
-@keyframes slideInStart {
+@keyframes bs5SlideInStart {
   from {
     transform: translateX(-100%);
   }
@@ -201,7 +201,7 @@
   }
 }
 
-@keyframes slideInEnd {
+@keyframes bs5SlideInEnd {
   from {
     transform: translateX(100%);
   }
@@ -211,7 +211,7 @@
   }
 }
 
-@keyframes slideInTop {
+@keyframes bs5SlideInTop {
   from {
     transform: translateY(-100%);
   }
@@ -221,7 +221,7 @@
   }
 }
 
-@keyframes slideInBottom {
+@keyframes bs5SlideInBottom {
   from {
     transform: translateY(100%);
   }
