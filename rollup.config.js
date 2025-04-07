@@ -10,7 +10,7 @@ import del from 'rollup-plugin-delete';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// 获取当前文件的目录路径
+// Get current directory path
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
@@ -20,17 +20,20 @@ export default {
       file: "dist/bs5dialog.js",
       format: "umd",
       name: "bs5dialog",
-      sourcemap: false
+      sourcemap: true,
+      exports: "named"
     },
     {
       file: "dist/bs5dialog.cjs.js",
       format: "cjs",
-      sourcemap: false
+      sourcemap: true,
+      exports: "named"
     },
     {
       file: "dist/bs5dialog.esm.js",
       format: "esm",
-      sourcemap: false
+      sourcemap: true,
+      exports: "named"
     }
   ],
   watch: {
@@ -55,21 +58,23 @@ export default {
     terser(),
     copy({
       targets: [
-        { 
+        {
           src: 'src/index.html',
           dest: 'dist/'
         },
-        { 
+        {
           src: 'src/form.html',
           dest: 'dist/'
         },
-        { 
-          src: 'src/examples/*',
-          dest: 'dist/examples'
+        {
+          src: 'src/examples/*.html',
+          dest: 'dist/examples',
+          flatten: true
         },
-        { 
+        {
           src: 'src/docs/*',
-          dest: 'dist/docs'
+          dest: 'dist/docs',
+          flatten: true
         }
       ],
       verbose: true,

@@ -10,8 +10,8 @@ import {
   observeElement
 } from "../utils.js";
 import * as i18n from "../i18n.js";
-import { Modal as bs5Modal } from "bootstrap";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
+// import { Modal as bs5dialogModal } from "bootstrap";
+import { initializeBootstrapComponents, checkBootstrapAvailability } from "../utils/bootstrapInit.js";
 import { makeIcon } from "../resource/icons.js";
 import { message } from "./message.js";
 
@@ -44,6 +44,11 @@ import { message } from "./message.js";
  * @param {function} options.onSubmitDone - A function to be called after the modal dialog is submitted, regardless of success or failure.
  */
 export async function load(content, options = {}) {
+  // Check if bootstrap is available
+  if (!checkBootstrapAvailability()) {
+    return { el: null, content, options };
+  }
+
   const defaultOptions = {
     title: "",
     type: "danger",
@@ -136,7 +141,7 @@ export async function load(content, options = {}) {
       }
 
       triggerEvent(modalElement, "bs5:dialog:load:rendered", { options, el: modalElement });
-      const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+      const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
 
       // Handle cancel button
       const cancelBtn = modalElement.querySelector(".modal-footer .btn-cancel");
@@ -171,7 +176,7 @@ export async function load(content, options = {}) {
           await handleFormSubmit(form, okBtn, modalInstance);
         });
 
-        // 添加回车提交支持
+        // Add support for form submission with Enter key
         form.addEventListener("keypress", event => {
           if (event.key === "Enter" && !event.shiftKey) {
             event.preventDefault();
@@ -259,7 +264,7 @@ export async function load(content, options = {}) {
   document.body.appendChild(modalElement);
 
   // Initialize and show modal
-  const modalInstance = bs5Modal.getOrCreateInstance(modalElement, {
+  const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement, {
     keyboard: options.keyboard,
     focus: options.focus,
     backdrop: options.backdrop

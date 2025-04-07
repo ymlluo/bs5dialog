@@ -1,6 +1,5 @@
 import { getOverlapDimensions, genDialogId, triggerEvent, observeElement } from "../utils.js";
-import { Offcanvas as bs5Offcanvas } from "bootstrap";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
+import { initializeBootstrapComponents, checkBootstrapAvailability } from "../utils/bootstrapInit.js";
 
 /**
  * Creates an offcanvas element with the given content and options.
@@ -20,6 +19,10 @@ import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
  * @param {Function} options.onHidden - The function to be called when the offcanvas is hidden.
  */
 export function offcanvas(content, options = {}) {
+  if (!checkBootstrapAvailability()) {
+    return { el: null, content, options };
+  }
+
   const defaultOptions = {
     title: "",
     direction: "start",
@@ -48,7 +51,7 @@ export function offcanvas(content, options = {}) {
   setupOffcanvasContent(offcanvasElement, content, options);
 
   document.body.appendChild(offcanvasElement);
-  const offcanvasInstance = bs5Offcanvas.getOrCreateInstance(offcanvasElement);
+  const offcanvasInstance = bootstrap.Offcanvas.getOrCreateInstance(offcanvasElement);
   offcanvasInstance.toggle();
 
   return {

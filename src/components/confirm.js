@@ -1,8 +1,7 @@
 import { setModalWrapper, replayLock, triggerEvent, genDialogId, observeElement } from "../utils.js";
 import { makeIcon } from "../resource/icons.js";
 import * as i18n from "../i18n.js";
-import { Modal as bs5Modal } from "bootstrap";
-import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
+import { initializeBootstrapComponents, checkBootstrapAvailability } from "../utils/bootstrapInit.js";
 
 /**
  * Displays a confirmation modal with the given content and options.
@@ -22,6 +21,11 @@ import { initializeBootstrapComponents } from "../utils/bootstrapInit.js";
  * @returns {Object} - An object containing the modal element, content, and options.
  */
 export function confirm(content = "", options = {}) {
+  // Check if bootstrap is available
+  if (!checkBootstrapAvailability()) {
+    return { el: null, content, options };
+  }
+
   const defaultOptions = {
     title: i18n.getConfig("sure"),
     type: "danger",
@@ -56,7 +60,7 @@ export function confirm(content = "", options = {}) {
     },
     rendered: () => {
       triggerEvent(modalElement, "bs5:dialog:confirm:rendered", { options, el: modalElement });
-      const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+      const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
       initializeBootstrapComponents(modalElement);
 
       // Handle button clicks
@@ -128,7 +132,7 @@ export function confirm(content = "", options = {}) {
 
   // Show modal
   document.body.appendChild(modalElement);
-  const modalInstance = bs5Modal.getOrCreateInstance(modalElement);
+  const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
   modalInstance.show();
 
   // Clean up on hide
